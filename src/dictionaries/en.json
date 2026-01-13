@@ -1,0 +1,64 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "portfolio": "Portfolio",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Almersal Media Production",
+    "subtitle": "We Create Content That Inspires",
+    "cta": "Explore Our Work"
+  },
+  "about": {
+    "title": "About Us",
+    "description": "Almersal Media Production - We are a team of creative professionals specializing in visual and digital content production. We strive to deliver innovative media solutions that meet our clients' needs and exceed their expectations."
+  },
+  "services": {
+    "title": "Our Services",
+    "subtitle": "We offer a comprehensive range of media services",
+    "video": {
+      "title": "Video Production",
+      "description": "Documentary films, commercials, and digital content of the highest quality"
+    },
+    "photo": {
+      "title": "Photography",
+      "description": "Professional photo sessions for products, events, and portraits"
+    },
+    "design": {
+      "title": "Graphic Design",
+      "description": "Visual identity design and innovative marketing materials"
+    },
+    "social": {
+      "title": "Social Media Management",
+      "description": "Content creation and management for social media platforms"
+    }
+  },
+  "stats": {
+    "projects": "Projects Completed",
+    "clients": "Happy Clients",
+    "awards": "Awards Won",
+    "years": "Years Experience"
+  },
+  "portfolio": {
+    "title": "Our Work",
+    "subtitle": "Featured projects from our portfolio"
+  },
+  "testimonials": {
+    "title": "Testimonials",
+    "subtitle": "What our clients say about us"
+  },
+  "cta": {
+    "title": "Have a Project?",
+    "subtitle": "Let us turn your idea into reality",
+    "button": "Contact Us"
+  },
+  "footer": {
+    "description": "Almersal Media Production - We Create Content That Inspires",
+    "quickLinks": "Quick Links",
+    "contact": "Contact Us",
+    "followUs": "Follow Us",
+    "rights": "All Rights Reserved"
+  }
+}
