@@ -33,16 +33,17 @@ export function Header({ lang, dictionary }: HeaderProps) {
 
   return (
     <>
-      {/* Header with 4px white bar and center notch */}
+      {/* Header with 8px white bar and center notch */}
       <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
-        {/* 4px white bar edge to edge */}
-        <div className="absolute top-0 left-0 right-0 h-[4px] bg-white" />
+        {/* 8px white bar edge to edge */}
+        <div className="absolute top-0 left-0 right-0 h-[8px] bg-white" />
 
         {/* Main header content */}
         <div className="relative">
-          {/* Center Notch with Hamburger Menu - Simple square with rounded bottom */}
+          {/* Center Notch with Hamburger Menu */}
           <div className="absolute left-1/2 -translate-x-1/2 top-0 pointer-events-auto">
-            <div className="bg-white px-5 pt-1 pb-3 rounded-b-lg">
+            {/* Notch shape - white background with rounded bottom */}
+            <div className="relative bg-white px-5 pt-2 pb-3 rounded-b-xl">
               {/* Two-line Menu Button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
@@ -58,6 +59,16 @@ export function Header({ lang, dictionary }: HeaderProps) {
                   isOpen && '-rotate-45 -translate-y-[5px]'
                 )} />
               </button>
+            </div>
+
+            {/* Light curved edges - left side */}
+            <div className="absolute -left-2 top-0 w-2 h-2 overflow-hidden">
+              <div className="absolute top-0 right-0 w-4 h-4 bg-transparent rounded-tr-[8px] shadow-[2px_-2px_0_0_white]" />
+            </div>
+
+            {/* Light curved edges - right side */}
+            <div className="absolute -right-2 top-0 w-2 h-2 overflow-hidden">
+              <div className="absolute top-0 left-0 w-4 h-4 bg-transparent rounded-tl-[8px] shadow-[-2px_-2px_0_0_white]" />
             </div>
           </div>
 
