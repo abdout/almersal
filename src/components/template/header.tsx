@@ -33,46 +33,31 @@ export function Header({ lang, dictionary }: HeaderProps) {
 
   return (
     <>
-      {/* Header with 2px white bar and center notch */}
+      {/* Header with 4px white bar and center notch */}
       <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
-        {/* 2px white bar edge to edge */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-white" />
+        {/* 4px white bar edge to edge */}
+        <div className="absolute top-0 left-0 right-0 h-[4px] bg-white" />
 
         {/* Main header content */}
         <div className="relative">
-          {/* Center Notch with Hamburger Menu */}
+          {/* Center Notch with Hamburger Menu - Simple square with rounded bottom */}
           <div className="absolute left-1/2 -translate-x-1/2 top-0 pointer-events-auto">
-            {/* Notch shape - white background with rounded bottom */}
-            <div className="relative bg-white px-6 pt-[2px] pb-3 rounded-b-[20px]">
-              {/* Hamburger Menu Button inside notch */}
+            <div className="bg-white px-5 pt-1 pb-3 rounded-b-lg">
+              {/* Two-line Menu Button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex flex-col items-center justify-center gap-1 p-2"
+                className="flex flex-col items-center justify-center gap-1.5 p-2"
                 aria-label="Toggle menu"
               >
                 <span className={cn(
-                  'block h-[2px] bg-primary-500 transition-all duration-300',
-                  isOpen ? 'w-5 rotate-45 translate-y-[6px]' : 'w-5'
+                  'block h-[2px] w-5 bg-primary-500 transition-all duration-300',
+                  isOpen && 'rotate-45 translate-y-[5px]'
                 )} />
                 <span className={cn(
-                  'block h-[2px] bg-primary-500 transition-all duration-300',
-                  isOpen ? 'opacity-0 w-5' : 'w-4'
-                )} />
-                <span className={cn(
-                  'block h-[2px] bg-primary-500 transition-all duration-300',
-                  isOpen ? 'w-5 -rotate-45 -translate-y-[6px]' : 'w-3'
+                  'block h-[2px] w-5 bg-primary-500 transition-all duration-300',
+                  isOpen && '-rotate-45 -translate-y-[5px]'
                 )} />
               </button>
-            </div>
-
-            {/* Curved edges - left side */}
-            <div className="absolute -left-4 top-0 w-4 h-4 overflow-hidden">
-              <div className="absolute top-0 right-0 w-8 h-8 bg-transparent rounded-tr-[16px] shadow-[4px_-4px_0_0_white]" />
-            </div>
-
-            {/* Curved edges - right side */}
-            <div className="absolute -right-4 top-0 w-4 h-4 overflow-hidden">
-              <div className="absolute top-0 left-0 w-8 h-8 bg-transparent rounded-tl-[16px] shadow-[-4px_-4px_0_0_white]" />
             </div>
           </div>
 

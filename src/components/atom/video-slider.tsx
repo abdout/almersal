@@ -129,32 +129,36 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="absolute left-0 top-0 bottom-0 w-[22%] md:w-[20%] z-20 flex flex-col justify-center items-center"
+        className="absolute left-0 top-0 bottom-0 w-[22%] md:w-[20%] z-20 flex flex-col justify-between items-center py-[15vh]"
         style={{ backgroundColor: currentColor }}
       >
-        <div className="relative h-full w-full flex flex-col justify-center items-center overflow-hidden">
-          {/* Main Large Text - Horizontal like reference */}
-          <div className="flex flex-col items-center justify-center text-center w-full">
-            <motion.span
-              key={`left-main-${currentIndex}`}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3, type: 'spring' }}
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[100px] font-black text-white leading-none whitespace-nowrap"
-            >
-              {slides[currentIndex].leftText?.main || 'الإبداع'}
-            </motion.span>
-            <motion.span
-              key={`left-sub-${currentIndex}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 mt-3"
-            >
-              {slides[currentIndex].leftText?.sub || 'نصنعه'}
-            </motion.span>
-          </div>
+        {/* Main Large Text - Upper area */}
+        <div className="flex-1 flex items-center justify-center">
+          <motion.span
+            key={`left-main-${currentIndex}`}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, type: 'spring' }}
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[100px] font-black text-white leading-none whitespace-nowrap"
+          >
+            {slides[currentIndex].leftText?.main || 'الإبداع'}
+          </motion.span>
         </div>
+        {/* Sub Text - Orange with white stroke at bottom */}
+        <motion.div
+          key={`left-sub-${currentIndex}`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-none whitespace-nowrap"
+          style={{
+            color: currentColor,
+            WebkitTextStroke: '2px white',
+            paintOrder: 'stroke fill'
+          }}
+        >
+          {slides[currentIndex].leftText?.sub || 'نصنعه'}
+        </motion.div>
       </motion.div>
 
       {/* Right Side Panel */}
@@ -163,32 +167,36 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="absolute right-0 top-0 bottom-0 w-[22%] md:w-[20%] z-20 flex flex-col justify-center items-center"
+        className="absolute right-0 top-0 bottom-0 w-[22%] md:w-[20%] z-20 flex flex-col justify-between items-center py-[15vh]"
         style={{ backgroundColor: currentColor }}
       >
-        <div className="relative h-full w-full flex flex-col justify-center items-center overflow-hidden">
-          {/* Main Large Text - Horizontal like reference */}
-          <div className="flex flex-col items-center justify-center text-center w-full">
-            <motion.span
-              key={`right-main-${currentIndex}`}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3, type: 'spring' }}
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[100px] font-black text-white leading-none whitespace-nowrap"
-            >
-              {slides[currentIndex].rightText?.main || 'الهوية'}
-            </motion.span>
-            <motion.span
-              key={`right-sub-${currentIndex}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 mt-3"
-            >
-              {slides[currentIndex].rightText?.sub || 'نحققها'}
-            </motion.span>
-          </div>
+        {/* Main Large Text - Upper area */}
+        <div className="flex-1 flex items-center justify-center">
+          <motion.span
+            key={`right-main-${currentIndex}`}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, type: 'spring' }}
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[100px] font-black text-white leading-none whitespace-nowrap"
+          >
+            {slides[currentIndex].rightText?.main || 'الهوية'}
+          </motion.span>
         </div>
+        {/* Sub Text - Orange with white stroke at bottom */}
+        <motion.div
+          key={`right-sub-${currentIndex}`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-none whitespace-nowrap"
+          style={{
+            color: currentColor,
+            WebkitTextStroke: '2px white',
+            paintOrder: 'stroke fill'
+          }}
+        >
+          {slides[currentIndex].rightText?.sub || 'نحققها'}
+        </motion.div>
       </motion.div>
 
       {/* Center Slider Area */}
