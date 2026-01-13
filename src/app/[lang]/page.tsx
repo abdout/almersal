@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { SplashScreen } from '@/components/template/splash-screen';
+import { LoadingWrapper } from '@/components/template/loading-wrapper';
 import { Header } from '@/components/template/header';
 import { HeroSection } from '@/components/template/hero-section';
 import { ServicesSection } from '@/components/template/services-section';
@@ -136,13 +135,10 @@ const dictionaries = {
 export default function HomePage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang: rawLang } = use(params);
   const lang = (locales.includes(rawLang as Locale) ? rawLang : defaultLocale) as Locale;
-  const [showSplash, setShowSplash] = useState(true);
   const dictionary = dictionaries[lang];
 
   return (
-    <>
-      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
-
+    <LoadingWrapper>
       <ParallaxCircles />
 
       <Header lang={lang} dictionary={dictionary} />
@@ -160,6 +156,6 @@ export default function HomePage({ params }: { params: Promise<{ lang: string }>
 
       {/* Safe area for bottom nav on mobile */}
       <div className="h-16 md:hidden" />
-    </>
+    </LoadingWrapper>
   );
 }

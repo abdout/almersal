@@ -20,11 +20,11 @@ export function HeroSection({ dictionary }: HeroSectionProps) {
       title: dictionary.hero.title,
       subtitle: 'شركة المرسال للإنتاج الإعلامي هي شركة رائدة في مجال الإنتاج الإعلامي والتصوير الاحترافي والمحتوى الرقمي.',
       leftText: {
-        main: 'الإبداع',
+        main: 'إبداع',
         sub: 'نصنعه',
       },
       rightText: {
-        main: 'الهوية',
+        main: 'هوية',
         sub: 'نبنيها',
       },
       overlayColor: 'oklch(0.65 0.2 45)',
@@ -35,11 +35,11 @@ export function HeroSection({ dictionary }: HeroSectionProps) {
       title: 'إنتاج الأفلام',
       subtitle: 'نصنع قصصاً تلهم وتؤثر - أفلام وثائقية وإعلانات تجارية بأعلى معايير الجودة العالمية.',
       leftText: {
-        main: 'القصة',
+        main: 'قصة',
         sub: 'نرويها',
       },
       rightText: {
-        main: 'الرؤية',
+        main: 'رؤية',
         sub: 'نحققها',
       },
       overlayColor: 'oklch(0.60 0.22 50)',
@@ -50,11 +50,11 @@ export function HeroSection({ dictionary }: HeroSectionProps) {
       title: 'التصوير الاحترافي',
       subtitle: 'نوثق لحظاتك بإبداع - جلسات تصوير احترافية للمنتجات والفعاليات والبورتريه.',
       leftText: {
-        main: 'اللحظة',
+        main: 'لحظة',
         sub: 'نوثقها',
       },
       rightText: {
-        main: 'الجمال',
+        main: 'جمال',
         sub: 'نكشفه',
       },
       overlayColor: 'oklch(0.70 0.18 40)',
@@ -65,11 +65,11 @@ export function HeroSection({ dictionary }: HeroSectionProps) {
       title: 'المحتوى الرقمي',
       subtitle: 'نبني حضورك الرقمي - إدارة وإنشاء محتوى مبتكر لمنصات التواصل الاجتماعي.',
       leftText: {
-        main: 'الحضور',
+        main: 'حضور',
         sub: 'نعززه',
       },
       rightText: {
-        main: 'التأثير',
+        main: 'تأثير',
         sub: 'نصنعه',
       },
       overlayColor: 'oklch(0.58 0.24 55)',

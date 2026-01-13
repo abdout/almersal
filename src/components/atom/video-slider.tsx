@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useLoading } from '@/components/template/loading-context';
 
 interface Slide {
   id: string;
@@ -41,6 +42,24 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
   const [direction, setDirection] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+  const { setContentLoaded } = useLoading();
+
+  // Preload first image and signal loading complete
+  useEffect(() => {
+    const firstSlide = slides[0];
+    if (firstSlide?.image) {
+      const img = new Image();
+      img.onload = () => setContentLoaded();
+      img.onerror = () => setContentLoaded(); // Still complete on error
+      img.src = firstSlide.image;
+    } else if (firstSlide?.video) {
+      // For video, signal after a short delay
+      const timeout = setTimeout(setContentLoaded, 500);
+      return () => clearTimeout(timeout);
+    } else {
+      setContentLoaded();
+    }
+  }, [slides, setContentLoaded]);
 
   const paginate = useCallback(
     (newDirection: number) => {
@@ -110,19 +129,18 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="absolute left-0 top-0 bottom-0 w-[20%] md:w-[18%] z-20 flex flex-col justify-center items-center"
+        className="absolute left-0 top-0 bottom-0 w-[22%] md:w-[20%] z-20 flex flex-col justify-center items-center"
         style={{ backgroundColor: currentColor }}
       >
-        <div className="relative h-full flex flex-col justify-center items-center py-20">
-          {/* Main Large Text - Vertical */}
-          <div className="writing-mode-vertical flex flex-col items-center gap-4">
+        <div className="relative h-full w-full flex flex-col justify-center items-center overflow-hidden">
+          {/* Main Large Text - Horizontal like reference */}
+          <div className="flex flex-col items-center justify-center text-center w-full">
             <motion.span
               key={`left-main-${currentIndex}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-5xl md:text-7xl lg:text-8xl font-bold text-white"
-              style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, type: 'spring' }}
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[100px] font-black text-white leading-none whitespace-nowrap"
             >
               {slides[currentIndex].leftText?.main || 'الإبداع'}
             </motion.span>
@@ -130,9 +148,8 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
               key={`left-sub-${currentIndex}`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-lg md:text-xl lg:text-2xl text-white/90"
-              style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+              transition={{ delay: 0.5 }}
+              className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 mt-3"
             >
               {slides[currentIndex].leftText?.sub || 'نصنعه'}
             </motion.span>
@@ -146,19 +163,18 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="absolute right-0 top-0 bottom-0 w-[20%] md:w-[18%] z-20 flex flex-col justify-center items-center"
+        className="absolute right-0 top-0 bottom-0 w-[22%] md:w-[20%] z-20 flex flex-col justify-center items-center"
         style={{ backgroundColor: currentColor }}
       >
-        <div className="relative h-full flex flex-col justify-center items-center py-20">
-          {/* Main Large Text - Vertical */}
-          <div className="writing-mode-vertical flex flex-col items-center gap-4">
+        <div className="relative h-full w-full flex flex-col justify-center items-center overflow-hidden">
+          {/* Main Large Text - Horizontal like reference */}
+          <div className="flex flex-col items-center justify-center text-center w-full">
             <motion.span
               key={`right-main-${currentIndex}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-5xl md:text-7xl lg:text-8xl font-bold text-white"
-              style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, type: 'spring' }}
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[100px] font-black text-white leading-none whitespace-nowrap"
             >
               {slides[currentIndex].rightText?.main || 'الهوية'}
             </motion.span>
@@ -166,21 +182,17 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
               key={`right-sub-${currentIndex}`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-lg md:text-xl lg:text-2xl text-white/90"
-              style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+              transition={{ delay: 0.5 }}
+              className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 mt-3"
             >
               {slides[currentIndex].rightText?.sub || 'نحققها'}
             </motion.span>
           </div>
-
-          {/* Hamburger Menu Placeholder Area */}
-          <div className="absolute top-4 right-4 w-10 h-10" />
         </div>
       </motion.div>
 
       {/* Center Slider Area */}
-      <div className="absolute inset-0 left-[20%] right-[20%] md:left-[18%] md:right-[18%]">
+      <div className="absolute inset-0 left-[22%] right-[22%] md:left-[20%] md:right-[20%]">
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.div
             key={currentIndex}
@@ -199,7 +211,7 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
             onDragEnd={handleDragEnd}
             className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
           >
-            {/* Background */}
+            {/* Background Image/Video */}
             {slides[currentIndex].video ? (
               <video
                 src={slides[currentIndex].video}
@@ -209,23 +221,26 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
                 playsInline
                 className="absolute inset-0 w-full h-full object-cover"
               />
-            ) : (
-              <div
-                className="absolute inset-0 w-full h-full bg-cover bg-center"
-                style={{ backgroundImage: `url(${slides[currentIndex].image})` }}
+            ) : slides[currentIndex].image ? (
+              <img
+                src={slides[currentIndex].image}
+                alt={slides[currentIndex].title}
+                className="absolute inset-0 w-full h-full object-cover"
               />
+            ) : (
+              <div className="absolute inset-0 w-full h-full bg-gray-800" />
             )}
 
             {/* Subtle Overlay */}
-            <div className="absolute inset-0 bg-black/20" />
+            <div className="absolute inset-0 bg-black/30" />
 
             {/* Bottom Content */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 lg:p-12 bg-gradient-to-t from-black/70 to-transparent">
+            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 lg:p-12 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.4 }}
-                className="text-sm md:text-base text-white/90 max-w-xl leading-relaxed"
+                className="text-base md:text-lg lg:text-xl text-white max-w-2xl leading-relaxed font-medium"
               >
                 {slides[currentIndex].subtitle}
               </motion.p>
@@ -234,8 +249,8 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
         </AnimatePresence>
       </div>
 
-      {/* Pagination Dots - Inside right panel */}
-      <div className="absolute right-[calc(20%+1rem)] md:right-[calc(18%+1rem)] top-1/2 -translate-y-1/2 flex flex-col gap-3 z-30">
+      {/* Pagination Dots - Inside center area near right edge */}
+      <div className="absolute right-[calc(22%+1.5rem)] md:right-[calc(20%+1.5rem)] top-1/2 -translate-y-1/2 flex flex-col gap-3 z-30">
         {slides.map((_, index) => (
           <button
             key={index}
@@ -243,8 +258,8 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
             className={cn(
               'w-3 h-3 rounded-full transition-all duration-300',
               index === currentIndex
-                ? 'bg-white scale-125'
-                : 'bg-white/40 hover:bg-white/70'
+                ? 'bg-white scale-125 shadow-lg'
+                : 'bg-white/50 hover:bg-white/80'
             )}
             aria-label={`Go to slide ${index + 1}`}
           />
@@ -252,10 +267,10 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
       </div>
 
       {/* Navigation Arrows */}
-      <div className="absolute right-[calc(20%+1rem)] md:right-[calc(18%+1rem)] bottom-8 flex flex-col gap-2 z-30">
+      <div className="absolute right-[calc(22%+1.5rem)] md:right-[calc(20%+1.5rem)] bottom-24 flex flex-col gap-3 z-30">
         <button
           onClick={() => paginate(-1)}
-          className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-colors"
+          className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-colors border border-white/30"
           aria-label="Previous slide"
         >
           <svg className="w-5 h-5 text-white rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -264,7 +279,7 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
         </button>
         <button
           onClick={() => paginate(1)}
-          className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-colors"
+          className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-colors border border-white/30"
           aria-label="Next slide"
         >
           <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -274,25 +289,25 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
       </div>
 
       {/* Slide Counter */}
-      <div className="absolute bottom-8 left-[calc(20%+1rem)] md:left-[calc(18%+1rem)] text-white z-30">
-        <span className="text-3xl font-bold">{String(currentIndex + 1).padStart(2, '0')}</span>
-        <span className="text-lg text-white/50 mx-2">/</span>
-        <span className="text-lg text-white/50">{String(slides.length).padStart(2, '0')}</span>
+      <div className="absolute bottom-8 left-[calc(22%+1.5rem)] md:left-[calc(20%+1.5rem)] text-white z-30">
+        <span className="text-4xl font-bold">{String(currentIndex + 1).padStart(2, '0')}</span>
+        <span className="text-xl text-white/50 mx-2">/</span>
+        <span className="text-xl text-white/50">{String(slides.length).padStart(2, '0')}</span>
       </div>
 
-      {/* Open Campus Style Banner - Optional, matching reference */}
+      {/* Coming Soon Banner - Matching reference style */}
       <motion.div
         key={`banner-${currentIndex}`}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className="absolute top-24 left-[calc(20%+1rem)] md:left-[calc(18%+1rem)] z-30"
+        className="absolute top-24 left-[calc(22%+1.5rem)] md:left-[calc(20%+1.5rem)] z-30"
       >
-        <div className="bg-white rounded-lg p-3 shadow-lg">
-          <div className="text-xs text-gray-500 mb-1">Coming Soon</div>
+        <div className="bg-white rounded-xl p-4 shadow-xl">
+          <div className="text-xs text-gray-500 mb-1 font-medium">Coming Soon</div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-primary-500">02.21</span>
-            <span className="px-2 py-0.5 rounded text-xs font-bold bg-primary-500 text-white">SAT</span>
+            <span className="text-3xl font-black text-primary-500">02.21</span>
+            <span className="px-3 py-1 rounded-lg text-sm font-bold bg-primary-500 text-white">SAT</span>
           </div>
         </div>
       </motion.div>
