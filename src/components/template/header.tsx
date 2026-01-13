@@ -33,68 +33,79 @@ export function Header({ lang, dictionary }: HeaderProps) {
 
   return (
     <>
-      {/* Header with Notch Design */}
+      {/* Header with 2px white bar and center notch */}
       <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
-        <div className="relative flex items-start justify-center">
-          {/* Notch Container - the white curved cutout */}
-          <div className="relative pointer-events-auto">
-            {/* The notch shape */}
-            <div className="relative bg-background px-8 pb-4 pt-2 rounded-b-[24px] shadow-lg">
-              {/* Small 2px line at top */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-primary-500 rounded-full" />
+        {/* 2px white bar edge to edge */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-white" />
 
-              {/* Logo */}
-              <Link href={`/${lang}`} className="flex flex-col items-center gap-1">
-                {/* Logo Icon - stylized lines like reference */}
-                <div className="flex items-end gap-[2px] h-8">
-                  <div className="w-1 h-4 bg-primary-500 rounded-t-sm" />
-                  <div className="w-1 h-6 bg-primary-500 rounded-t-sm" />
-                  <div className="w-1 h-8 bg-primary-500 rounded-t-sm" />
-                  <div className="w-1 h-6 bg-primary-500 rounded-t-sm" />
-                  <div className="w-1 h-4 bg-primary-500 rounded-t-sm" />
-                </div>
-                <span className="text-xs font-bold tracking-wider text-primary-500">ALMERSAL</span>
-              </Link>
+        {/* Main header content */}
+        <div className="relative">
+          {/* Center Notch with Hamburger Menu */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-0 pointer-events-auto">
+            {/* Notch shape - white background with rounded bottom */}
+            <div className="relative bg-white px-6 pt-[2px] pb-3 rounded-b-[20px]">
+              {/* Hamburger Menu Button inside notch */}
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex flex-col items-center justify-center gap-1 p-2"
+                aria-label="Toggle menu"
+              >
+                <span className={cn(
+                  'block h-[2px] bg-primary-500 transition-all duration-300',
+                  isOpen ? 'w-5 rotate-45 translate-y-[6px]' : 'w-5'
+                )} />
+                <span className={cn(
+                  'block h-[2px] bg-primary-500 transition-all duration-300',
+                  isOpen ? 'opacity-0 w-5' : 'w-4'
+                )} />
+                <span className={cn(
+                  'block h-[2px] bg-primary-500 transition-all duration-300',
+                  isOpen ? 'w-5 -rotate-45 -translate-y-[6px]' : 'w-3'
+                )} />
+              </button>
             </div>
 
-            {/* Curved edges connecting to transparent sides */}
-            <div className="absolute -left-6 top-0 w-6 h-full">
-              <div className="absolute top-0 right-0 w-6 h-6 bg-background rounded-tr-[24px]" />
-              <div className="absolute top-0 right-0 w-6 h-6 bg-transparent" style={{ boxShadow: '6px 0 0 0 var(--background)' }} />
+            {/* Curved edges - left side */}
+            <div className="absolute -left-4 top-0 w-4 h-4 overflow-hidden">
+              <div className="absolute top-0 right-0 w-8 h-8 bg-transparent rounded-tr-[16px] shadow-[4px_-4px_0_0_white]" />
             </div>
-            <div className="absolute -right-6 top-0 w-6 h-full">
-              <div className="absolute top-0 left-0 w-6 h-6 bg-background rounded-tl-[24px]" />
-              <div className="absolute top-0 left-0 w-6 h-6 bg-transparent" style={{ boxShadow: '-6px 0 0 0 var(--background)' }} />
+
+            {/* Curved edges - right side */}
+            <div className="absolute -right-4 top-0 w-4 h-4 overflow-hidden">
+              <div className="absolute top-0 left-0 w-8 h-8 bg-transparent rounded-tl-[16px] shadow-[-4px_-4px_0_0_white]" />
             </div>
           </div>
+
+          {/* Logo on the left (or right for RTL) */}
+          <Link
+            href={`/${lang}`}
+            className={cn(
+              'absolute top-3 flex items-center gap-2 pointer-events-auto',
+              isRTL ? 'right-4' : 'left-4'
+            )}
+          >
+            {/* Logo Icon - stylized bars */}
+            <div className="flex items-end gap-[2px] h-6">
+              <div className="w-[3px] h-3 bg-white rounded-t-sm" />
+              <div className="w-[3px] h-4 bg-white rounded-t-sm" />
+              <div className="w-[3px] h-6 bg-white rounded-t-sm" />
+              <div className="w-[3px] h-4 bg-white rounded-t-sm" />
+              <div className="w-[3px] h-3 bg-white rounded-t-sm" />
+            </div>
+            <span className="text-sm font-bold tracking-wider text-white">المرسال</span>
+          </Link>
+
+          {/* Language Switcher on the opposite side */}
+          <Link
+            href={isRTL ? '/en' : '/ar'}
+            className={cn(
+              'absolute top-3 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-lg pointer-events-auto text-sm font-medium text-white hover:bg-white/20 transition-colors',
+              isRTL ? 'left-4' : 'right-4'
+            )}
+          >
+            {isRTL ? 'EN' : 'AR'}
+          </Link>
         </div>
-
-        {/* Hamburger Menu Button - floating on the right */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={cn(
-            'absolute top-4 p-3 bg-primary-500 rounded-lg pointer-events-auto transition-colors hover:bg-primary-600',
-            isRTL ? 'left-4' : 'right-4'
-          )}
-          aria-label="Toggle menu"
-        >
-          <div className="flex flex-col gap-1.5">
-            <span className={cn('block h-0.5 bg-white transition-all', isOpen ? 'w-5 rotate-45 translate-y-2' : 'w-5')} />
-            <span className={cn('block h-0.5 bg-white transition-all', isOpen ? 'opacity-0' : 'w-4')} />
-            <span className={cn('block h-0.5 bg-white transition-all', isOpen ? 'w-5 -rotate-45 -translate-y-2' : 'w-3')} />
-          </div>
-        </button>
-
-        {/* Language Switcher - floating on the opposite side */}
-        <Link
-          href={isRTL ? '/en' : '/ar'}
-          className={cn(
-            'absolute top-4 px-3 py-2 bg-white/10 backdrop-blur-sm rounded-lg pointer-events-auto text-sm font-medium text-white hover:bg-white/20 transition-colors',
-            isRTL ? 'right-4' : 'left-4'
-          )}
-        >
-          {isRTL ? 'EN' : 'AR'}
-        </Link>
       </header>
 
       {/* Full Screen Mobile Menu */}

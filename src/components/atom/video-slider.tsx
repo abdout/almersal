@@ -267,7 +267,7 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
       </div>
 
       {/* Navigation Arrows */}
-      <div className="absolute right-[calc(22%+1.5rem)] md:right-[calc(20%+1.5rem)] bottom-24 flex flex-col gap-3 z-30">
+      <div className="absolute right-[calc(22%+1.5rem)] md:right-[calc(20%+1.5rem)] bottom-32 flex flex-col gap-3 z-30">
         <button
           onClick={() => paginate(-1)}
           className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-colors border border-white/30"
@@ -289,10 +289,53 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
       </div>
 
       {/* Slide Counter */}
-      <div className="absolute bottom-8 left-[calc(22%+1.5rem)] md:left-[calc(20%+1.5rem)] text-white z-30">
+      <div className="absolute bottom-28 left-[calc(22%+1.5rem)] md:left-[calc(20%+1.5rem)] text-white z-30">
         <span className="text-4xl font-bold">{String(currentIndex + 1).padStart(2, '0')}</span>
         <span className="text-xl text-white/50 mx-2">/</span>
         <span className="text-xl text-white/50">{String(slides.length).padStart(2, '0')}</span>
+      </div>
+
+      {/* Horizontal Thumbnail Carousel - TikTok Style Cards */}
+      <div className="absolute bottom-6 left-[22%] right-[22%] md:left-[20%] md:right-[20%] z-30 px-4">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide py-2">
+          {slides.map((slide, index) => (
+            <button
+              key={slide.id}
+              onClick={() => goToSlide(index)}
+              className={cn(
+                'relative flex-shrink-0 w-20 h-14 md:w-28 md:h-20 rounded-lg overflow-hidden transition-all duration-300',
+                index === currentIndex
+                  ? 'ring-2 ring-white scale-105 shadow-lg'
+                  : 'opacity-60 hover:opacity-100 hover:scale-102'
+              )}
+            >
+              {slide.image ? (
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : slide.video ? (
+                <video
+                  src={slide.video}
+                  muted
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div
+                  className="w-full h-full"
+                  style={{ backgroundColor: slide.overlayColor || slideColors[index % slideColors.length] }}
+                />
+              )}
+              {/* Overlay gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              {/* Slide number */}
+              <span className="absolute bottom-1 left-2 text-xs font-bold text-white">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Coming Soon Banner - Matching reference style */}
