@@ -42,12 +42,12 @@ export function Header({ lang, dictionary }: HeaderProps) {
         <div className="relative">
           {/* Center Notch with Hamburger Menu */}
           <div className="absolute left-1/2 -translate-x-1/2 top-0 pointer-events-auto">
-            {/* Notch shape - white background with rounded bottom */}
-            <div className="relative bg-white px-5 pt-2 pb-3 rounded-b-xl">
+            {/* Notch shape - white background with smooth rounded bottom */}
+            <div className="relative bg-white px-4 pt-2 pb-3 rounded-b-[8px]">
               {/* Two-line Menu Button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex flex-col items-center justify-center gap-1.5 p-2"
+                className="flex flex-col items-center justify-center gap-1.5 p-1"
                 aria-label="Toggle menu"
               >
                 <span className={cn(
@@ -61,14 +61,14 @@ export function Header({ lang, dictionary }: HeaderProps) {
               </button>
             </div>
 
-            {/* Light curved edges - left side */}
-            <div className="absolute -left-2 top-0 w-2 h-2 overflow-hidden">
-              <div className="absolute top-0 right-0 w-4 h-4 bg-transparent rounded-tr-[8px] shadow-[2px_-2px_0_0_white]" />
+            {/* Inverse rounded corner - left side */}
+            <div className="absolute -left-[7px] top-[8px] w-[7px] h-[7px] overflow-hidden">
+              <div className="absolute top-0 right-0 w-[14px] h-[14px] rounded-tr-[7px] shadow-[4px_-4px_0_0_white]" />
             </div>
 
-            {/* Light curved edges - right side */}
-            <div className="absolute -right-2 top-0 w-2 h-2 overflow-hidden">
-              <div className="absolute top-0 left-0 w-4 h-4 bg-transparent rounded-tl-[8px] shadow-[-2px_-2px_0_0_white]" />
+            {/* Inverse rounded corner - right side */}
+            <div className="absolute -right-[7px] top-[8px] w-[7px] h-[7px] overflow-hidden">
+              <div className="absolute top-0 left-0 w-[14px] h-[14px] rounded-tl-[7px] shadow-[-4px_-4px_0_0_white]" />
             </div>
           </div>
 

@@ -10,9 +10,11 @@ interface HeroSectionProps {
       cta: string;
     };
   };
+  onColorChange?: (color: string) => void;
 }
 
-export function HeroSection({ dictionary }: HeroSectionProps) {
+export function HeroSection({ dictionary, onColorChange }: HeroSectionProps) {
+  // Exact colors from reference site (media-arts.ac.jp)
   const slides = [
     {
       id: '1',
@@ -27,7 +29,7 @@ export function HeroSection({ dictionary }: HeroSectionProps) {
         main: 'هوية',
         sub: 'نبنيها',
       },
-      overlayColor: 'oklch(0.65 0.2 45)',
+      overlayColor: '#ED6C00', // Orange (exact from reference)
     },
     {
       id: '2',
@@ -42,7 +44,7 @@ export function HeroSection({ dictionary }: HeroSectionProps) {
         main: 'رؤية',
         sub: 'نحققها',
       },
-      overlayColor: 'oklch(0.60 0.22 50)',
+      overlayColor: '#2639A6', // Blue (exact from reference)
     },
     {
       id: '3',
@@ -57,11 +59,11 @@ export function HeroSection({ dictionary }: HeroSectionProps) {
         main: 'جمال',
         sub: 'نكشفه',
       },
-      overlayColor: 'oklch(0.70 0.18 40)',
+      overlayColor: '#CC2525', // Red (exact from reference)
     },
     {
       id: '4',
-      image: 'https://images.unsplash.com/photo-1536240478700-b869070f9279?w=1920&q=80',
+      image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=1920&q=80',
       title: 'المحتوى الرقمي',
       subtitle: 'نبني حضورك الرقمي - إدارة وإنشاء محتوى مبتكر لمنصات التواصل الاجتماعي.',
       leftText: {
@@ -72,9 +74,24 @@ export function HeroSection({ dictionary }: HeroSectionProps) {
         main: 'تأثير',
         sub: 'نصنعه',
       },
-      overlayColor: 'oklch(0.58 0.24 55)',
+      overlayColor: '#139A39', // Green (exact from reference)
+    },
+    {
+      id: '5',
+      image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=1920&q=80',
+      title: 'الإعلانات المرئية',
+      subtitle: 'نصمم حملات إعلانية مبتكرة تصل لجمهورك المستهدف بأسلوب إبداعي مميز.',
+      leftText: {
+        main: 'إعلان',
+        sub: 'نبدعه',
+      },
+      rightText: {
+        main: 'نجاح',
+        sub: 'نحققه',
+      },
+      overlayColor: '#FFD900', // Yellow (exact from reference)
     },
   ];
 
-  return <VideoSlider slides={slides} autoPlayInterval={6000} />;
+  return <VideoSlider slides={slides} autoPlayInterval={6000} onColorChange={onColorChange} />;
 }

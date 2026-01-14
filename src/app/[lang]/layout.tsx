@@ -1,4 +1,3 @@
-import { geistSans, geistMono, notoArabic } from '@/lib/fonts';
 import { locales, getDirection, defaultLocale, type Locale } from '@/lib/i18n';
 
 export async function generateStaticParams() {
@@ -17,12 +16,8 @@ export default async function LangLayout({
   const dir = getDirection(lang);
 
   return (
-    <html lang={lang} dir={dir} suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${notoArabic.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <div lang={lang} dir={dir}>
+      {children}
+    </div>
   );
 }

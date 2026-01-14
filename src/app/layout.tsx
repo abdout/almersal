@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { geistSans, geistMono, notoArabic } from '@/lib/fonts';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -11,5 +12,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return (
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${notoArabic.variable} antialiased`}
+      >
+        {children}
+      </body>
+    </html>
+  );
 }
