@@ -26,23 +26,31 @@ interface VideoSliderProps {
   slides: Slide[];
   autoPlayInterval?: number;
   className?: string;
+  dictionary?: {
+    cta?: {
+      primary: string;
+      secondary: string;
+    };
+    description?: string;
+    comingSoon?: string;
+    scrollDown?: string;
+  };
+  onColorChange?: (color: string) => void;
 }
 
-// Orange color variations for each slide
-const slideColors = [
-  'oklch(0.65 0.2 45)', // Main orange
-  'oklch(0.60 0.22 50)', // Slightly darker/warmer
-  'oklch(0.70 0.18 40)', // Slightly lighter/cooler
-  'oklch(0.58 0.24 55)', // Deep orange
-  'oklch(0.68 0.20 42)', // Bright orange
-];
+// Orange color for overlay and accents
+const brandColor = 'oklch(0.65 0.2 45)';
 
-export function VideoSlider({ slides, autoPlayInterval = 5000, className }: VideoSliderProps) {
+export function VideoSlider({ slides, autoPlayInterval = 5000, className, dictionary, onColorChange }: VideoSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
   const { setContentLoaded } = useLoading();
+
+  // Get previous and next indices for side previews
+  const prevIndex = currentIndex === 0 ? slides.length - 1 : currentIndex - 1;
+  const nextIndex = currentIndex === slides.length - 1 ? 0 : currentIndex + 1;
 
   // Preload first image and signal loading complete
   useEffect(() => {
@@ -50,16 +58,22 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
     if (firstSlide?.image) {
       const img = new Image();
       img.onload = () => setContentLoaded();
-      img.onerror = () => setContentLoaded(); // Still complete on error
+      img.onerror = () => setContentLoaded();
       img.src = firstSlide.image;
     } else if (firstSlide?.video) {
-      // For video, signal after a short delay
       const timeout = setTimeout(setContentLoaded, 500);
       return () => clearTimeout(timeout);
     } else {
       setContentLoaded();
     }
   }, [slides, setContentLoaded]);
+
+  // Notify parent of color changes
+  useEffect(() => {
+    if (onColorChange && slides[currentIndex]?.overlayColor) {
+      onColorChange(slides[currentIndex].overlayColor);
+    }
+  }, [currentIndex, slides, onColorChange]);
 
   const paginate = useCallback(
     (newDirection: number) => {
@@ -116,252 +130,231 @@ export function VideoSlider({ slides, autoPlayInterval = 5000, className }: Vide
     }),
   };
 
-  const currentColor = slides[currentIndex].overlayColor || slideColors[currentIndex % slideColors.length];
+  // Render slide media (image or video)
+  const renderMedia = (slide: Slide) => {
+    if (slide.video) {
+      return (
+        <video
+          src={slide.video}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      );
+    } else if (slide.image) {
+      return (
+        <img
+          src={slide.image}
+          alt={slide.title}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      );
+    }
+    return <div className="absolute inset-0 w-full h-full bg-gray-800" />;
+  };
 
   return (
     <div
       ref={containerRef}
       className={cn('relative w-full h-screen overflow-hidden', className)}
     >
-      {/* Left Side Panel */}
-      <motion.div
-        key={`left-${currentIndex}`}
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="absolute left-0 top-0 bottom-0 w-[22%] md:w-[20%] z-20 flex flex-col justify-between items-center py-[15vh]"
-        style={{ backgroundColor: currentColor }}
-      >
-        {/* Main Large Text - Upper area */}
-        <div className="flex-1 flex items-center justify-center">
-          <motion.span
-            key={`left-main-${currentIndex}`}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, type: 'spring' }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[100px] font-black text-white leading-none whitespace-nowrap"
-          >
-            {slides[currentIndex].leftText?.main || 'الإبداع'}
-          </motion.span>
-        </div>
-        {/* Sub Text - Orange with white stroke at bottom */}
-        <motion.div
-          key={`left-sub-${currentIndex}`}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-none whitespace-nowrap"
-          style={{
-            color: currentColor,
-            WebkitTextStroke: '2px white',
-            paintOrder: 'stroke fill'
-          }}
-        >
-          {slides[currentIndex].leftText?.sub || 'نصنعه'}
-        </motion.div>
-      </motion.div>
-
-      {/* Right Side Panel */}
-      <motion.div
-        key={`right-${currentIndex}`}
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="absolute right-0 top-0 bottom-0 w-[22%] md:w-[20%] z-20 flex flex-col justify-between items-center py-[15vh]"
-        style={{ backgroundColor: currentColor }}
-      >
-        {/* Main Large Text - Upper area */}
-        <div className="flex-1 flex items-center justify-center">
-          <motion.span
-            key={`right-main-${currentIndex}`}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, type: 'spring' }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[100px] font-black text-white leading-none whitespace-nowrap"
-          >
-            {slides[currentIndex].rightText?.main || 'الهوية'}
-          </motion.span>
-        </div>
-        {/* Sub Text - Orange with white stroke at bottom */}
-        <motion.div
-          key={`right-sub-${currentIndex}`}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-none whitespace-nowrap"
-          style={{
-            color: currentColor,
-            WebkitTextStroke: '2px white',
-            paintOrder: 'stroke fill'
-          }}
-        >
-          {slides[currentIndex].rightText?.sub || 'نحققها'}
-        </motion.div>
-      </motion.div>
-
-      {/* Center Slider Area */}
-      <div className="absolute inset-0 left-[22%] right-[22%] md:left-[20%] md:right-[20%]">
-        <AnimatePresence initial={false} custom={direction} mode="wait">
-          <motion.div
-            key={currentIndex}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{
-              y: { type: 'spring', stiffness: 300, damping: 30 },
-              opacity: { duration: 0.2 },
-            }}
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={0.2}
-            onDragEnd={handleDragEnd}
-            className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
-          >
-            {/* Background Image/Video */}
-            {slides[currentIndex].video ? (
-              <video
-                src={slides[currentIndex].video}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            ) : slides[currentIndex].image ? (
-              <img
-                src={slides[currentIndex].image}
-                alt={slides[currentIndex].title}
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            ) : (
-              <div className="absolute inset-0 w-full h-full bg-gray-800" />
-            )}
-
-            {/* Subtle Overlay */}
-            <div className="absolute inset-0 bg-black/30" />
-
-            {/* Bottom Content */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 lg:p-12 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.4 }}
-                className="text-base md:text-lg lg:text-xl text-white max-w-2xl leading-relaxed font-medium"
-              >
-                {slides[currentIndex].subtitle}
-              </motion.p>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Pagination Dots - Inside center area near right edge */}
-      <div className="absolute right-[calc(22%+1.5rem)] md:right-[calc(20%+1.5rem)] top-1/2 -translate-y-1/2 flex flex-col gap-3 z-30">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={cn(
-              'w-3 h-3 rounded-full transition-all duration-300',
-              index === currentIndex
-                ? 'bg-white scale-125 shadow-lg'
-                : 'bg-white/50 hover:bg-white/80'
-            )}
-            aria-label={`Go to slide ${index + 1}`}
+      {/* Left Side Panel - Adjacent slide with color overlay */}
+      <div className="absolute left-0 top-0 bottom-0 w-[18%] z-10 overflow-hidden">
+        {/* Adjacent slide image */}
+        <div className="absolute inset-0">
+          {renderMedia(slides[prevIndex])}
+          {/* Brand color overlay */}
+          <div
+            className="absolute inset-0"
+            style={{ backgroundColor: brandColor, opacity: 0.85 }}
           />
-        ))}
-      </div>
+        </div>
 
-      {/* Navigation Arrows */}
-      <div className="absolute right-[calc(22%+1.5rem)] md:right-[calc(20%+1.5rem)] bottom-32 flex flex-col gap-3 z-30">
-        <button
-          onClick={() => paginate(-1)}
-          className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-colors border border-white/30"
-          aria-label="Previous slide"
+        {/* Description text - positioned above bottom text */}
+        <motion.div
+          key={`desc-${currentIndex}`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="absolute top-[35%] left-4 right-4 z-20"
         >
-          <svg className="w-5 h-5 text-white rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
-        </button>
-        <button
-          onClick={() => paginate(1)}
-          className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-colors border border-white/30"
-          aria-label="Next slide"
+          <p className="text-sm md:text-base text-white/90 leading-relaxed">
+            {dictionary?.description || slides[currentIndex].subtitle || 'شركة المرسال للإنتاج الإعلامي - نصنع المحتوى الإعلامي الذي يلهم ويؤثر. من الفكرة إلى التنفيذ، نحقق رؤيتك بأعلى جودة.'}
+          </p>
+        </motion.div>
+      </div>
+
+      {/* Right Side Panel - Adjacent slide with color overlay */}
+      <div className="absolute right-0 top-0 bottom-0 w-[18%] z-10 overflow-hidden">
+        {/* Adjacent slide image */}
+        <div className="absolute inset-0">
+          {renderMedia(slides[nextIndex])}
+          {/* Brand color overlay */}
+          <div
+            className="absolute inset-0"
+            style={{ backgroundColor: brandColor, opacity: 0.85 }}
+          />
+        </div>
+
+        {/* Event Badge */}
+        <motion.div
+          key={`badge-${currentIndex}`}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.5, type: 'spring' }}
+          className="absolute top-[30%] left-1/2 -translate-x-1/2 z-20"
         >
-          <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
-        </button>
+          <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-primary-600 flex flex-col items-center justify-center text-white shadow-2xl border-4 border-white/20">
+            <span className="text-[10px] md:text-xs font-medium opacity-90">
+              {dictionary?.comingSoon || 'قريباً'}
+            </span>
+            <span className="text-2xl md:text-4xl font-black">02.21</span>
+            <span className="text-xs md:text-sm font-bold">SAT</span>
+            <span className="text-[8px] md:text-[10px] mt-1 opacity-70">MORE →</span>
+          </div>
+        </motion.div>
       </div>
 
-      {/* Slide Counter */}
-      <div className="absolute bottom-28 left-[calc(22%+1.5rem)] md:left-[calc(20%+1.5rem)] text-white z-30">
-        <span className="text-4xl font-bold">{String(currentIndex + 1).padStart(2, '0')}</span>
-        <span className="text-xl text-white/50 mx-2">/</span>
-        <span className="text-xl text-white/50">{String(slides.length).padStart(2, '0')}</span>
-      </div>
+      {/* Center Main Slider Area - Phone Mockup */}
+      <div className="absolute top-[5%] bottom-[18%] left-[18%] right-[18%] z-20 flex items-center justify-center">
+        {/* Phone Mockup Frame */}
+        <div className="relative w-[280px] md:w-[320px] lg:w-[380px] h-[85%] max-h-[600px]">
+          {/* Phone Frame Border */}
+          <div className="absolute inset-0 bg-white/90 rounded-[40px] shadow-2xl" />
 
-      {/* Horizontal Thumbnail Carousel - TikTok Style Cards */}
-      <div className="absolute bottom-6 left-[22%] right-[22%] md:left-[20%] md:right-[20%] z-30 px-4">
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide py-2">
-          {slides.map((slide, index) => (
+          {/* Phone Screen Area */}
+          <div className="absolute inset-[8px] md:inset-[10px] rounded-[32px] overflow-hidden bg-black">
+            <AnimatePresence initial={false} custom={direction} mode="wait">
+              <motion.div
+                key={currentIndex}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  y: { type: 'spring', stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                }}
+                drag="y"
+                dragConstraints={{ top: 0, bottom: 0 }}
+                dragElastic={0.2}
+                onDragEnd={handleDragEnd}
+                className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
+              >
+                {/* Background Media */}
+                {renderMedia(slides[currentIndex])}
+
+                {/* Subtle Overlay */}
+                <div className="absolute inset-0 bg-black/10" />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Phone Notch/Dynamic Island */}
+          <div className="absolute top-[12px] md:top-[14px] left-1/2 -translate-x-1/2 w-[80px] md:w-[100px] h-[24px] md:h-[28px] bg-black rounded-full z-10" />
+        </div>
+
+        {/* Pagination Dots - Below phone */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+          <span className="text-xs text-white/60 mr-3">Scroll Down</span>
+          {slides.map((_, index) => (
             <button
-              key={slide.id}
+              key={index}
               onClick={() => goToSlide(index)}
               className={cn(
-                'relative flex-shrink-0 w-20 h-14 md:w-28 md:h-20 rounded-lg overflow-hidden transition-all duration-300',
+                'w-2 h-2 rounded-full transition-all duration-300',
                 index === currentIndex
-                  ? 'ring-2 ring-white scale-105 shadow-lg'
-                  : 'opacity-60 hover:opacity-100 hover:scale-102'
+                  ? 'bg-white'
+                  : 'bg-white/40 hover:bg-white/60'
               )}
-            >
-              {slide.image ? (
-                <img
-                  src={slide.image}
-                  alt={slide.title}
-                  className="w-full h-full object-cover"
-                />
-              ) : slide.video ? (
-                <video
-                  src={slide.video}
-                  muted
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div
-                  className="w-full h-full"
-                  style={{ backgroundColor: slide.overlayColor || slideColors[index % slideColors.length] }}
-                />
-              )}
-              {/* Overlay gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              {/* Slide number */}
-              <span className="absolute bottom-1 left-2 text-xs font-bold text-white">
-                {String(index + 1).padStart(2, '0')}
-              </span>
-            </button>
+              aria-label={`Go to slide ${index + 1}`}
+            />
           ))}
         </div>
       </div>
 
-      {/* Coming Soon Banner - Matching reference style */}
-      <motion.div
-        key={`banner-${currentIndex}`}
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="absolute top-24 left-[calc(22%+1.5rem)] md:left-[calc(20%+1.5rem)] z-30"
-      >
-        <div className="bg-white rounded-xl p-4 shadow-xl">
-          <div className="text-xs text-gray-500 mb-1 font-medium">Coming Soon</div>
-          <div className="flex items-center gap-2">
-            <span className="text-3xl font-black text-primary-500">02.21</span>
-            <span className="px-3 py-1 rounded-lg text-sm font-bold bg-primary-500 text-white">SAT</span>
-          </div>
+      {/* Bottom Text Section - Large text at very bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-[15%] z-30 flex">
+        {/* Left Bottom Text */}
+        <div className="w-[18%] flex flex-col justify-center items-center px-4">
+          <motion.div
+            key={`left-main-${currentIndex}`}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white leading-none"
+          >
+            {slides[currentIndex].leftText?.main || 'الإبداع'}
+          </motion.div>
+          <motion.div
+            key={`left-sub-${currentIndex}`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-xl sm:text-2xl md:text-3xl font-black leading-none mt-2"
+            style={{
+              color: 'transparent',
+              WebkitTextStroke: '1.5px white',
+            }}
+          >
+            {slides[currentIndex].leftText?.sub || 'نصنعه'}
+          </motion.div>
         </div>
-      </motion.div>
+
+        {/* Center Bottom - Empty spacer */}
+        <div className="flex-1" />
+
+        {/* Right Bottom Text */}
+        <div className="w-[18%] flex flex-col justify-center items-center px-4">
+          <motion.div
+            key={`right-main-${currentIndex}`}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white leading-none"
+          >
+            {slides[currentIndex].rightText?.main || 'الهوية'}
+          </motion.div>
+          <motion.div
+            key={`right-sub-${currentIndex}`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-xl sm:text-2xl md:text-3xl font-black leading-none mt-2"
+            style={{
+              color: 'transparent',
+              WebkitTextStroke: '1.5px white',
+            }}
+          >
+            {slides[currentIndex].rightText?.sub || 'نحققها'}
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Navigation Arrows - Next to phone mockup */}
+      <div className="absolute left-[calc(18%+2rem)] top-1/2 -translate-y-1/2 flex flex-col gap-3 z-30">
+        <button
+          onClick={() => paginate(-1)}
+          className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-colors"
+          aria-label="Previous slide"
+        >
+          <svg className="w-4 h-4 text-white -rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+        <button
+          onClick={() => paginate(1)}
+          className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-colors"
+          aria-label="Next slide"
+        >
+          <svg className="w-4 h-4 text-white rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
     </div>
   );
 }
