@@ -3,14 +3,10 @@
 import { motion } from 'framer-motion';
 import { InfiniteSlider } from '@/components/atom/infinite-slider';
 import Image from 'next/image';
+import type { Dictionary } from '@/lib/i18n';
 
 interface PortfolioSectionProps {
-  dictionary: {
-    portfolio: {
-      title: string;
-      subtitle: string;
-    };
-  };
+  dictionary: Dictionary;
 }
 
 const portfolioImages = [

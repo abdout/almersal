@@ -4,19 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import type { Locale } from '@/lib/i18n';
+import type { Locale, Dictionary } from '@/lib/i18n';
 
 interface HeaderProps {
   lang: Locale;
-  dictionary: {
-    nav: {
-      home: string;
-      about: string;
-      services: string;
-      portfolio: string;
-      contact: string;
-    };
-  };
+  dictionary: Dictionary;
 }
 
 export function Header({ lang, dictionary }: HeaderProps) {
@@ -43,32 +35,32 @@ export function Header({ lang, dictionary }: HeaderProps) {
           {/* Center Notch with Hamburger Menu */}
           <div className="absolute left-1/2 -translate-x-1/2 top-0 pointer-events-auto">
             {/* Notch shape - white background with smooth rounded bottom */}
-            <div className="relative bg-white px-4 pt-2 pb-3 rounded-b-[8px]">
+            <div className="group relative bg-white px-6 pt-2 pb-4 rounded-b-[10px] transition-all duration-300 ease-out hover:pb-6">
               {/* Two-line Menu Button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex flex-col items-center justify-center gap-1.5 p-1"
+                className="flex flex-col items-center justify-center gap-[5px] p-1 mt-1 transition-transform duration-300 group-hover:translate-y-1"
                 aria-label="Toggle menu"
               >
                 <span className={cn(
-                  'block h-[2px] w-5 bg-primary-500 transition-all duration-300',
-                  isOpen && 'rotate-45 translate-y-[5px]'
+                  'block h-[2.5px] w-5 bg-primary-500 rounded-full transition-all duration-300',
+                  isOpen && 'rotate-45 translate-y-[7px]'
                 )} />
                 <span className={cn(
-                  'block h-[2px] w-5 bg-primary-500 transition-all duration-300',
-                  isOpen && '-rotate-45 -translate-y-[5px]'
+                  'block h-[2.5px] w-5 bg-primary-500 rounded-full transition-all duration-300',
+                  isOpen && '-rotate-45 -translate-y-[7px]'
                 )} />
               </button>
             </div>
 
             {/* Inverse rounded corner - left side */}
-            <div className="absolute -left-[7px] top-[8px] w-[7px] h-[7px] overflow-hidden">
-              <div className="absolute top-0 right-0 w-[14px] h-[14px] rounded-tr-[7px] shadow-[4px_-4px_0_0_white]" />
+            <div className="absolute -left-[8px] top-[8px] w-[8px] h-[8px] overflow-hidden">
+              <div className="absolute top-0 right-0 w-[16px] h-[16px] rounded-tr-[8px] shadow-[4px_-4px_0_0_white]" />
             </div>
 
             {/* Inverse rounded corner - right side */}
-            <div className="absolute -right-[7px] top-[8px] w-[7px] h-[7px] overflow-hidden">
-              <div className="absolute top-0 left-0 w-[14px] h-[14px] rounded-tl-[7px] shadow-[-4px_-4px_0_0_white]" />
+            <div className="absolute -right-[8px] top-[8px] w-[8px] h-[8px] overflow-hidden">
+              <div className="absolute top-0 left-0 w-[16px] h-[16px] rounded-tl-[8px] shadow-[-4px_-4px_0_0_white]" />
             </div>
           </div>
 

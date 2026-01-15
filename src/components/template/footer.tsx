@@ -1,24 +1,9 @@
 import Link from 'next/link';
-import type { Locale } from '@/lib/i18n';
+import type { Locale, Dictionary } from '@/lib/i18n';
 
 interface FooterProps {
   lang: Locale;
-  dictionary: {
-    nav: {
-      home: string;
-      about: string;
-      services: string;
-      portfolio: string;
-      contact: string;
-    };
-    footer: {
-      description: string;
-      quickLinks: string;
-      contact: string;
-      followUs: string;
-      rights: string;
-    };
-  };
+  dictionary: Dictionary;
 }
 
 // Arrow icon component for primary nav links

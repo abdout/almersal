@@ -3,18 +3,10 @@
 import { motion } from 'framer-motion';
 import { FlipCard } from '@/components/atom/flip-card';
 import { Video, Camera, Palette, Share2 } from 'lucide-react';
+import type { Dictionary } from '@/lib/i18n';
 
 interface ServicesSectionProps {
-  dictionary: {
-    services: {
-      title: string;
-      subtitle: string;
-      video: { title: string; description: string };
-      photo: { title: string; description: string };
-      design: { title: string; description: string };
-      social: { title: string; description: string };
-    };
-  };
+  dictionary: Dictionary;
 }
 
 const services = [

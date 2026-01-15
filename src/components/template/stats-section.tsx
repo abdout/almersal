@@ -2,16 +2,10 @@
 
 import { motion } from 'framer-motion';
 import { Counter } from '@/components/atom/counter';
+import type { Dictionary } from '@/lib/i18n';
 
 interface StatsSectionProps {
-  dictionary: {
-    stats: {
-      projects: string;
-      clients: string;
-      awards: string;
-      years: string;
-    };
-  };
+  dictionary: Dictionary;
 }
 
 const stats = [

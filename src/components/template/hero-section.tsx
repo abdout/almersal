@@ -1,15 +1,10 @@
 'use client';
 
-import { VideoSlider } from '@/components/atom/video-slider';
+import { GSAPHeroSlider } from '@/components/atom/gsap-hero-slider';
+import type { Dictionary } from '@/lib/i18n';
 
 interface HeroSectionProps {
-  dictionary: {
-    hero: {
-      title: string;
-      subtitle: string;
-      cta: string;
-    };
-  };
+  dictionary: Dictionary;
   onColorChange?: (color: string) => void;
 }
 
@@ -93,5 +88,5 @@ export function HeroSection({ dictionary, onColorChange }: HeroSectionProps) {
     },
   ];
 
-  return <VideoSlider slides={slides} autoPlayInterval={6000} onColorChange={onColorChange} />;
+  return <GSAPHeroSlider slides={slides} autoPlayInterval={6000} onColorChange={onColorChange} />;
 }

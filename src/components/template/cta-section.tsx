@@ -3,17 +3,11 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import type { Locale } from '@/lib/i18n';
+import type { Locale, Dictionary } from '@/lib/i18n';
 
 interface CTASectionProps {
   lang: Locale;
-  dictionary: {
-    cta: {
-      title: string;
-      subtitle: string;
-      button: string;
-    };
-  };
+  dictionary: Dictionary;
 }
 
 export function CTASection({ lang, dictionary }: CTASectionProps) {
