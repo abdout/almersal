@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { LoadingWrapper } from '@/components/template/loading-wrapper';
+import { useHeroColor } from '@/components/template/hero-color-context';
 import { Header } from '@/components/template/header';
 import { HeroSection } from '@/components/template/hero-section';
 import { PickupSection } from '@/components/template/pickup-section';
@@ -24,11 +24,7 @@ interface HomeContentProps {
 
 export function HomeContent({ dictionary, params }: HomeContentProps) {
   const { lang } = params;
-  const [currentColor, setCurrentColor] = useState('#e07830');
-
-  const handleColorChange = useCallback((color: string) => {
-    setCurrentColor(color);
-  }, []);
+  const { heroColor, setHeroColor } = useHeroColor();
 
   return (
     <LoadingWrapper>
@@ -40,10 +36,10 @@ export function HomeContent({ dictionary, params }: HomeContentProps) {
         {/* Unified Colored Section - Hero + Pickup */}
         <motion.div
           className="relative z-20 rounded-b-[80px] md:rounded-b-[120px] overflow-hidden shadow-2xl"
-          animate={{ backgroundColor: currentColor }}
+          animate={{ backgroundColor: heroColor }}
           transition={{ duration: 0.8, ease: 'easeInOut' }}
         >
-          <HeroSection dictionary={dictionary} onColorChange={handleColorChange} />
+          <HeroSection dictionary={dictionary} onColorChange={setHeroColor} />
           <PickupSection />
         </motion.div>
 

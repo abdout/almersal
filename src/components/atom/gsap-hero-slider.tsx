@@ -319,7 +319,7 @@ export function GSAPHeroSlider({
       >
         <div
           ref={trackRef}
-          className="flex items-center h-full will-change-transform"
+          className="flex items-start pt-[12vh] h-full will-change-transform"
           style={{ gap: `${SLIDE_GAP}px`, direction: 'ltr' }}
         >
           {allSlides.map((slide, arrayIndex) => {
@@ -351,12 +351,12 @@ export function GSAPHeroSlider({
                   draggable={false}
                 />
 
-                {/* Color overlay for non-center slides */}
+                {/* Color overlay for non-center slides - heavy overlay like reference */}
                 {!isCenter && isVisible && hasAnimated && (
                   <div
-                    className="absolute inset-0 pointer-events-none mix-blend-multiply transition-all duration-500"
+                    className="absolute inset-0 pointer-events-none transition-all duration-500"
                     style={{
-                      opacity: 0.4,
+                      opacity: distanceFromCenter === 1 ? 0.85 : 0.92,
                       backgroundColor: currentSlide?.overlayColor || '#ED6C00',
                     }}
                   />

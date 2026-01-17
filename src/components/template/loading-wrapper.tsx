@@ -2,6 +2,7 @@
 
 import { useState, useEffect, type ReactNode } from 'react';
 import { LoadingProvider, useLoading } from './loading-context';
+import { HeroColorProvider } from './hero-color-context';
 import { LoadingScreen } from './loading-screen';
 
 type LoadingState = 'loading' | 'transitioning' | 'complete';
@@ -63,7 +64,9 @@ function LoadingContent({ children }: { children: ReactNode }) {
 export function LoadingWrapper({ children }: { children: ReactNode }) {
   return (
     <LoadingProvider>
-      <LoadingContent>{children}</LoadingContent>
+      <HeroColorProvider>
+        <LoadingContent>{children}</LoadingContent>
+      </HeroColorProvider>
     </LoadingProvider>
   );
 }

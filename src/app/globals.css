@@ -75,28 +75,43 @@ body {
   font-family: var(--font-arabic);
 }
 
-/* Custom scrollbar */
+/* Smooth scroll + Overlay scrollbar behavior */
+html {
+  scroll-behavior: smooth;
+  overflow-y: overlay; /* Chrome/Safari/Edge - scrollbar overlays content */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: transparent transparent; /* Firefox - hidden by default */
+}
+
+/* Show scrollbar on hover (Firefox) */
+html:hover {
+  scrollbar-color: oklch(0.65 0.2 45) transparent;
+}
+
+/* Custom scrollbar - hidden by default, overlay on content */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-muted);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-primary-500);
+  background: transparent;
   border-radius: var(--radius-md);
+  transition: background 0.3s ease;
 }
 
-::-webkit-scrollbar-thumb:hover {
+/* Show scrollbar on hover/interaction */
+html:hover::-webkit-scrollbar-thumb,
+html:active::-webkit-scrollbar-thumb {
+  background: var(--color-primary-500);
+}
+
+html:hover::-webkit-scrollbar-thumb:hover {
   background: var(--color-primary-600);
-}
-
-/* Smooth scroll */
-html {
-  scroll-behavior: smooth;
 }
 
 /* Selection color */

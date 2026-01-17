@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useHeroColor } from '@/components/template/hero-color-context';
 import type { Locale, Dictionary } from '@/lib/i18n';
 
 interface HeaderProps {
@@ -13,6 +14,7 @@ interface HeaderProps {
 
 export function Header({ lang, dictionary }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { heroColor } = useHeroColor();
   const isRTL = lang === 'ar';
 
   const navItems = [
@@ -42,14 +44,20 @@ export function Header({ lang, dictionary }: HeaderProps) {
                 className="flex flex-col items-center justify-center gap-[5px] p-1 mt-1 transition-transform duration-300 group-hover:translate-y-1"
                 aria-label="Toggle menu"
               >
-                <span className={cn(
-                  'block h-[2.5px] w-5 bg-primary-500 rounded-full transition-all duration-300',
-                  isOpen && 'rotate-45 translate-y-[7px]'
-                )} />
-                <span className={cn(
-                  'block h-[2.5px] w-5 bg-primary-500 rounded-full transition-all duration-300',
-                  isOpen && '-rotate-45 -translate-y-[7px]'
-                )} />
+                <span
+                  className={cn(
+                    'block h-[2.5px] w-5 rounded-full transition-all duration-800',
+                    isOpen && 'rotate-45 translate-y-[7px]'
+                  )}
+                  style={{ backgroundColor: heroColor, transitionDuration: '800ms' }}
+                />
+                <span
+                  className={cn(
+                    'block h-[2.5px] w-5 rounded-full transition-all duration-800',
+                    isOpen && '-rotate-45 -translate-y-[7px]'
+                  )}
+                  style={{ backgroundColor: heroColor, transitionDuration: '800ms' }}
+                />
               </button>
             </div>
 
