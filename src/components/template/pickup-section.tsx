@@ -1,11 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, type PanInfo, type MotionValue } from 'framer-motion';
 import { cn } from '@/lib/utils';
-gsap.registerPlugin(useGSAP);
 
 const ORANGE = '#ED6C00';
 
@@ -27,24 +24,20 @@ interface PickupSectionProps {
 }
 
 // Animation constants
-// Center: 700 x 400, Small: 467 x 267 (700/1.5 x 400/1.5)
-const SLIDE_WIDTH = 467;          // Base slide width (desktop)
-const SLIDE_WIDTH_TABLET = 350;   // Tablet
-const SLIDE_WIDTH_MOBILE = 280;   // Mobile
-const SLIDE_HEIGHT = 267;         // Base slide height
+// Center: 700 x 400, Small: 467 x 267
+const SLIDE_WIDTH = 467;          // Small slide width
 const CENTER_WIDTH = 700;         // Center slide width
+const SLIDE_HEIGHT = 267;         // Small slide height
 const CENTER_HEIGHT = 400;        // Center slide height
 const SLIDE_GAP = 24;             // Gap between slides
-const CENTER_SCALE = CENTER_WIDTH / SLIDE_WIDTH; // ~1.5x
 const AUTO_PLAY_INTERVAL = 5000;  // 5 seconds
-const TRANSITION_DURATION = 0.7;  // Slide transition
+const DRAG_THRESHOLD = 50;        // Drag threshold for navigation
 const BG_TRANSITION = 0.5;        // Background crossfade
-const MIN_SCALE = 1;              // Edge slides at normal scale
-const INTERPOLATION_RANGE = 1.2;  // Distance over which interpolation happens
 
-// Linear interpolation helper
-const lerp = (start: number, end: number, t: number): number => {
-  return start + (end - start) * Math.max(0, Math.min(1, t));
+// Spring configuration for smooth track movement
+const springConfig = {
+  stiffness: 300,
+  damping: 40,
 };
 
 const pickupItems: PickupItem[] = [
@@ -56,23 +49,131 @@ const pickupItems: PickupItem[] = [
   { id: '6', color: '#FFFFFF', title: 'خدماتنا الجديدة', tag: 'إعلان', date: '2025.02.20' },
 ];
 
+// Individual slide component with smooth scaling using useTransform
+interface PickupSlideItemProps {
+  arrayIndex: number;
+  slide: PickupItem;
+  trackX: MotionValue<number>;
+  windowWidth: number;
+  hasAnimated: boolean;
+  onClickLeft: () => void;
+  onClickRight: () => void;
+}
+
+function PickupSlideItem({
+  arrayIndex,
+  slide,
+  trackX,
+  windowWidth,
+  hasAnimated,
+  onClickLeft,
+  onClickRight,
+}: PickupSlideItemProps) {
+  const slidePosition = arrayIndex * (SLIDE_WIDTH + SLIDE_GAP);
+  const screenCenter = windowWidth / 2;
+
+  // Transition zone - area where scaling happens
+  const transitionZone = (SLIDE_WIDTH + SLIDE_GAP) * 0.8;
+
+  // Calculate width based on distance from center
+  const width = useTransform(trackX, (x) => {
+    const slideCenterX = slidePosition + SLIDE_WIDTH / 2 + x;
+    const distanceFromCenter = Math.abs(slideCenterX - screenCenter);
+
+    // Outside transition zone = small size
+    if (distanceFromCenter > transitionZone) {
+      return SLIDE_WIDTH;
+    }
+    // Inside transition zone = interpolate to center size
+    const t = 1 - (distanceFromCenter / transitionZone);
+    return SLIDE_WIDTH + ((CENTER_WIDTH - SLIDE_WIDTH) * t);
+  });
+
+  // Calculate height based on distance from center
+  const height = useTransform(trackX, (x) => {
+    const slideCenterX = slidePosition + SLIDE_WIDTH / 2 + x;
+    const distanceFromCenter = Math.abs(slideCenterX - screenCenter);
+
+    // Outside transition zone = small size
+    if (distanceFromCenter > transitionZone) {
+      return SLIDE_HEIGHT;
+    }
+    // Inside transition zone = interpolate to center size
+    const t = 1 - (distanceFromCenter / transitionZone);
+    return SLIDE_HEIGHT + ((CENTER_HEIGHT - SLIDE_HEIGHT) * t);
+  });
+
+  // Calculate opacity based on distance from center
+  const opacity = useTransform(trackX, (x) => {
+    const slideCenterX = slidePosition + SLIDE_WIDTH / 2 + x;
+    const distanceFromCenter = Math.abs(slideCenterX - screenCenter);
+    const maxVisibleDistance = (SLIDE_WIDTH + SLIDE_GAP) * 3;
+
+    if (distanceFromCenter > maxVisibleDistance) return 0;
+    if (distanceFromCenter < maxVisibleDistance * 0.5) return 1;
+    // Fade from 1 to 0.5 at edges
+    const t = (distanceFromCenter - maxVisibleDistance * 0.5) / (maxVisibleDistance * 0.5);
+    return 1 - (t * 0.5);
+  });
+
+  // Determine click direction
+  const handleClick = useCallback(() => {
+    const currentX = trackX.get();
+    const slideCenterX = slidePosition + SLIDE_WIDTH / 2 + currentX;
+    if (slideCenterX < screenCenter) {
+      onClickLeft();
+    } else if (slideCenterX > screenCenter) {
+      onClickRight();
+    }
+  }, [trackX, slidePosition, screenCenter, onClickLeft, onClickRight]);
+
+  return (
+    <motion.div
+      className="flex-shrink-0 cursor-pointer"
+      style={{
+        width,
+        height,
+        opacity: hasAnimated ? opacity : 1,
+      }}
+      onClick={handleClick}
+    >
+      <div
+        className="w-full h-full"
+        style={{ backgroundColor: slide.color }}
+      />
+    </motion.div>
+  );
+}
+
 export function PickupSection({ dictionary, onColorChange }: PickupSectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayIndex, setDisplayIndex] = useState(0);
   const [isReady, setIsReady] = useState(false);
-  const [slideWidth, setSlideWidth] = useState(SLIDE_WIDTH);
-  const [, setAnimationTick] = useState(0); // Force re-render during animation
-  const lastColorRef = useRef<string | null>(null);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1920);
+  const [isPaused, setIsPaused] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
   const isAnimatingRef = useRef(false);
-  const trackPositionRef = useRef(0);
+  const lastColorRef = useRef<string | null>(null);
 
   const totalSlides = pickupItems.length;
-  const centerOffset = totalSlides; // Start in middle copy for infinite scroll
+  const centerArrayOffset = totalSlides; // Start in the middle copy for infinite scroll
+
+  // Create extended slides array for infinite scroll (3 copies)
+  const extendedSlides = [...pickupItems, ...pickupItems, ...pickupItems];
+
+  // Motion value for track position
+  const trackX = useMotionValue(0);
+  const smoothTrackX = useSpring(trackX, springConfig);
+
+  // Update window width on resize
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Track scroll to change parent color to orange when hero exits viewport
   useEffect(() => {
@@ -101,139 +202,98 @@ export function PickupSection({ dictionary, onColorChange }: PickupSectionProps)
     return () => window.removeEventListener('scroll', handleScroll);
   }, [onColorChange]);
 
-  // Create extended slides array for infinite scroll (3 copies)
-  const extendedSlides = useCallback(() => {
-    return [...pickupItems, ...pickupItems, ...pickupItems];
-  }, []);
+  // Calculate track offset to center a specific slide
+  const getTrackOffset = useCallback((index: number) => {
+    const screenCenter = windowWidth / 2;
+    const targetSlideIndex = centerArrayOffset + index;
 
-  // Handle responsive slide width
+    // Position of target slide's left edge
+    const position = targetSlideIndex * (SLIDE_WIDTH + SLIDE_GAP);
+
+    // Center of the target slide (which will be at CENTER_WIDTH when centered)
+    const slideCenter = position + CENTER_WIDTH / 2;
+
+    return screenCenter - slideCenter;
+  }, [windowWidth, centerArrayOffset]);
+
+  // Initialize position
   useEffect(() => {
-    const updateSlideWidth = () => {
-      const width = window.innerWidth;
-      if (width < 768) {
-        setSlideWidth(SLIDE_WIDTH_MOBILE);
-      } else if (width < 1024) {
-        setSlideWidth(SLIDE_WIDTH_TABLET);
-      } else {
-        setSlideWidth(SLIDE_WIDTH);
-      }
-    };
+    const initialOffset = getTrackOffset(0);
+    trackX.set(initialOffset);
 
-    updateSlideWidth();
-    window.addEventListener('resize', updateSlideWidth);
-    return () => window.removeEventListener('resize', updateSlideWidth);
-  }, []);
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      setIsReady(true);
+      setHasAnimated(true);
+    }, 100);
 
-  // Calculate track position for a given index
-  const getTrackPosition = useCallback((index: number) => {
-    if (trackRef.current && trackRef.current.children.length > 0) {
-      const slides = trackRef.current.children;
-      const targetSlideIndex = centerOffset + index;
+    return () => clearTimeout(timer);
+  }, [getTrackOffset, trackX]);
 
-      if (targetSlideIndex >= 0 && targetSlideIndex < slides.length) {
-        const targetSlide = slides[targetSlideIndex] as HTMLElement;
-        const containerCenter = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
-        const slideCenterInTrack = targetSlide.offsetLeft + targetSlide.offsetWidth / 2;
-        return containerCenter - slideCenterInTrack;
-      }
-    }
-
-    // Fallback calculation
-    const slideUnit = slideWidth + SLIDE_GAP;
-    const targetPosition = (centerOffset + index) * slideUnit;
-    const containerCenter = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
-    return containerCenter - targetPosition - slideWidth / 2;
-  }, [centerOffset, slideWidth]);
-
-  // Initial positioning
-  useEffect(() => {
-    if (trackRef.current) {
-      const timer = setTimeout(() => {
-        const initialPos = getTrackPosition(currentIndex);
-        trackPositionRef.current = initialPos;
-        gsap.set(trackRef.current, { x: initialPos });
-        setIsReady(true);
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [getTrackPosition, currentIndex]);
-
-  // Animate to a new index
-  const animateToIndex = useCallback((newIndex: number, direction: number) => {
-    if (!trackRef.current || !isReady || isAnimatingRef.current) return;
+  // Animate to specific index
+  const animateToIndex = useCallback((newIndex: number) => {
+    if (!isReady || isAnimatingRef.current) return;
 
     isAnimatingRef.current = true;
-    const newPos = getTrackPosition(newIndex);
 
-    gsap.to(trackRef.current, {
-      x: newPos,
-      duration: TRANSITION_DURATION,
-      ease: 'power2.inOut',
-      onUpdate: () => {
-        // Update track position ref for style calculations
-        trackPositionRef.current = gsap.getProperty(trackRef.current, 'x') as number;
-        // Force re-render to update slide styles during animation
-        setAnimationTick((tick) => tick + 1);
-      },
-      onComplete: () => {
-        trackPositionRef.current = newPos;
-        setCurrentIndex(newIndex);
-        isAnimatingRef.current = false;
-
-        // Handle infinite scroll reset
-        if (newIndex >= totalSlides) {
-          const resetIndex = newIndex % totalSlides;
-          const resetPos = getTrackPosition(resetIndex);
-          gsap.set(trackRef.current, { x: resetPos });
-          trackPositionRef.current = resetPos;
-          setCurrentIndex(resetIndex);
-        } else if (newIndex < 0) {
-          const resetIndex = totalSlides + (newIndex % totalSlides);
-          const resetPos = getTrackPosition(resetIndex);
-          gsap.set(trackRef.current, { x: resetPos });
-          trackPositionRef.current = resetPos;
-          setCurrentIndex(resetIndex);
-        }
-      },
-    });
-
-    // Update display index immediately for UI
+    // Update display index for UI immediately
     const actualNewIndex = ((newIndex % totalSlides) + totalSlides) % totalSlides;
     setDisplayIndex(actualNewIndex);
-  }, [isReady, getTrackPosition, totalSlides]);
 
-  // Navigation functions
+    const newOffset = getTrackOffset(newIndex);
+    trackX.set(newOffset);
+
+    // Complete animation after spring settles
+    setTimeout(() => {
+      isAnimatingRef.current = false;
+
+      // Seamless infinite loop reset
+      let resetIndex = newIndex;
+      if (newIndex >= totalSlides) {
+        resetIndex = newIndex % totalSlides;
+      } else if (newIndex < 0) {
+        resetIndex = ((newIndex % totalSlides) + totalSlides) % totalSlides;
+      }
+
+      // Only reset if we went outside the middle array
+      if (resetIndex !== newIndex) {
+        const resetOffset = getTrackOffset(resetIndex);
+        trackX.jump(resetOffset);
+        smoothTrackX.jump(resetOffset);
+      }
+      setCurrentIndex(resetIndex);
+    }, 600);
+  }, [isReady, getTrackOffset, totalSlides, trackX, smoothTrackX]);
+
+  // Paginate by direction
   const paginate = useCallback((direction: number) => {
     if (!isReady || isAnimatingRef.current) return;
-    const newIndex = currentIndex + direction;
-    animateToIndex(newIndex, direction);
+    animateToIndex(currentIndex + direction);
   }, [isReady, currentIndex, animateToIndex]);
 
+  // Go to specific slide
   const goToSlide = useCallback((index: number) => {
     if (!isReady || isAnimatingRef.current) return;
     const actualCurrentIndex = currentIndex % totalSlides;
     if (index === actualCurrentIndex) return;
 
-    const direction = index > actualCurrentIndex ? 1 : -1;
     const targetIndex = currentIndex + (index - actualCurrentIndex);
-    animateToIndex(targetIndex, direction);
+    animateToIndex(targetIndex);
   }, [isReady, currentIndex, totalSlides, animateToIndex]);
 
   // Auto-play - shifts RIGHT
   useEffect(() => {
-    if (!isReady) return;
+    if (!isReady || isPaused) return;
 
-    autoPlayRef.current = setInterval(() => {
-      paginate(1); // Shift right
-    }, AUTO_PLAY_INTERVAL);
-
+    autoPlayRef.current = setInterval(() => paginate(1), AUTO_PLAY_INTERVAL);
     return () => {
       if (autoPlayRef.current) clearInterval(autoPlayRef.current);
     };
-  }, [isReady, paginate]);
+  }, [isReady, isPaused, paginate]);
 
   // Pause auto-play on hover
   const handleMouseEnter = () => {
+    setIsPaused(true);
     if (autoPlayRef.current) {
       clearInterval(autoPlayRef.current);
       autoPlayRef.current = null;
@@ -241,66 +301,26 @@ export function PickupSection({ dictionary, onColorChange }: PickupSectionProps)
   };
 
   const handleMouseLeave = () => {
-    if (isReady && !autoPlayRef.current) {
-      autoPlayRef.current = setInterval(() => paginate(1), AUTO_PLAY_INTERVAL);
+    setIsPaused(false);
+  };
+
+  // Drag end handler
+  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (!isReady) return;
+
+    const { offset } = info;
+    if (offset.x < -DRAG_THRESHOLD) {
+      paginate(1);
+    } else if (offset.x > DRAG_THRESHOLD) {
+      paginate(-1);
+    } else {
+      // Snap back to current position
+      const currentOffset = getTrackOffset(currentIndex);
+      trackX.set(currentOffset);
     }
   };
 
-  const allSlides = extendedSlides();
   const currentSlide = pickupItems[displayIndex];
-
-  // Get styles for each slide based on actual pixel distance from viewport center
-  const getSlideStyles = useCallback((slideArrayIndex: number): React.CSSProperties => {
-    const slideElement = slideRefs.current[slideArrayIndex];
-    const viewportCenter = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
-
-    // Calculate pixel distance from viewport center
-    let pixelDistanceFromCenter: number;
-
-    if (slideElement && trackRef.current) {
-      // Get current track position from GSAP or ref
-      const trackX = trackPositionRef.current;
-      // Calculate slide center in viewport coordinates
-      const slideLeftInTrack = slideElement.offsetLeft;
-      const slideCenter = slideLeftInTrack + slideElement.offsetWidth / 2 + trackX;
-      pixelDistanceFromCenter = Math.abs(slideCenter - viewportCenter);
-    } else {
-      // Fallback: calculate based on array index
-      const relativeToCenter = slideArrayIndex - (centerOffset + currentIndex);
-      pixelDistanceFromCenter = Math.abs(relativeToCenter) * (slideWidth + SLIDE_GAP);
-    }
-
-    // Normalize distance: 0 = at center, 1 = one slide unit away
-    const slideUnit = slideWidth + SLIDE_GAP;
-    const normalizedDistance = pixelDistanceFromCenter / slideUnit;
-
-    // Clamp interpolation factor (0 = center, 1 = edge/beyond)
-    const t = Math.min(normalizedDistance / INTERPOLATION_RANGE, 1);
-
-    // Interpolate all properties smoothly
-    const scale = lerp(CENTER_SCALE, 1, t);
-    const width = slideWidth * scale;
-
-    // Height interpolation - center: 400px, small: 267px
-    const height = lerp(CENTER_HEIGHT, SLIDE_HEIGHT, t);
-
-    // Opacity: center = 1, edges = 0.5
-    const opacity = lerp(1, 0.5, Math.min(normalizedDistance / 2.5, 1));
-
-    // Transform scale - subtle, mostly rely on width/height
-    const transformScale = lerp(1.02, MIN_SCALE, t);
-
-    // Z-index based on distance
-    const zIndex = Math.max(1, Math.round(10 - normalizedDistance));
-
-    return {
-      width: `${width}px`,
-      height: `${height}px`,
-      opacity: isReady ? opacity : (normalizedDistance <= 3 ? 1 : 0),
-      transform: `scale(${transformScale})`,
-      zIndex,
-    };
-  }, [centerOffset, currentIndex, slideWidth, isReady]);
 
   return (
     <section
@@ -335,34 +355,31 @@ export function PickupSection({ dictionary, onColorChange }: PickupSectionProps)
 
         {/* Photo Slider Track - centered within bg */}
         <div className="relative overflow-hidden w-full max-w-[1000px]">
-          <div
-            ref={trackRef}
+          <motion.div
             className="flex items-center will-change-transform"
-            style={{ gap: `${SLIDE_GAP}px`, direction: 'ltr' }}
+            style={{
+              x: smoothTrackX,
+              gap: `${SLIDE_GAP}px`,
+              direction: 'ltr'
+            }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.1}
+            onDragEnd={handleDragEnd}
           >
-            {allSlides.map((slide, arrayIndex) => {
-              const relativeToCenter = arrayIndex - (centerOffset + currentIndex);
-              const styles = getSlideStyles(arrayIndex);
-
-              return (
-                <div
-                  key={`slide-${arrayIndex}`}
-                  ref={(el) => { slideRefs.current[arrayIndex] = el; }}
-                  className="flex-shrink-0 cursor-pointer"
-                  style={styles}
-                  onClick={() => {
-                    if (relativeToCenter < 0) paginate(relativeToCenter);
-                    else if (relativeToCenter > 0) paginate(relativeToCenter);
-                  }}
-                >
-                  <div
-                    className="w-full h-full"
-                    style={{ backgroundColor: slide.color }}
-                  />
-                </div>
-              );
-            })}
-          </div>
+            {extendedSlides.map((slide, arrayIndex) => (
+              <PickupSlideItem
+                key={`slide-${arrayIndex}`}
+                arrayIndex={arrayIndex}
+                slide={slide}
+                trackX={smoothTrackX}
+                windowWidth={windowWidth}
+                hasAnimated={hasAnimated}
+                onClickLeft={() => paginate(-1)}
+                onClickRight={() => paginate(1)}
+              />
+            ))}
+          </motion.div>
         </div>
 
         {/* Navigation - Simple dots */}

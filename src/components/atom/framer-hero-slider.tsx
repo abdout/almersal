@@ -38,13 +38,13 @@ const SCALE_MAX = 1.18;
 
 // Default placeholder slides with overlay colors
 const placeholderSlides: Slide[] = [
-  { id: '1', overlayColor: '#ED6C00' },
-  { id: '2', overlayColor: '#2639A6' },
-  { id: '3', overlayColor: '#CC2525' },
-  { id: '4', overlayColor: '#139A39' },
-  { id: '5', overlayColor: '#FFD900' },
-  { id: '6', overlayColor: '#8B5CF6' },
-  { id: '7', overlayColor: '#0891B2' },
+  { id: '1', overlayColor: '#ED6C00' },  // Orange
+  { id: '2', overlayColor: '#2639A6' },  // Blue
+  { id: '3', overlayColor: '#CC2525' },  // Red
+  { id: '4', overlayColor: '#139A39' },  // Green
+  { id: '5', overlayColor: '#FFD900' },  // Yellow
+  { id: '6', overlayColor: '#139A39' },  // Green (repeat)
+  { id: '7', overlayColor: '#2639A6' },  // Blue (repeat)
 ];
 
 // Spring configuration for smooth track movement
