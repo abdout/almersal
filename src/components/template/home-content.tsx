@@ -26,8 +26,9 @@ interface HomeContentProps {
 
 // Inner component that uses the hero color context (must be inside HeroColorProvider)
 function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: Locale }) {
-  const { heroColor, setHeroColor } = useHeroColor();
+  const { heroColor, setHeroColor, setIsPastHeroSection } = useHeroColor();
   const heroRef = useRef<HTMLDivElement>(null);
+  const heroPickupWrapperRef = useRef<HTMLDivElement>(null);
   const [isHeroInView, setIsHeroInView] = useState(true);
 
   // Track when hero section is completely out of view
@@ -47,6 +48,24 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
 
     return () => window.removeEventListener('scroll', checkHeroVisibility);
   }, []);
+
+  // Track when the entire hero+pickup wrapper is out of view
+  useEffect(() => {
+    const checkWrapperVisibility = () => {
+      if (!heroPickupWrapperRef.current) return;
+
+      const rect = heroPickupWrapperRef.current.getBoundingClientRect();
+      // Wrapper is out of view when its bottom is above the viewport top
+      const wrapperOutOfView = rect.bottom < 0;
+
+      setIsPastHeroSection(wrapperOutOfView);
+    };
+
+    window.addEventListener('scroll', checkWrapperVisibility, { passive: true });
+    checkWrapperVisibility(); // Initial check
+
+    return () => window.removeEventListener('scroll', checkWrapperVisibility);
+  }, [setIsPastHeroSection]);
 
   // When hero goes out of view, transition to main orange
   useEffect(() => {
@@ -69,6 +88,7 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
       <main className="relative">
         {/* Unified Colored Section - Hero + Pickup */}
         <motion.div
+          ref={heroPickupWrapperRef}
           className="relative z-20 rounded-b-[80px] md:rounded-b-[120px] overflow-hidden shadow-2xl"
           animate={{ backgroundColor: heroColor }}
           transition={{ duration: 0.8, ease: 'easeInOut' }}
@@ -80,7 +100,7 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
         </motion.div>
 
         {/* Photo Grid Section - Positioned behind hero+pickup, reveals on scroll */}
-        <div className="relative z-0 -mt-32 md:-mt-40">
+        <div className="relative z-0 -mt-[70vh] md:-mt-[75vh]">
           <PhotoGridSection />
         </div>
 

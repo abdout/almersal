@@ -1,5 +1,8 @@
 'use client';
 
+import { useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion';
+
 interface GridItem {
   id: string;
   color: string;
@@ -29,102 +32,125 @@ function GridImage({
   return (
     <div
       className={`relative overflow-hidden rounded-lg ${className}`}
+      style={{ backgroundColor: item.color }}
+    />
+  );
+}
+
+function ZoomableE({
+  item,
+  scale,
+  borderRadius,
+  zIndex,
+  className = '',
+}: {
+  item: GridItem;
+  scale: MotionValue<number>;
+  borderRadius: MotionValue<number>;
+  zIndex: MotionValue<number>;
+  className?: string;
+}) {
+  return (
+    <motion.div
+      className={`relative overflow-hidden rounded-lg will-change-transform ${className}`}
       style={{
         backgroundColor: item.color,
+        scale,
+        borderRadius,
+        zIndex,
+        transformOrigin: 'center center',
       }}
     />
   );
 }
 
 export function PhotoGridSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start 0.8', 'end start'],
+  });
+
+  // Phase 1: Entire grid moves as one unit with parallax reveal (0 - 0.4)
+  const yRaw = useTransform(scrollYProgress, [0, 0.4], [400, 0]);
+  const y = useSpring(yRaw, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
+  // Phase 2: "e" item zooms to full screen (0.5 - 0.8)
+  // Scale stays at 1 until 0.5, then zooms
+  const eScaleRaw = useTransform(scrollYProgress, [0.5, 0.8], [1, 12]);
+  const eScale = useSpring(eScaleRaw, { stiffness: 80, damping: 25, restDelta: 0.001 });
+
+  // Border radius of "e" goes to 0 as it scales
+  const eBorderRadius = useTransform(scrollYProgress, [0.5, 0.65], [8, 0]);
+
+  // Z-index jumps up when zoom starts
+  const eZIndex = useTransform(scrollYProgress, [0.49, 0.5], [0, 50]);
+
+  // Fade out other items as "e" zooms
+  const otherOpacityRaw = useTransform(scrollYProgress, [0.5, 0.6], [1, 0]);
+  const otherOpacity = useSpring(otherOpacityRaw, { stiffness: 100, damping: 30 });
+
   const getItem = (id: string) => gridItems.find(item => item.id === id)!;
 
   return (
-    <section className="relative px-4 md:px-5 py-4">
-      {/*
-        3 MAIN COLUMNS: LEFT (38%) | MID (24%) | RIGHT (38%)
-
-        ┌──────────────┬──────────┬──────────────┐
-        │    LEFT      │   MID    │    RIGHT     │
-        │    38%       │   24%    │    38%       │
-        ├──────┬───────┼──────────┼──────────────┤
-        │  a   │   b   │    c     │              │
-        ├──────┴───────┼──────────┤    tall      │
-        │      d       │    e     │              │
-        └──────────────┴──────────┴──────────────┘
-        ┌────────┬─────────┬─────────┬───────────┐
-        │   g    │    h    │    i    │     j     │
-        └────────┴─────────┴─────────┴───────────┘
-      */}
-      <div className="w-full h-[120vh] flex flex-col gap-4 md:gap-5">
-        {/* TOP: 3 main columns using CSS Grid */}
-        <div
-          className="flex-[2.5] grid gap-4 md:gap-5"
-          style={{
-            gridTemplateColumns: '38fr 24fr 38fr',
-          }}
+    <section ref={containerRef} className="relative h-[350vh]">
+      <div
+        className="sticky top-0 h-screen overflow-hidden px-4 md:px-5 py-4"
+        style={{ contain: 'layout style paint' }}
+      >
+        <motion.div
+          className="w-full h-full flex flex-col gap-4 md:gap-5 will-change-transform"
+          style={{ y }}
         >
-          {/* LEFT (38%): [a 40%][b 60%] top 40%, [d] bottom 60% */}
-          <div className="flex flex-col gap-4 md:gap-5">
-            <div className="flex-[4] flex gap-4 md:gap-5">
-              <GridImage
-                item={getItem('a')}
+          {/* TOP: 3 main columns using CSS Grid */}
+          <div
+            className="flex-[2.5] grid gap-4 md:gap-5"
+            style={{ gridTemplateColumns: '38fr 24fr 38fr' }}
+          >
+            {/* LEFT (38%): [a 40%][b 60%] top 40%, [d] bottom 60% */}
+            <motion.div className="flex flex-col gap-4 md:gap-5" style={{ opacity: otherOpacity }}>
+              <div className="flex-[4] flex gap-4 md:gap-5">
+                <GridImage item={getItem('a')} className="flex-[4]" />
+                <GridImage item={getItem('b')} className="flex-[6]" />
+              </div>
+              <GridImage item={getItem('d')} className="flex-[6]" />
+            </motion.div>
+
+            {/* MID (24%): [c 60%] top, [e 40%] bottom */}
+            <div className="flex flex-col gap-4 md:gap-5">
+              <motion.div className="flex-[6]" style={{ opacity: otherOpacity }}>
+                <GridImage item={getItem('c')} className="h-full" />
+              </motion.div>
+              <ZoomableE
+                item={getItem('e')}
+                scale={eScale}
+                borderRadius={eBorderRadius}
+                zIndex={eZIndex}
                 className="flex-[4]"
               />
-              <GridImage
-                item={getItem('b')}
-                className="flex-[6]"
-              />
             </div>
-            <GridImage
-              item={getItem('d')}
-              className="flex-[6]"
-            />
+
+            {/* RIGHT (38%): [tall] full height */}
+            <motion.div style={{ opacity: otherOpacity }}>
+              <GridImage item={getItem('tall')} className="h-full" />
+            </motion.div>
           </div>
 
-          {/* MID (24%): [c 60%] top, [e 40%] bottom */}
-          <div className="flex flex-col gap-4 md:gap-5">
-            <GridImage
-              item={getItem('c')}
-              className="flex-[6]"
-            />
-            <GridImage
-              item={getItem('e')}
-              className="flex-[4]"
-            />
-          </div>
-
-          {/* RIGHT (38%): [tall] full height */}
-          <GridImage
-            item={getItem('tall')}
-          />
-        </div>
-
-        {/* BOTTOM: 4 items */}
-        <div className="flex-[1.3] flex gap-4 md:gap-5">
-          <GridImage
-            item={getItem('g')}
-            className="flex-[1.3]"
-          />
-          <GridImage
-            item={getItem('h')}
-            className="flex-[0.9]"
-          />
-          <GridImage
-            item={getItem('i')}
-            className="flex-[1.3]"
-          />
-          <div className="flex-[0.8] flex flex-col gap-4 md:gap-5">
-            <GridImage
-              item={getItem('j')}
-              className="flex-1"
-            />
-            <GridImage
-              item={getItem('k')}
-              className="flex-1"
-            />
-          </div>
-        </div>
+          {/* BOTTOM: 4 items */}
+          <motion.div
+            className="flex-[1.3] flex gap-4 md:gap-5"
+            style={{ opacity: otherOpacity }}
+          >
+            <GridImage item={getItem('g')} className="flex-[1.3]" />
+            <GridImage item={getItem('h')} className="flex-[0.9]" />
+            <GridImage item={getItem('i')} className="flex-[1.3]" />
+            <div className="flex-[0.8] flex flex-col gap-4 md:gap-5">
+              <GridImage item={getItem('j')} className="flex-1" />
+              <GridImage item={getItem('k')} className="flex-1" />
+            </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

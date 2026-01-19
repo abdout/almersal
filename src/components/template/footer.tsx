@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Locale, Dictionary } from '@/lib/i18n';
 
 interface FooterProps {
@@ -117,7 +118,7 @@ export function Footer({ lang }: FooterProps) {
   ];
 
   return (
-    <footer className="bg-[#1a1a1a] text-white">
+    <footer className="bg-[#ED6C00] text-white">
       {/* Main Navigation Grid */}
       <div className="max-w-7xl mx-auto px-6 pt-16 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
@@ -127,7 +128,7 @@ export function Footer({ lang }: FooterProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="block py-3 border-b border-white/15 text-sm hover:text-white/70 transition-colors"
+                className="block py-3 border-b border-white/20 text-sm hover:text-white/70 transition-colors"
               >
                 {item.label}
               </Link>
@@ -138,13 +139,13 @@ export function Footer({ lang }: FooterProps) {
           <div className="space-y-8">
             {/* School Info */}
             <div>
-              <h3 className="text-sm font-medium mb-4 text-white/60">{isRTL ? 'عن المؤسسة' : 'About School'}</h3>
+              <h3 className="text-sm font-medium mb-4">{isRTL ? 'عن المؤسسة' : 'About School'}</h3>
               <nav className="space-y-2">
                 {schoolInfoLinks.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="block text-sm text-white/60 hover:text-white transition-colors"
+                    className="block text-sm text-white/80 hover:text-white transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -154,13 +155,13 @@ export function Footer({ lang }: FooterProps) {
 
             {/* Departments */}
             <div>
-              <h3 className="text-sm font-medium mb-4 text-white/60">{isRTL ? 'الأقسام' : 'Departments'}</h3>
+              <h3 className="text-sm font-medium mb-4">{isRTL ? 'الأقسام' : 'Departments'}</h3>
               <nav className="space-y-2">
                 {departmentLinks.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="block text-sm text-white/60 hover:text-white transition-colors"
+                    className="block text-sm text-white/80 hover:text-white transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -173,13 +174,13 @@ export function Footer({ lang }: FooterProps) {
           <div className="space-y-8">
             {/* Employment */}
             <div>
-              <h3 className="text-sm font-medium mb-4 text-white/60">{isRTL ? 'التوظيف' : 'Employment'}</h3>
+              <h3 className="text-sm font-medium mb-4">{isRTL ? 'التوظيف' : 'Employment'}</h3>
               <nav className="space-y-2">
                 {employmentLinks.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="block text-sm text-white/60 hover:text-white transition-colors"
+                    className="block text-sm text-white/80 hover:text-white transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -189,13 +190,13 @@ export function Footer({ lang }: FooterProps) {
 
             {/* Visitors */}
             <div>
-              <h3 className="text-sm font-medium mb-4 text-white/60">{isRTL ? 'الزوار' : 'Visitors'}</h3>
+              <h3 className="text-sm font-medium mb-4">{isRTL ? 'الزوار' : 'Visitors'}</h3>
               <nav className="space-y-2">
                 {visitorLinks.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="block text-sm text-white/60 hover:text-white transition-colors"
+                    className="block text-sm text-white/80 hover:text-white transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -208,19 +209,19 @@ export function Footer({ lang }: FooterProps) {
           <div className="space-y-6">
             {/* Organization Info */}
             <div className="text-sm leading-relaxed">
-              <p className="text-white/60">{isRTL ? 'شركة المرسال للإنتاج الإعلامي' : 'Almersal Media Production'}</p>
+              <p className="text-white/80">{isRTL ? 'شركة المرسال للإنتاج الإعلامي' : 'Almersal Media Production'}</p>
               <p className="font-medium mt-1">{isRTL ? 'المرسال للإنتاج الإعلامي' : 'Almersal Media'}</p>
-              <p className="mt-3 text-white/60">
+              <p className="mt-3 text-white/80">
                 {isRTL ? 'الرياض، المملكة العربية السعودية' : 'Riyadh, Saudi Arabia'}
               </p>
-              <p className="mt-2 text-white/60">
+              <p className="mt-2 text-white/80">
                 Tel. <a href="tel:+966501234567" className="text-white hover:text-white/70 transition-colors">050-123-4567</a>
               </p>
             </div>
 
             {/* Social Links - Horizontal Row */}
             <div>
-              <p className="text-xs text-white/40 mb-3">{isRTL ? 'حساباتنا الرسمية' : 'Official SNS'}</p>
+              <p className="text-xs text-white/60 mb-3">{isRTL ? 'حساباتنا الرسمية' : 'Official SNS'}</p>
               <div className="flex items-center gap-3 flex-wrap">
                 {socialLinks.map((social) => (
                   <a
@@ -228,7 +229,7 @@ export function Footer({ lang }: FooterProps) {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-9 h-9 border border-white/20 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:border-white/40 transition-colors"
+                    className="w-9 h-9 bg-white rounded-full flex items-center justify-center text-[#ED6C00] hover:bg-white/90 transition-colors"
                     aria-label={social.label}
                   >
                     <social.icon className="w-4 h-4" />
@@ -240,7 +241,7 @@ export function Footer({ lang }: FooterProps) {
             {/* Contact Link */}
             <Link
               href={`/${lang}/contact`}
-              className="inline-block border border-white/30 text-white/80 px-5 py-2 text-sm hover:bg-white/10 hover:text-white transition-colors"
+              className="inline-block bg-white text-[#ED6C00] px-5 py-2 text-sm font-medium hover:bg-white/90 transition-colors"
             >
               {isRTL ? 'تواصل معنا' : 'Contact Us'}
             </Link>
@@ -249,22 +250,29 @@ export function Footer({ lang }: FooterProps) {
       </div>
 
       {/* Logo Section */}
-      <div className="flex justify-center py-10 border-t border-white/10">
-        <Link href={`/${lang}`} className="hover:opacity-70 transition-opacity">
-          <span className="text-xl font-bold tracking-wide">{isRTL ? 'المرسال' : 'ALMERSAL'}</span>
+      <div className="flex justify-center py-12 border-t border-white/20">
+        <Link href={`/${lang}`} className="flex items-center gap-5 hover:opacity-80 transition-opacity">
+          <Image
+            src="/logo.png"
+            alt="Almersal Logo"
+            width={80}
+            height={80}
+            className="w-20 h-20"
+          />
+          <span className="text-3xl md:text-4xl font-bold tracking-wide">{isRTL ? 'المرسال للإنتاج الإعلامي' : 'ALMERSAL MEDIA PRODUCTION'}</span>
         </Link>
       </div>
 
       {/* Bottom Bar */}
-      <div className="bg-[#111111]">
+      <div className="bg-[#4A3F35]">
         <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
           <Link
             href={`/${lang}/privacy`}
-            className="text-xs text-white/50 hover:text-white/70 transition-colors"
+            className="text-xs text-white/70 hover:text-white transition-colors"
           >
             {isRTL ? 'سياسة الخصوصية' : 'Privacy Policy'}
           </Link>
-          <p className="text-xs text-white/40">
+          <p className="text-xs text-white/60">
             © {currentYear} {isRTL ? 'المرسال للإنتاج الإعلامي. جميع الحقوق محفوظة.' : 'ALMERSAL MEDIA. ALL RIGHTS RESERVED.'}
           </p>
         </div>

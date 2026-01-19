@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useHeroColor } from '@/components/template/hero-color-context';
+
+const MAIN_ORANGE = '#ED6C00';
 import {
   CalendarIcon,
   DocumentIcon,
@@ -34,8 +36,13 @@ interface HeaderProps {
 
 export function Header({ lang, dictionary }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { heroColor } = useHeroColor();
+  const { heroColor, isPastHeroSection } = useHeroColor();
   const isRTL = lang === 'ar';
+
+  // Colors for bar and notch - white when in hero/pickup, orange when past
+  const barColor = isPastHeroSection ? MAIN_ORANGE : 'white';
+  const notchBgColor = isPastHeroSection ? MAIN_ORANGE : 'white';
+  const hamburgerColor = isPastHeroSection ? 'white' : heroColor;
 
   const navItems = [
     { href: `/${lang}`, label: dictionary.nav.home },
@@ -48,42 +55,58 @@ export function Header({ lang, dictionary }: HeaderProps) {
 
   return (
     <>
-      {/* Header with 8px white bar and center notch */}
+      {/* Header with 8px bar and center notch - color transitions based on scroll */}
       <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
-        {/* 8px white bar edge to edge */}
-        <div className="absolute top-0 left-0 right-0 h-[8px] bg-white" />
+        {/* 8px bar edge to edge - animates from white to orange */}
+        <motion.div
+          className="absolute top-0 left-0 right-0 h-[8px]"
+          animate={{ backgroundColor: barColor }}
+          transition={{ duration: 0.5, ease: 'easeInOut' }}
+        />
 
         {/* Main header content */}
         <div className="relative">
-          {/* Center Notch with Hamburger Menu */}
+          {/* Center Notch with Hamburger Menu - entire notch is clickable */}
           <div className="absolute left-1/2 -translate-x-1/2 top-0 pointer-events-auto">
-            {/* Notch shape - white background with smooth rounded bottom */}
-            <div className="group relative bg-white px-6 pt-2 pb-4 rounded-b-[10px] transition-all duration-300 ease-out hover:pb-6">
-              {/* Two-line Menu Button - no X animation since close button is at bottom */}
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="flex flex-col items-center justify-center gap-[5px] p-1 mt-1 transition-transform duration-300 group-hover:translate-y-1"
-                aria-label="Toggle menu"
-              >
-                <span
-                  className="block h-[2.5px] w-5 rounded-full transition-colors duration-300"
-                  style={{ backgroundColor: heroColor }}
+            {/* Notch shape - animates from white to orange */}
+            <motion.button
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle menu"
+              className="group relative px-6 pt-2 pb-4 rounded-b-[10px] transition-all duration-300 ease-out hover:pb-6 cursor-pointer"
+              animate={{ backgroundColor: notchBgColor }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
+            >
+              {/* Two-line Menu Icon */}
+              <div className="flex flex-col items-center justify-center gap-[5px] p-1 mt-1 transition-transform duration-300 group-hover:translate-y-1">
+                <motion.span
+                  className="block h-[2.5px] w-5 rounded-full"
+                  animate={{ backgroundColor: hamburgerColor }}
+                  transition={{ duration: 0.5, ease: 'easeInOut' }}
                 />
-                <span
-                  className="block h-[2.5px] w-5 rounded-full transition-colors duration-300"
-                  style={{ backgroundColor: heroColor }}
+                <motion.span
+                  className="block h-[2.5px] w-5 rounded-full"
+                  animate={{ backgroundColor: hamburgerColor }}
+                  transition={{ duration: 0.5, ease: 'easeInOut' }}
                 />
-              </button>
-            </div>
+              </div>
+            </motion.button>
 
             {/* Inverse rounded corner - left side */}
             <div className="absolute -left-[8px] top-[8px] w-[8px] h-[8px] overflow-hidden">
-              <div className="absolute top-0 right-0 w-[16px] h-[16px] rounded-tr-[8px] shadow-[4px_-4px_0_0_white]" />
+              <motion.div
+                className="absolute top-0 right-0 w-[16px] h-[16px] rounded-tr-[8px]"
+                animate={{ boxShadow: `4px -4px 0 0 ${barColor}` }}
+                transition={{ duration: 0.5, ease: 'easeInOut' }}
+              />
             </div>
 
             {/* Inverse rounded corner - right side */}
             <div className="absolute -right-[8px] top-[8px] w-[8px] h-[8px] overflow-hidden">
-              <div className="absolute top-0 left-0 w-[16px] h-[16px] rounded-tl-[8px] shadow-[-4px_-4px_0_0_white]" />
+              <motion.div
+                className="absolute top-0 left-0 w-[16px] h-[16px] rounded-tl-[8px]"
+                animate={{ boxShadow: `-4px -4px 0 0 ${barColor}` }}
+                transition={{ duration: 0.5, ease: 'easeInOut' }}
+              />
             </div>
           </div>
 
@@ -95,17 +118,30 @@ export function Header({ lang, dictionary }: HeaderProps) {
               isRTL ? 'right-4 md:right-6' : 'left-4 md:left-6'
             )}
           >
-            <Image
-              src="/logo.png"
-              alt={isRTL ? 'المرسال' : 'Almersal'}
-              width={160}
-              height={56}
-              className="h-10 md:h-14 w-auto"
-              priority
-            />
-            <span className="hidden md:block text-3xl font-extrabold tracking-wider text-white">
+            <motion.div
+              animate={{
+                filter: isPastHeroSection
+                  ? 'brightness(0) saturate(100%) invert(44%) sepia(99%) saturate(1441%) hue-rotate(7deg) brightness(101%) contrast(103%)'
+                  : 'none'
+              }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
+            >
+              <Image
+                src="/logo.png"
+                alt={isRTL ? 'المرسال' : 'Almersal'}
+                width={160}
+                height={56}
+                className="h-10 md:h-14 w-auto"
+                priority
+              />
+            </motion.div>
+            <motion.span
+              className="hidden md:block text-3xl font-extrabold tracking-wider"
+              animate={{ color: isPastHeroSection ? '#000000' : '#ffffff' }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
+            >
               {isRTL ? 'المرسال' : 'Almersal'}
-            </span>
+            </motion.span>
           </Link>
 
           {/* CTA Buttons on the opposite side - hidden on mobile */}
@@ -202,8 +238,10 @@ export function Header({ lang, dictionary }: HeaderProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: '-100%' }}
             transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-            className="fixed top-0 left-0 right-0 h-screen md:h-[80vh] z-[60] rounded-b-[2rem] md:rounded-b-[3rem] bg-[#ED6C00] flex flex-col overflow-y-auto"
+            className="fixed top-0 left-0 right-0 h-screen md:h-[80vh] z-[60] rounded-b-[2rem] md:rounded-b-[3rem] bg-[#ED6C00] flex flex-col overflow-visible"
           >
+            {/* Scrollable content wrapper */}
+            <div className="flex-1 overflow-y-auto overflow-x-hidden pb-8">
             {/* Top Section: Logo centered with sitename below */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -490,8 +528,10 @@ export function Header({ lang, dictionary }: HeaderProps) {
                 </div>
               </motion.div>
             </div>
+            </div>
+            {/* End scrollable content wrapper */}
 
-            {/* Close Button - White Circle at Bottom Center */}
+            {/* Close Button - White Circle at Bottom Center, overflows beyond menu */}
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
