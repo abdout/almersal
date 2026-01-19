@@ -42,8 +42,8 @@ const placeholderSlides: Slide[] = [
 
 // Spring configuration for smooth track movement
 const springConfig = {
-  stiffness: 300,
-  damping: 40,
+  stiffness: 150,
+  damping: 25,
 };
 
 // Individual slide component with smooth scaling
@@ -68,7 +68,7 @@ function SlideItem({
   const screenCenter = windowWidth / 2;
 
   const baseHeight = 200;
-  const transitionZone = (smallSlideWidth + SLIDE_GAP) * 0.8;
+  const transitionZone = (smallSlideWidth + SLIDE_GAP) * 1.2;
 
   // Calculate width - only scale when entering/leaving center
   const width = useTransform(trackX, (x) => {

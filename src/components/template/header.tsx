@@ -42,6 +42,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
     { href: `/${lang}/about`, label: dictionary.nav.about },
     { href: `/${lang}/services`, label: dictionary.nav.services },
     { href: `/${lang}/portfolio`, label: dictionary.nav.portfolio },
+    { href: `/${lang}/blog`, label: isRTL ? 'المدونة' : 'Blog' },
     { href: `/${lang}/contact`, label: dictionary.nav.contact },
   ];
 
