@@ -272,10 +272,10 @@ export function Header({ lang, dictionary }: HeaderProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="col-span-2 flex flex-col"
+                className="col-span-2 flex flex-col gap-10"
               >
                 {/* CTA Buttons Row */}
-                <div className={cn('flex gap-3 mb-6', isRTL && 'flex-row-reverse')}>
+                <div className={cn('flex gap-3', isRTL && 'flex-row-reverse')}>
                   {/* Book Now - Yellow */}
                   <Link
                     href={`/${lang}/contact`}
@@ -340,7 +340,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
                 </div>
 
                 {/* Categories and Contact side by side */}
-                <div className={cn('grid grid-cols-2 gap-8 flex-1', isRTL && 'direction-rtl')}>
+                <div className={cn('grid grid-cols-2 gap-6', isRTL && 'direction-rtl')}>
                   {/* Categories */}
                   <div className="flex flex-col">
                     {/* Categories - Table grid with shared borders */}
@@ -418,69 +418,59 @@ export function Header({ lang, dictionary }: HeaderProps) {
                     </div>
                   </div>
                 </div>
+
+                {/* Social Icons + Footer Links - Below Categories and Contact */}
+                <div className="flex items-center justify-between">
+                  {/* Social Icons - Left */}
+                  <div className="flex items-center gap-3">
+                    {[
+                      { icon: InstagramIcon, href: 'https://instagram.com/almersal', size: 18 },
+                      { icon: XIcon, href: 'https://x.com/almersal', size: 16 },
+                      { icon: FacebookIcon, href: 'https://facebook.com/almersal', size: 11 },
+                      { icon: LineIcon, href: 'https://line.me/almersal', size: 19 },
+                      { icon: TikTokIcon, href: 'https://tiktok.com/@almersal', size: 16, label: 'TikTok' },
+                    ].map(({ icon: Icon, href, size, label }) => (
+                      <a
+                        key={href}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-9 h-9 flex items-center justify-center rounded-full bg-white text-[#ED6C00] hover:bg-white/90 transition-all"
+                        aria-label={label}
+                      >
+                        <Icon size={size} />
+                      </a>
+                    ))}
+                  </div>
+
+                  {/* Footer Links - Right */}
+                  <div className="flex items-center gap-4 text-white/50 text-xs">
+                    <Link
+                      href={`/${lang}/privacy`}
+                      onClick={() => setIsOpen(false)}
+                      className="hover:text-white transition-colors"
+                    >
+                      {isRTL ? 'سياسة الخصوصية' : 'Privacy Policy'}
+                    </Link>
+                    <Link
+                      href={`/${lang}/terms`}
+                      onClick={() => setIsOpen(false)}
+                      className="hover:text-white transition-colors"
+                    >
+                      {isRTL ? 'الشروط والأحكام' : 'Terms'}
+                    </Link>
+                    {/* Language Switch */}
+                    <Link
+                      href={isRTL ? '/en' : '/ar'}
+                      onClick={() => setIsOpen(false)}
+                      className="hover:text-white transition-colors font-medium"
+                    >
+                      {isRTL ? 'English' : 'العربية'}
+                    </Link>
+                  </div>
+                </div>
               </motion.div>
             </div>
-
-            {/* Bottom Section: Social Icons + Footer Links */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35 }}
-              className="relative px-12 mb-10"
-            >
-              {/* Social Icons - Centered */}
-              <div className="flex justify-center items-center gap-4">
-                {[
-                  { icon: InstagramIcon, href: 'https://instagram.com/almersal', size: 18 },
-                  { icon: XIcon, href: 'https://x.com/almersal', size: 16 },
-                  { icon: FacebookIcon, href: 'https://facebook.com/almersal', size: 11 },
-                  { icon: LineIcon, href: 'https://line.me/almersal', size: 19 },
-                  { icon: TikTokIcon, href: 'https://tiktok.com/@almersal', size: 16, label: 'TikTok' },
-                ].map(({ icon: Icon, href, size, label }) => (
-                  <a
-                    key={href}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white hover:text-[#ED6C00] transition-all"
-                    aria-label={label}
-                  >
-                    <Icon size={size} />
-                  </a>
-                ))}
-                {/* TikTok text label like in reference */}
-                <span className="text-white/60 text-xs ml-1">TikTok</span>
-              </div>
-
-              {/* Footer Links - Right aligned */}
-              <div className={cn(
-                'absolute bottom-0 flex items-center gap-4 text-white/50 text-xs',
-                isRTL ? 'left-12' : 'right-12'
-              )}>
-                <Link
-                  href={`/${lang}/privacy`}
-                  onClick={() => setIsOpen(false)}
-                  className="hover:text-white transition-colors"
-                >
-                  {isRTL ? 'سياسة الخصوصية' : 'Privacy Policy'}
-                </Link>
-                <Link
-                  href={`/${lang}/terms`}
-                  onClick={() => setIsOpen(false)}
-                  className="hover:text-white transition-colors"
-                >
-                  {isRTL ? 'الشروط والأحكام' : 'Terms'}
-                </Link>
-                {/* Language Switch */}
-                <Link
-                  href={isRTL ? '/en' : '/ar'}
-                  onClick={() => setIsOpen(false)}
-                  className="hover:text-white transition-colors font-medium"
-                >
-                  {isRTL ? 'English' : 'العربية'}
-                </Link>
-              </div>
-            </motion.div>
 
             {/* Scroll Down indicator */}
             <motion.div

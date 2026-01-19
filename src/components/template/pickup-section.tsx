@@ -7,6 +7,8 @@ import { cn } from '@/lib/utils';
 interface Slide {
   id: string;
   overlayColor: string;
+  title: string;
+  date: string;
 }
 
 interface PickupSectionProps {
@@ -32,23 +34,24 @@ const HEIGHT_SCALE_MAX = 2.4;
 
 // Default placeholder slides with overlay colors (6 slides)
 const placeholderSlides: Slide[] = [
-  { id: '1', overlayColor: '#ED6C00' },  // Orange
-  { id: '2', overlayColor: '#2639A6' },  // Blue
-  { id: '3', overlayColor: '#CC2525' },  // Red
-  { id: '4', overlayColor: '#139A39' },  // Green
-  { id: '5', overlayColor: '#FFD900' },  // Yellow
-  { id: '6', overlayColor: '#139A39' },  // Green (repeat)
+  { id: '1', overlayColor: '#ED6C00', title: 'Message to Parents', date: '2025.01.14' },
+  { id: '2', overlayColor: '#2639A6', title: 'Photography Workshop', date: '2025.01.20' },
+  { id: '3', overlayColor: '#CC2525', title: 'Competition Results', date: '2025.01.10' },
+  { id: '4', overlayColor: '#139A39', title: 'Editing Course', date: '2025.02.05' },
+  { id: '5', overlayColor: '#FFD900', title: 'Work Exhibition', date: '2025.02.15' },
+  { id: '6', overlayColor: '#139A39', title: 'New Services', date: '2025.02.20' },
 ];
 
 // Spring configuration for smooth track movement
 const springConfig = {
-  stiffness: 150,
-  damping: 25,
+  stiffness: 120,
+  damping: 20,
 };
 
 // Individual slide component with smooth scaling
 interface SlideItemProps {
   arrayIndex: number;
+  slide: Slide;
   trackX: MotionValue<number>;
   windowWidth: number;
   onClickLeft: () => void;
@@ -57,6 +60,7 @@ interface SlideItemProps {
 
 function SlideItem({
   arrayIndex,
+  slide,
   trackX,
   windowWidth,
   onClickLeft,
@@ -68,7 +72,7 @@ function SlideItem({
   const screenCenter = windowWidth / 2;
 
   const baseHeight = 200;
-  const transitionZone = (smallSlideWidth + SLIDE_GAP) * 1.2;
+  const transitionZone = (smallSlideWidth + SLIDE_GAP) * 1.0;
 
   // Calculate width - only scale when entering/leaving center
   const width = useTransform(trackX, (x) => {
@@ -97,6 +101,17 @@ function SlideItem({
     return baseHeight * SCALE_MIN + (baseHeight * (HEIGHT_SCALE_MAX - SCALE_MIN) * t);
   });
 
+  // Calculate text opacity - only show when close to center
+  const textOpacity = useTransform(trackX, (x) => {
+    const widthGrowth = (centerSlideWidth - smallSlideWidth) / 2;
+    const slideCenterX = slidePosition + smallSlideWidth / 2 + widthGrowth + x;
+    const distanceFromCenter = Math.abs(slideCenterX - screenCenter);
+    const fadeZone = transitionZone * 0.6;
+
+    if (distanceFromCenter > fadeZone) return 0;
+    return 1 - (distanceFromCenter / fadeZone);
+  });
+
   // Determine click direction
   const handleClick = useCallback(() => {
     const currentX = trackX.get();
@@ -109,17 +124,35 @@ function SlideItem({
   }, [trackX, slidePosition, screenCenter, onClickLeft, onClickRight]);
 
   return (
-    <motion.div
-      className="relative flex-shrink-0 rounded-lg overflow-hidden cursor-pointer"
-      style={{
-        width,
-        height,
-      }}
-      onClick={handleClick}
-    >
-      {/* White placeholder div */}
-      <div className="w-full h-full bg-white" />
-    </motion.div>
+    <div className="relative flex-shrink-0 flex flex-col items-center">
+      {/* Date - above slide, aligned right */}
+      <motion.div
+        className="text-right mb-3"
+        style={{ opacity: textOpacity, width }}
+      >
+        <span className="text-white/90 text-xl font-semibold">{slide.date}</span>
+      </motion.div>
+
+      {/* Slide */}
+      <motion.div
+        className="relative rounded-lg overflow-hidden cursor-pointer"
+        style={{
+          width,
+          height,
+        }}
+        onClick={handleClick}
+      >
+        <div className="w-full h-full bg-white" />
+      </motion.div>
+
+      {/* Title - below slide, aligned left */}
+      <motion.div
+        className="text-left mt-3"
+        style={{ opacity: textOpacity, width }}
+      >
+        <span className="text-white text-xl font-bold">{slide.title}</span>
+      </motion.div>
+    </div>
   );
 }
 
@@ -283,6 +316,20 @@ export function PickupSection({
 
   return (
     <div ref={containerRef} className={cn('relative w-full h-[150vh] overflow-hidden', className)}>
+      {/* Section Title - Top left corner of center div */}
+      <div
+        className="absolute z-20 left-1/2"
+        style={{
+          transform: `translateX(-${(SLIDE_WIDTH * SCALE_MAX) / 2 + 200}px)`,
+          top: 'calc(50% - 380px)'
+        }}
+      >
+        <h2 className="text-white text-8xl font-black tracking-wider">
+          <span className="block">PICK</span>
+          <span className="block">UP</span>
+        </h2>
+      </div>
+
       {/* Slider Track */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <motion.div
@@ -297,10 +344,11 @@ export function PickupSection({
           dragElastic={0.1}
           onDragEnd={handleDragEnd}
         >
-          {extendedSlides.map((_, arrayIndex) => (
+          {extendedSlides.map((slide, arrayIndex) => (
             <SlideItem
               key={`slide-${arrayIndex}`}
               arrayIndex={arrayIndex}
+              slide={slide}
               trackX={smoothTrackX}
               windowWidth={windowWidth}
               onClickLeft={() => paginate(-1)}
@@ -310,9 +358,34 @@ export function PickupSection({
         </motion.div>
       </div>
 
-      {/* Bottom Navigation with Timer Progress */}
-      <div className="absolute left-0 right-0 z-30" style={{ bottom: '16%' }}>
-        <div className="flex flex-col items-center gap-4">
+      {/* Navigation - Arrows left, Indicators right */}
+      <div className="absolute left-1/2 -translate-x-1/2 z-30" style={{ bottom: '18%', width: `${SLIDE_WIDTH * SCALE_MAX}px` }}>
+        <div className="flex items-center justify-between">
+          {/* Left/Right Arrows */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => paginate(-1)}
+              className="h-10 px-4 flex items-center justify-center bg-white text-orange-500 hover:text-orange-600 transition-colors rounded-l-lg"
+              aria-label="Previous slide"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5" />
+                <path d="M12 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              onClick={() => paginate(1)}
+              className="h-10 px-4 flex items-center justify-center bg-white text-orange-500 hover:text-orange-600 transition-colors rounded-r-lg"
+              aria-label="Next slide"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14" />
+                <path d="M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Indicators */}
           <div className="flex items-center gap-2">
             {slides.map((_, index) => {
               const isActive = index === displayIndex;
@@ -321,64 +394,13 @@ export function PickupSection({
                   key={index}
                   onClick={() => goToSlide(index)}
                   className={cn(
-                    'relative transition-all duration-300',
-                    isActive ? 'w-6 h-6' : 'w-2 h-2'
+                    'relative transition-all duration-300 rounded-full bg-white',
+                    isActive ? 'w-5 h-5' : 'w-2 h-2 hover:bg-white/80'
                   )}
                   aria-label={`Go to slide ${index + 1}`}
                 >
-                  {!isActive && (
-                    <div className="absolute inset-0 rounded-full bg-white/40 hover:bg-white/60 transition-colors" />
-                  )}
-
                   {isActive && (
-                    <>
-                      <svg
-                        className="absolute inset-0 w-full h-full -rotate-90"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          fill="none"
-                          stroke="rgba(255,255,255,0.3)"
-                          strokeWidth="1.5"
-                        />
-                        {phase === 'ready' && (
-                          <circle
-                            key={`timer-circle-${displayIndex}`}
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            fill="none"
-                            stroke="white"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeDasharray={2 * Math.PI * 10}
-                            strokeDashoffset={2 * Math.PI * 10}
-                            className="timer-circle-progress"
-                            style={{
-                              '--timer-duration': `${autoPlayInterval}ms`,
-                            } as React.CSSProperties}
-                          />
-                        )}
-                        {phase === 'sliding' && (
-                          <circle
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            fill="none"
-                            stroke="white"
-                            strokeWidth="1.5"
-                            strokeDasharray={2 * Math.PI * 10}
-                            strokeDashoffset="0"
-                          />
-                        )}
-                      </svg>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-1.5 h-1.5 bg-white rounded-[1px]" />
-                      </div>
-                    </>
+                    <div className="absolute inset-1 rounded-full bg-orange-500" />
                   )}
                 </button>
               );

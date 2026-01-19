@@ -149,7 +149,7 @@ function SlideItem({
 
   return (
     <motion.div
-      className="relative flex-shrink-0 rounded-[28px] overflow-hidden cursor-pointer"
+      className="relative flex-shrink-0 rounded-[28px] overflow-hidden"
       style={{
         width,
         height,
@@ -186,6 +186,11 @@ export function FramerHeroSlider({
   const [hasAnimated, setHasAnimated] = useState(false);
   const [displayIndex, setDisplayIndex] = useState(0);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1920);
+
+  // Custom cursor state
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [cursorVisible, setCursorVisible] = useState(false);
+  const [cursorDirection, setCursorDirection] = useState<'left' | 'right'>('right');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
@@ -336,10 +341,66 @@ export function FramerHeroSlider({
     }
   };
 
+  // Custom cursor handlers
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    setCursorPos({ x: e.clientX, y: e.clientY });
+    setCursorDirection(e.clientX < windowWidth / 2 ? 'left' : 'right');
+  }, [windowWidth]);
+
+  const handleMouseEnter = useCallback(() => {
+    setCursorVisible(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setCursorVisible(false);
+  }, []);
+
+  const handleCursorClick = useCallback(() => {
+    if (phase !== 'ready' || isAnimatingRef.current) return;
+    paginate(cursorDirection === 'left' ? -1 : 1);
+  }, [phase, paginate, cursorDirection]);
+
   const currentSlide = slides[displayIndex];
 
   return (
-    <div ref={containerRef} className={cn('relative w-full h-screen overflow-hidden', className)}>
+    <div
+      ref={containerRef}
+      className={cn('relative w-full h-screen overflow-hidden cursor-none', className)}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleCursorClick}
+    >
+      {/* Custom Cursor */}
+      {cursorVisible && (
+        <div
+          className="fixed pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-150"
+          style={{
+            left: cursorPos.x,
+            top: cursorPos.y,
+          }}
+        >
+          <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              style={{ color: currentSlide?.overlayColor || '#ED6C00' }}
+              className={cursorDirection === 'left' ? 'rotate-180' : ''}
+            >
+              <path
+                d="M5 12h14m0 0l-4-4m4 4l-4 4"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+      )}
+
       {/* Slider Track */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <motion.div
@@ -404,7 +465,7 @@ export function FramerHeroSlider({
         className="absolute right-0 top-0 bottom-0 w-[20%] z-20 flex flex-col items-end justify-between pt-[10vh] pb-8 pr-8 md:pr-12 lg:pr-16 pl-4 pointer-events-none"
         style={{ fontFamily }}
       >
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto cursor-auto">
           <EventBadge heroColor={currentSlide?.overlayColor} />
         </div>
         <div>
@@ -427,7 +488,7 @@ export function FramerHeroSlider({
       </div>
 
       {/* Bottom Navigation with Timer Progress */}
-      <div className="absolute left-0 right-0 z-30" style={{ bottom: '16%' }}>
+      <div className="absolute left-0 right-0 z-30 pointer-events-auto cursor-auto" style={{ bottom: '16%' }}>
         <div className="flex flex-col items-center gap-4">
           <div className="flex items-center gap-2">
             {slides.map((_, index) => {
@@ -435,7 +496,10 @@ export function FramerHeroSlider({
               return (
                 <button
                   key={index}
-                  onClick={() => goToSlide(index)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToSlide(index);
+                  }}
                   className={cn(
                     'relative transition-all duration-300',
                     isActive ? 'w-6 h-6' : 'w-2 h-2'
