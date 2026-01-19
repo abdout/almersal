@@ -253,32 +253,32 @@ export function Footer({ lang }: FooterProps) {
 
       {/* Contact Cards Section */}
       <div className="max-w-7xl mx-auto px-6 pb-12">
-        <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-stretch gap-4">
           {/* Contact Card */}
-          <div className="flex-1 bg-white/95 rounded-2xl p-8 text-gray-800">
-            <p className="text-[13px] text-center mb-4">
+          <div className="flex-1 bg-[#D35400] rounded-2xl p-6 text-white flex flex-col items-center justify-center text-center">
+            <p className="text-[13px] mb-4">
               {isRTL
-                ? 'للاستفسارات، يرجى الاتصال بنا عبر الهاتف أو النموذج'
-                : 'For inquiries, please contact us by phone or form'}
+                ? 'للاستفسارات والحجوزات، يرجى الاتصال بنا عبر الهاتف أو النموذج'
+                : 'For inquiries and bookings, contact us by phone or through the web form'}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <div className="flex items-baseline gap-1">
-                <span className="text-sm text-gray-600">Tel.</span>
+                <span className="text-sm text-white/80">Tel.</span>
                 <a
-                  href="tel:+966500000000"
-                  className="text-[#E67E22] text-3xl sm:text-4xl font-bold tracking-tight hover:opacity-80 transition-opacity"
+                  href="tel:+966501234567"
+                  className="text-white text-3xl sm:text-4xl font-bold tracking-tight hover:opacity-80 transition-opacity"
                 >
-                  028-610-7070
+                  050-123-4567
                 </a>
               </div>
-              <span className="text-[13px] text-gray-500">
-                {isRTL ? '【ساعات العمل】9:30〜17:00' : '【Hours】9:30〜17:00'}
+              <span className="text-[13px] text-white/80">
+                {isRTL ? '【ساعات العمل】الأحد - الخميس 9:00〜17:00' : '【Hours】Sun - Thu 9:00〜17:00'}
               </span>
               <Link
                 href={`/${lang}/contact`}
-                className="bg-[#E67E22] border border-[#D35400] text-white px-6 py-2.5 rounded text-[13px] font-medium hover:bg-[#D35400] transition-colors"
+                className="bg-white text-[#D35400] px-6 py-2.5 rounded text-[13px] font-medium hover:bg-white/90 transition-colors"
               >
-                {isRTL ? 'تواصل عبر الويب' : 'Web Contact'}
+                {isRTL ? 'تواصل عبر الويب' : 'Contact via Web'}
               </Link>
             </div>
           </div>

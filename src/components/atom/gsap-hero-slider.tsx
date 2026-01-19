@@ -403,7 +403,7 @@ export function GSAPHeroSlider({
       <div className="absolute right-0 top-0 bottom-0 w-[20%] z-20 flex flex-col items-end justify-between pt-[10vh] pb-16 pr-8 md:pr-12 lg:pr-16 pl-4 pointer-events-none" style={{ fontFamily }}>
         {/* Top-right: Badge (static) */}
         <div className="pointer-events-auto">
-          <EventBadge />
+          <EventBadge heroColor={currentSlide?.overlayColor} />
         </div>
         {/* Bottom-right: Main text (static) */}
         <div className="text-end">

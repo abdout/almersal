@@ -250,7 +250,7 @@ export function VideoSlider({
           transition={{ delay: 0.5, type: 'spring' }}
           className="mt-16"
         >
-          <EventBadge />
+          <EventBadge heroColor={currentSlide?.overlayColor} />
         </motion.div>
 
         {/* Right Bottom Text */}

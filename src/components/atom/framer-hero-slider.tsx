@@ -128,12 +128,12 @@ function SlideItem({
     const distanceFromCenter = Math.abs(slideCenterX - screenCenter);
 
     // Fully visible overlay outside transition zone
-    if (distanceFromCenter > transitionZone) return 0.85;
+    if (distanceFromCenter > transitionZone) return 0.95;
     // No overlay at center
     if (distanceFromCenter < transitionZone * 0.3) return 0;
     // Transition zone
     const t = (distanceFromCenter - transitionZone * 0.3) / (transitionZone * 0.7);
-    return t * 0.85;
+    return t * 0.95;
   });
 
   // Determine click direction
@@ -405,7 +405,7 @@ export function FramerHeroSlider({
         style={{ fontFamily }}
       >
         <div className="pointer-events-auto">
-          <EventBadge />
+          <EventBadge heroColor={currentSlide?.overlayColor} />
         </div>
         <div>
           {(() => {

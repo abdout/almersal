@@ -22,6 +22,7 @@ import {
   YouTubeIcon,
   TikTokIcon,
   LocationPinIcon,
+  LocationPinFilledIcon,
   LineIcon,
 } from '@/components/atom/icons';
 import type { Locale, Dictionary } from '@/lib/i18n';
@@ -207,7 +208,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="pt-6 flex flex-col items-center"
+              className="pt-6 pb-4 flex flex-col items-center"
             >
               <Link href={`/${lang}`} onClick={() => setIsOpen(false)} className="flex flex-col items-center">
                 <Image
@@ -278,32 +279,62 @@ export function Header({ lang, dictionary }: HeaderProps) {
                   <Link
                     href={`/${lang}/contact`}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center gap-3 h-24 px-10 rounded-md font-bold text-[16px] transition-transform hover:scale-105 flex-1"
+                    className="group relative flex items-center justify-center h-24 px-10 rounded-md font-bold text-[16px] overflow-hidden flex-1"
                     style={{ backgroundColor: '#FFD900', color: '#000' }}
                   >
-                    <CalendarIcon size={22} />
-                    <span>{isRTL ? 'احجز الآن' : 'Book Now'}</span>
+                    {/* Default state: Icon + Text */}
+                    <span className="flex items-center gap-3 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-0 group-hover:translate-x-4">
+                      <CalendarIcon size={22} />
+                      <span>{isRTL ? 'احجز الآن' : 'Book Now'}</span>
+                    </span>
+                    {/* Hover state: Circle + Text */}
+                    <span className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 -translate-x-4 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-100 group-hover:translate-x-0">
+                      <span className="flex items-center justify-center w-7 h-7 bg-black rounded-full">
+                        <ExternalLinkIcon size={12} className="text-[#FFD900]" />
+                      </span>
+                      <span>{isRTL ? 'احجز الآن' : 'Book Now'}</span>
+                    </span>
                   </Link>
 
                   {/* Request - Blue */}
                   <Link
                     href={`/${lang}/portfolio`}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center gap-3 h-24 px-10 rounded-md font-bold text-[16px] text-white transition-transform hover:scale-105 flex-1"
+                    className="group relative flex items-center justify-center h-24 px-10 rounded-md font-bold text-[16px] text-white overflow-hidden flex-1"
                     style={{ backgroundColor: '#2639A6' }}
                   >
-                    <DocumentIcon size={20} className="text-white" />
-                    <span>{isRTL ? 'طلب الملف' : 'Request'}</span>
+                    {/* Default state: Icon + Text */}
+                    <span className="flex items-center gap-3 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-0 group-hover:translate-x-4">
+                      <DocumentIcon size={20} className="text-white" />
+                      <span>{isRTL ? 'طلب الملف' : 'Request'}</span>
+                    </span>
+                    {/* Hover state: Circle + Text */}
+                    <span className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 -translate-x-4 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-100 group-hover:translate-x-0">
+                      <span className="flex items-center justify-center w-7 h-7 bg-white rounded-full">
+                        <ButtonArrowIcon size={12} className="text-[#2639A6]" />
+                      </span>
+                      <span>{isRTL ? 'طلب الملف' : 'Request'}</span>
+                    </span>
                   </Link>
 
                   {/* Access/Location - White */}
                   <Link
                     href={`/${lang}/contact#location`}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center gap-3 h-24 px-10 rounded-md font-bold text-[16px] text-[#ED6C00] bg-white transition-all hover:bg-white/90 flex-1"
+                    className="group relative flex items-center justify-center h-24 px-10 rounded-md font-bold text-[16px] text-[#ED6C00] bg-white overflow-hidden flex-1"
                   >
-                    <LocationPinIcon size={22} className="text-[#ED6C00]" />
-                    <span>{isRTL ? 'الموقع' : 'Access'}</span>
+                    {/* Default state: Icon + Text */}
+                    <span className="flex items-center gap-3 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-0 group-hover:translate-x-4">
+                      <LocationPinFilledIcon size={22} className="text-[#ED6C00]" />
+                      <span>{isRTL ? 'الموقع' : 'Access'}</span>
+                    </span>
+                    {/* Hover state: Circle + Text */}
+                    <span className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 -translate-x-4 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-100 group-hover:translate-x-0">
+                      <span className="flex items-center justify-center w-7 h-7 bg-[#ED6C00] rounded-full">
+                        <ButtonArrowIcon size={12} className="text-white" />
+                      </span>
+                      <span>{isRTL ? 'الموقع' : 'Access'}</span>
+                    </span>
                   </Link>
                 </div>
 
@@ -314,6 +345,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
                     {/* Categories - Table grid with shared borders */}
                     {(() => {
                       const cellClass = "text-white hover:bg-white/10 text-sm font-medium py-4 px-4 transition-colors text-center";
+                      const innerCellClass = "text-white hover:bg-white/10 text-sm font-medium py-6 px-4 transition-colors text-center";
                       const categories = {
                         top: { href: `/${lang}/services`, ar: 'جميع الخدمات', en: 'All Services' },
                         grid: [
@@ -336,7 +368,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
                           {categories.grid.map((row, i) => (
                             <div key={i} className="flex border-b border-white/30">
                               {row.map((cell, j) => (
-                                <Link key={cell.href} href={cell.href} onClick={() => setIsOpen(false)} className={`flex-1 ${cellClass} ${j === 0 ? 'border-r border-white/30' : ''}`}>
+                                <Link key={cell.href} href={cell.href} onClick={() => setIsOpen(false)} className={`flex-1 ${innerCellClass} ${j === 0 ? 'border-r border-white/30' : ''}`}>
                                   {isRTL ? cell.ar : cell.en}
                                 </Link>
                               ))}
@@ -352,35 +384,33 @@ export function Header({ lang, dictionary }: HeaderProps) {
 
                   {/* Contact Box */}
                   <div className="flex flex-col">
-                    <div className={cn(
-                      'bg-white rounded-2xl p-5 shadow-lg',
-                      isRTL && 'text-right'
-                    )}>
+                    <div className="bg-white rounded-lg p-6 py-[1.875rem] flex flex-col items-center justify-center text-center">
                       {/* Header Text */}
-                      <p className="text-gray-600 text-xs mb-3 leading-relaxed">
+                      <p className="text-gray-600 text-xs mb-3 leading-relaxed max-w-[180px]">
                         {isRTL
                           ? 'للاستفسارات والحجوزات، تواصلوا معنا عبر الهاتف أو النموذج الإلكتروني'
                           : 'For inquiries and bookings, contact us by phone or through the web form'}
                       </p>
 
                       {/* Large Phone Number */}
-                      <div className={cn('mb-2', isRTL && 'text-right')}>
-                        <span className="text-[#2639A6] text-2xl font-bold tracking-wide" dir="ltr">
-                          Tel. 050-123-4567
+                      <div className="mb-2" dir="ltr">
+                        <span className="text-[#ED6C00] text-base font-medium">Tel. </span>
+                        <span className="text-[#ED6C00] text-3xl font-bold tracking-wide">
+                          050-123-4567
                         </span>
                       </div>
 
                       {/* Hours */}
-                      <div className={cn('flex items-center gap-2 mb-4 text-gray-500 text-xs', isRTL && 'flex-row-reverse')}>
+                      <div className="flex items-center gap-2 mb-4 text-gray-500 text-xs">
                         <span className="font-medium">{isRTL ? 'ساعات العمل' : 'Hours'}</span>
                         <span>{isRTL ? 'الأحد - الخميس 9:00 - 17:00' : 'Sun - Thu 9:00 - 17:00'}</span>
                       </div>
 
-                      {/* Contact Button - Yellow */}
+                      {/* Contact Button - Orange */}
                       <Link
                         href={`/${lang}/contact`}
                         onClick={() => setIsOpen(false)}
-                        className="block w-full py-2.5 bg-[#FFD900] text-black font-bold text-sm text-center rounded-full hover:bg-[#FFD900]/90 transition-colors"
+                        className="inline-block px-8 py-2.5 bg-[#ED6C00] text-white font-bold text-sm text-center rounded-full hover:bg-[#ED6C00]/90 transition-colors"
                       >
                         {isRTL ? 'تواصل عبر الموقع' : 'Contact via Web'}
                       </Link>
