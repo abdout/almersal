@@ -2,8 +2,13 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'المرسال للإنتاج الإعلامي | Almersal Media',
-  description: 'شركة المرسال للإنتاج الإعلامي - نصنع المحتوى الذي يلهم',
+  title: 'Almersal Media Production',
+  description: 'Almersal Media Production - We create content that inspires',
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({
