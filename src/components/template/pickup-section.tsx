@@ -359,7 +359,7 @@ export function PickupSection({
       </div>
 
       {/* Navigation - Arrows left, Indicators right */}
-      <div className="absolute left-1/2 -translate-x-1/2 z-30" style={{ bottom: '18%', width: `${SLIDE_WIDTH * SCALE_MAX}px` }}>
+      <div className="absolute left-1/2 -translate-x-1/2 z-30" style={{ bottom: '20%', width: `${SLIDE_WIDTH * SCALE_MAX}px` }}>
         <div className="flex items-center justify-between">
           {/* Left/Right Arrows */}
           <div className="flex items-center gap-2">
