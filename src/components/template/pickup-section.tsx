@@ -330,6 +330,17 @@ export function PickupSection({
         </h2>
       </div>
 
+      {/* Background div behind slider */}
+      <div
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white pointer-events-none"
+        style={{
+          width: '1010px',
+          height: '940px',
+          opacity: 0.1,
+          zIndex: 0,
+        }}
+      />
+
       {/* Slider Track */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <motion.div

@@ -472,19 +472,6 @@ export function Header({ lang, dictionary }: HeaderProps) {
               </motion.div>
             </div>
 
-            {/* Scroll Down indicator */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="flex flex-col items-center text-white/40 text-xs mb-4"
-            >
-              <span>{isRTL ? 'تصفح للأسفل' : 'Scroll Down'}</span>
-              <svg className="w-4 h-4 mt-1 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
-            </motion.div>
-
             {/* Close Button - White Circle at Bottom Center */}
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
