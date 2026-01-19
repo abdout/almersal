@@ -1,64 +1,95 @@
 {
   "nav": {
     "home": "Home",
-    "about": "About",
-    "services": "Services",
-    "portfolio": "Portfolio",
-    "contact": "Contact"
+    "about": "Story",
+    "services": "Craft",
+    "portfolio": "Work",
+    "contact": "Connect"
+  },
+  "menu": {
+    "bookNow": "Book Now",
+    "request": "Request",
+    "languageSwitch": "العربية",
+    "categories": {
+      "title": "Services",
+      "video": "Film & Motion",
+      "photo": "Photography",
+      "design": "Design",
+      "social": "Social Media",
+      "branding": "Brand Identity",
+      "motion": "Motion Graphics"
+    },
+    "contact": {
+      "title": "Get in Touch",
+      "phone": "+966 50 123 4567",
+      "email": "info@almersal.sa",
+      "hours": "Sun - Thu: 9am - 6pm",
+      "button": "Send Message"
+    },
+    "close": "Close"
   },
   "hero": {
-    "title": "Almersal Media Production",
-    "subtitle": "We Create Content That Inspires",
-    "cta": "Explore Our Work"
+    "title": "Almersal",
+    "subtitle": "Your Story. Delivered.",
+    "cta": "See Our Work",
+    "visionStatement": "We craft innovative media content that reflects our clients' identity and reaches the hearts of audiences",
+    "leftPanel": "Fuel\nCreativity",
+    "rightPanel": "Shape\nIdentity",
+    "comingSoon": "Coming Soon",
+    "scrollDown": "Scroll Down"
+  },
+  "pickup": {
+    "title": "Featured Stories",
+    "subtitle": "Editor's Picks"
   },
   "about": {
-    "title": "About Us",
-    "description": "Almersal Media Production - We are a team of creative professionals specializing in visual and digital content production. We strive to deliver innovative media solutions that meet our clients' needs and exceed their expectations."
+    "title": "The Messenger",
+    "description": "Almersal means 'The Messenger' — and that's exactly what we do. We deliver your story to the world through stunning visuals, compelling narratives, and strategic content that resonates."
   },
   "services": {
-    "title": "Our Services",
-    "subtitle": "We offer a comprehensive range of media services",
+    "title": "What We Craft",
+    "subtitle": "From concept to screen, we bring visions to life",
     "video": {
-      "title": "Video Production",
-      "description": "Documentary films, commercials, and digital content of the highest quality"
+      "title": "Film & Motion",
+      "description": "Cinematic storytelling — documentaries, commercials, and content that captivates"
     },
     "photo": {
       "title": "Photography",
-      "description": "Professional photo sessions for products, events, and portraits"
+      "description": "Moments frozen in time — products, events, and portraits that speak"
     },
     "design": {
-      "title": "Graphic Design",
-      "description": "Visual identity design and innovative marketing materials"
+      "title": "Brand & Identity",
+      "description": "Visual systems that make brands unforgettable"
     },
     "social": {
-      "title": "Social Media Management",
-      "description": "Content creation and management for social media platforms"
+      "title": "Digital Presence",
+      "description": "Strategic content that builds communities and drives engagement"
     }
   },
   "stats": {
-    "projects": "Projects Completed",
-    "clients": "Happy Clients",
-    "awards": "Awards Won",
-    "years": "Years Experience"
+    "projects": "Stories Told",
+    "clients": "Brands Elevated",
+    "awards": "Awards Earned",
+    "years": "Years Crafting"
   },
   "portfolio": {
-    "title": "Our Work",
-    "subtitle": "Featured projects from our portfolio"
+    "title": "Selected Work",
+    "subtitle": "Stories we're proud to have told"
   },
   "testimonials": {
-    "title": "Testimonials",
-    "subtitle": "What our clients say about us"
+    "title": "Client Voices",
+    "subtitle": "The brands we've helped grow"
   },
   "cta": {
-    "title": "Have a Project?",
-    "subtitle": "Let us turn your idea into reality",
-    "button": "Contact Us"
+    "title": "Ready to Tell Your Story?",
+    "subtitle": "Let's create something remarkable together",
+    "button": "Start a Project"
   },
   "footer": {
-    "description": "Almersal Media Production - We Create Content That Inspires",
-    "quickLinks": "Quick Links",
-    "contact": "Contact Us",
-    "followUs": "Follow Us",
+    "description": "Almersal — The Messenger. Your story, beautifully delivered.",
+    "quickLinks": "Explore",
+    "contact": "Get in Touch",
+    "followUs": "Follow Along",
     "rights": "All Rights Reserved"
   }
 }

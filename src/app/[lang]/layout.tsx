@@ -1,5 +1,5 @@
 import { locales, getDirection, defaultLocale, localeConfig, type Locale } from '@/lib/i18n';
-import { geistSans, geistMono, notoArabic } from '@/lib/fonts';
+import { geistSans, geistMono, notoArabic, rubik } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
 
 export async function generateStaticParams() {
@@ -28,6 +28,7 @@ export default async function LangLayout({
         geistSans.variable,
         geistMono.variable,
         notoArabic.variable,
+        rubik.variable,
         'antialiased'
       )}>
         {children}

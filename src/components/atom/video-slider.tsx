@@ -250,12 +250,7 @@ export function VideoSlider({
           transition={{ delay: 0.5, type: 'spring' }}
           className="mt-16"
         >
-          <EventBadge
-            date="02.21"
-            day="SAT"
-            label={dictionary?.comingSoon || 'قريباً'}
-            moreText="MORE"
-          />
+          <EventBadge />
         </motion.div>
 
         {/* Right Bottom Text */}

@@ -23,8 +23,12 @@ interface GSAPHeroSliderProps {
   slides: Slide[];
   autoPlayInterval?: number;
   className?: string;
+  locale?: 'ar' | 'en';
   dictionary?: {
     description?: string;
+    visionStatement?: string;
+    leftPanel?: string;
+    rightPanel?: string;
     comingSoon?: string;
     scrollDown?: string;
   };
@@ -41,9 +45,12 @@ export function GSAPHeroSlider({
   slides,
   autoPlayInterval = 6000,
   className,
+  locale = 'ar',
   dictionary,
   onColorChange,
 }: GSAPHeroSliderProps) {
+  // Use Geist for English, Rubik for Arabic
+  const fontFamily = locale === 'en' ? 'var(--font-geist-sans)' : 'var(--font-rubik)';
   const [currentIndex, setCurrentIndex] = useState(0);
   const [phase, setPhase] = useState<AnimationPhase>('initial');
   const [imagesLoaded, setImagesLoaded] = useState(false);
@@ -191,11 +198,11 @@ export function GSAPHeroSlider({
     const newPos = getTrackPosition(newIndex);
     const newColor = slides[newIndex]?.overlayColor || '#ED6C00';
 
-    // Animate the track smoothly
+    // Animate the track smoothly - no bounce, smooth transition
     gsap.to(trackRef.current, {
       x: newPos,
-      duration: 0.8,
-      ease: 'power2.inOut',
+      duration: 0.7,
+      ease: 'power1.inOut',
       onUpdate: () => {
         trackPositionRef.current = gsap.getProperty(trackRef.current, 'x') as number;
       },
@@ -369,6 +376,7 @@ export function GSAPHeroSlider({
                     style={{ backgroundColor: `rgba(0,0,0,${0.1 * distanceFromCenter})` }}
                   />
                 )}
+
               </div>
             );
           })}
@@ -376,77 +384,150 @@ export function GSAPHeroSlider({
       </div>
 
       {/* Left Panel */}
-      <div className="absolute left-0 top-0 bottom-0 w-[20%] z-20 flex flex-col justify-center px-4 md:px-6 pointer-events-none">
-        <div className={cn(
-          'mb-8 transition-all duration-500',
-          phase === 'ready' || phase === 'sliding' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-        )}>
-          <p className="text-xs md:text-sm text-white/90 leading-relaxed drop-shadow-lg">
-            {dictionary?.description || currentSlide?.subtitle || 'شركة المرسال للإنتاج الإعلامي'}
+      <div className="absolute left-0 top-0 bottom-0 w-[28%] z-20 flex flex-col justify-between pt-[20vh] pb-16 px-8 md:px-12 lg:px-16 pointer-events-none" style={{ fontFamily }}>
+        {/* Top-left: Vision statement (simplified) */}
+        <div className="text-start max-w-[320px]">
+          <p className="text-lg md:text-xl lg:text-2xl font-bold text-white leading-snug drop-shadow-lg">
+            {dictionary?.visionStatement || 'نسعى لصناعة محتوى إعلامي مبتكر يعكس هوية عملائنا ويصل إلى قلوب الجمهور'}
           </p>
         </div>
-        <div className="mt-auto pb-8">
-          <div className={cn(
-            'text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-none drop-shadow-lg transition-all duration-500',
-            phase === 'ready' || phase === 'sliding' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          )}>
-            {currentSlide?.leftText?.main || 'الإبداع'}
-          </div>
-          <div
-            className={cn(
-              'text-lg sm:text-xl md:text-2xl font-black leading-none mt-2 drop-shadow-lg transition-all duration-500 delay-100',
-              phase === 'ready' || phase === 'sliding' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-            )}
-            style={{ color: 'transparent', WebkitTextStroke: '1.5px white' }}
-          >
-            {currentSlide?.leftText?.sub || 'نصنعه'}
+        {/* Bottom-left: Main text (static) */}
+        <div>
+          <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white leading-none drop-shadow-lg">
+            {dictionary?.leftPanel || 'الإبداع'}
           </div>
         </div>
       </div>
 
       {/* Right Panel */}
-      <div className="absolute right-0 top-0 bottom-0 w-[20%] z-20 flex flex-col items-center justify-center px-4 pointer-events-none">
-        <div className={cn(
-          'pointer-events-auto transition-all duration-500',
-          phase === 'ready' || phase === 'sliding' ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
-        )}>
-          <EventBadge date="02.21" day="SAT" label={dictionary?.comingSoon || 'قريباً'} moreText="MORE" />
+      <div className="absolute right-0 top-0 bottom-0 w-[20%] z-20 flex flex-col items-end justify-between pt-[10vh] pb-16 pr-8 md:pr-12 lg:pr-16 pl-4 pointer-events-none" style={{ fontFamily }}>
+        {/* Top-right: Badge (static) */}
+        <div className="pointer-events-auto">
+          <EventBadge />
         </div>
-        <div className="mt-auto pb-8 text-center">
-          <div className={cn(
-            'text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-none drop-shadow-lg transition-all duration-500',
-            phase === 'ready' || phase === 'sliding' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          )}>
-            {currentSlide?.rightText?.main || 'الهوية'}
-          </div>
-          <div
-            className={cn(
-              'text-lg sm:text-xl md:text-2xl font-black leading-none mt-2 drop-shadow-lg transition-all duration-500 delay-100',
-              phase === 'ready' || phase === 'sliding' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-            )}
-            style={{ color: 'transparent', WebkitTextStroke: '1.5px white' }}
-          >
-            {currentSlide?.rightText?.sub || 'نحققها'}
+        {/* Bottom-right: Main text (static) */}
+        <div className="text-end">
+          <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white leading-none drop-shadow-lg">
+            {dictionary?.rightPanel || 'الهوية'}
           </div>
         </div>
       </div>
 
-      {/* Bottom Navigation */}
-      <div className="absolute bottom-[6%] left-0 right-0 z-30">
-        <div className="flex flex-col items-center gap-3">
-          <span className="text-xs text-white/60 drop-shadow">{dictionary?.scrollDown || 'Scroll Down'}</span>
-          <div className="flex gap-2">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToSlide(index)}
-                className={cn(
-                  'w-2 h-2 rounded-full transition-all duration-300',
-                  index === displayIndex ? 'bg-white w-6' : 'bg-white/40 hover:bg-white/60'
-                )}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
+      {/* Bottom Navigation with Timer Progress - positioned higher */}
+      <div className="absolute left-0 right-0 z-30" style={{ bottom: '14%' }}>
+        <div className="flex flex-col items-center gap-4">
+          {/* Slide indicators with timer */}
+          <div className="flex items-center gap-2">
+            {slides.map((_, index) => {
+              const isActive = index === displayIndex;
+              return (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className={cn(
+                    'relative transition-all duration-300',
+                    isActive ? 'w-6 h-6' : 'w-2 h-2'
+                  )}
+                  aria-label={`Go to slide ${index + 1}`}
+                >
+                  {/* Inactive: simple dot */}
+                  {!isActive && (
+                    <div className="absolute inset-0 rounded-full bg-white/40 hover:bg-white/60 transition-colors" />
+                  )}
+
+                  {/* Active: circle with square center and timer progress */}
+                  {isActive && (
+                    <>
+                      {/* Circular progress track */}
+                      <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 24 24">
+                        {/* Background circle */}
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          fill="none"
+                          stroke="rgba(255,255,255,0.3)"
+                          strokeWidth="1.5"
+                        />
+                        {/* Progress circle */}
+                        {phase === 'ready' && (
+                          <circle
+                            key={`timer-circle-${displayIndex}`}
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            fill="none"
+                            stroke="white"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeDasharray={2 * Math.PI * 10}
+                            strokeDashoffset={2 * Math.PI * 10}
+                            className="timer-circle-progress"
+                            style={{
+                              '--timer-duration': `${autoPlayInterval}ms`,
+                            } as React.CSSProperties}
+                          />
+                        )}
+                        {/* Full circle when sliding */}
+                        {phase === 'sliding' && (
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            fill="none"
+                            stroke="white"
+                            strokeWidth="1.5"
+                            strokeDasharray={2 * Math.PI * 10}
+                            strokeDashoffset="0"
+                          />
+                        )}
+                      </svg>
+                      {/* Square in center */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-1.5 h-1.5 bg-white rounded-[1px]" />
+                      </div>
+                    </>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Scroll Down Caption - positioned below indicators */}
+      <div className={cn(
+        'absolute left-1/2 -translate-x-1/2 z-30 transition-all duration-500 flex flex-col items-center gap-1.5',
+        phase === 'ready' || phase === 'sliding' ? 'opacity-100' : 'opacity-0'
+      )} style={{ bottom: '2%' }}>
+        {/* Masked container for text scroll loop */}
+        <div className="h-[14px] overflow-hidden relative">
+          <div className="animate-scroll-loop absolute inset-x-0">
+            <div className="h-[14px] flex items-center justify-center">
+              <span className="text-[11px] text-white/90 font-medium tracking-[0.15em] uppercase drop-shadow-lg">
+                {dictionary?.scrollDown || 'Scroll Down'}
+              </span>
+            </div>
+            <div className="h-[14px] flex items-center justify-center">
+              <span className="text-[11px] text-white/90 font-medium tracking-[0.15em] uppercase drop-shadow-lg">
+                {dictionary?.scrollDown || 'Scroll Down'}
+              </span>
+            </div>
+          </div>
+        </div>
+        {/* Masked container for arrow scroll loop */}
+        <div className="h-[12px] overflow-hidden relative">
+          <div className="animate-scroll-loop absolute inset-x-0">
+            <div className="h-[12px] flex items-center justify-center">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-white/80">
+                <path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div className="h-[12px] flex items-center justify-center">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-white/80">
+                <path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
           </div>
         </div>
       </div>

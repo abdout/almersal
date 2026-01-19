@@ -12,7 +12,6 @@ import { PortfolioSection } from '@/components/template/portfolio-section';
 import { CTASection } from '@/components/template/cta-section';
 import { Footer } from '@/components/template/footer';
 import { BottomNav } from '@/components/template/bottom-nav';
-import { ParallaxCircles } from '@/components/atom/parallax-circle';
 import { ParallaxSection } from '@/components/template/parallax-section';
 import { PhotoGridSection } from '@/components/template/photo-grid-section';
 import type { Locale, Dictionary } from '@/lib/i18n';
@@ -22,14 +21,12 @@ interface HomeContentProps {
   params: { lang: Locale };
 }
 
-export function HomeContent({ dictionary, params }: HomeContentProps) {
-  const { lang } = params;
+// Inner component that uses the hero color context (must be inside HeroColorProvider)
+function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: Locale }) {
   const { heroColor, setHeroColor } = useHeroColor();
 
   return (
-    <LoadingWrapper>
-      <ParallaxCircles />
-
+    <>
       <Header lang={lang} dictionary={dictionary} />
 
       <main className="relative">
@@ -40,7 +37,7 @@ export function HomeContent({ dictionary, params }: HomeContentProps) {
           transition={{ duration: 0.8, ease: 'easeInOut' }}
         >
           <HeroSection dictionary={dictionary} onColorChange={setHeroColor} />
-          <PickupSection />
+          <PickupSection dictionary={dictionary.pickup} onColorChange={setHeroColor} />
         </motion.div>
 
         {/* Photo Grid Section - Right after colored section */}
@@ -73,6 +70,16 @@ export function HomeContent({ dictionary, params }: HomeContentProps) {
 
       {/* Safe area for bottom nav on mobile */}
       <div className="h-16 md:hidden" />
+    </>
+  );
+}
+
+export function HomeContent({ dictionary, params }: HomeContentProps) {
+  const { lang } = params;
+
+  return (
+    <LoadingWrapper>
+      <HomeContentInner dictionary={dictionary} lang={lang} />
     </LoadingWrapper>
   );
 }

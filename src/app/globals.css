@@ -44,6 +44,7 @@
   /* Fonts */
   --font-sans: var(--font-geist-sans), system-ui, sans-serif;
   --font-arabic: var(--font-noto-arabic), system-ui, sans-serif;
+  --font-rubik: var(--font-rubik), system-ui, sans-serif;
 }
 
 /* Dark mode */
@@ -85,7 +86,7 @@ html {
 
 /* Show scrollbar on hover (Firefox) */
 html:hover {
-  scrollbar-color: oklch(0.65 0.2 45) transparent;
+  scrollbar-color: oklch(0.3 0 0 / 0.6) transparent;
 }
 
 /* Custom scrollbar - hidden by default, overlay on content */
@@ -102,16 +103,17 @@ html:hover {
   background: transparent;
   border-radius: var(--radius-md);
   transition: background 0.3s ease;
+  backdrop-filter: blur(8px);
 }
 
 /* Show scrollbar on hover/interaction */
 html:hover::-webkit-scrollbar-thumb,
 html:active::-webkit-scrollbar-thumb {
-  background: var(--color-primary-500);
+  background: oklch(0.3 0 0 / 0.6);
 }
 
 html:hover::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary-600);
+  background: oklch(0.2 0 0 / 0.8);
 }
 
 /* Selection color */
@@ -247,4 +249,77 @@ html:hover::-webkit-scrollbar-thumb:hover {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Hero slider timer progress animation */
+@keyframes timerProgress {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+.timer-progress {
+  animation: timerProgress var(--timer-duration, 6s) linear forwards;
+}
+
+/* Circular timer progress for hero slider */
+@keyframes circleTimerProgress {
+  0% {
+    stroke-dashoffset: 62.83; /* 2 * PI * 10 */
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.timer-circle-progress {
+  animation: circleTimerProgress var(--timer-duration, 6s) linear forwards;
+}
+
+/* Circular timer progress for pickup slider (radius 14) */
+@keyframes pickupTimerProgress {
+  0% {
+    stroke-dashoffset: 87.96; /* 2 * PI * 14 */
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.pickup-timer-progress {
+  animation: pickupTimerProgress var(--timer-duration, 5s) linear forwards;
+}
+
+/* Scroll loop animation - content scrolls within fixed mask, stays in place */
+@keyframes scrollLoop {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-scroll-loop {
+  animation: scrollLoop 2s ease-in-out infinite;
+}
+
+/* Scroll down animation - continuous down, instant reset */
+@keyframes scrollDown {
+  0%, 10% {
+    transform: translateY(-50%);
+  }
+  45%, 55% {
+    transform: translateY(0);
+  }
+  55.01% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-scroll-down {
+  animation: scrollDown 2s ease-in-out infinite;
 }

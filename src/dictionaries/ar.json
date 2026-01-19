@@ -6,10 +6,41 @@
     "portfolio": "أعمالنا",
     "contact": "تواصل معنا"
   },
+  "menu": {
+    "bookNow": "احجز الآن",
+    "request": "طلب الملف",
+    "languageSwitch": "English",
+    "categories": {
+      "title": "الخدمات",
+      "video": "إنتاج الفيديو",
+      "photo": "التصوير",
+      "design": "التصميم",
+      "social": "التواصل الاجتماعي",
+      "branding": "الهوية البصرية",
+      "motion": "موشن جرافيك"
+    },
+    "contact": {
+      "title": "تواصل معنا",
+      "phone": "+966 50 123 4567",
+      "email": "info@almersal.sa",
+      "hours": "الأحد - الخميس: 9ص - 6م",
+      "button": "أرسل رسالة"
+    },
+    "close": "إغلاق"
+  },
   "hero": {
     "title": "المرسال للإنتاج الإعلامي",
     "subtitle": "نصنع المحتوى الذي يلهم",
-    "cta": "اكتشف أعمالنا"
+    "cta": "اكتشف أعمالنا",
+    "visionStatement": "نصنع قصصاً بصرية تحمل رسالتك وتجعلها تصل للقلوب.",
+    "leftPanel": "جريء",
+    "rightPanel": "علامة",
+    "comingSoon": "قريباً",
+    "scrollDown": "تصفح للأسفل"
+  },
+  "pickup": {
+    "title": "مواضيع مميزة",
+    "subtitle": "اختيارات المحررين"
   },
   "about": {
     "title": "من نحن",
