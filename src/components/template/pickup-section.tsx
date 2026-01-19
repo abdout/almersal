@@ -24,13 +24,26 @@ interface PickupSectionProps {
 
 type AnimationPhase = 'initial' | 'entering' | 'focusing' | 'ready' | 'sliding';
 
-// Constants for slide dimensions
+// Constants for slide dimensions (desktop defaults)
 const SLIDE_WIDTH = 300;
 const SLIDE_GAP = 40;
 const DRAG_THRESHOLD = 50;
 const SCALE_MIN = 1.0;
 const SCALE_MAX = 2.4;
 const HEIGHT_SCALE_MAX = 2.4;
+
+// Responsive helper
+const getResponsiveValues = (windowWidth: number) => {
+  const isMobile = windowWidth < 768;
+  return {
+    slideWidth: isMobile ? 240 : SLIDE_WIDTH,
+    slideGap: isMobile ? 20 : SLIDE_GAP,
+    scaleMax: isMobile ? 1.4 : SCALE_MAX,
+    heightScaleMax: isMobile ? 1.4 : HEIGHT_SCALE_MAX,
+    baseHeight: isMobile ? 160 : 200,
+    isMobile,
+  };
+};
 
 // Default placeholder slides with overlay colors (6 slides)
 const placeholderSlides: Slide[] = [
@@ -56,6 +69,13 @@ interface SlideItemProps {
   windowWidth: number;
   onClickLeft: () => void;
   onClickRight: () => void;
+  // Responsive values
+  slideWidth: number;
+  slideGap: number;
+  scaleMax: number;
+  heightScaleMax: number;
+  baseHeight: number;
+  isMobile: boolean;
 }
 
 function SlideItem({
@@ -65,14 +85,19 @@ function SlideItem({
   windowWidth,
   onClickLeft,
   onClickRight,
+  slideWidth,
+  slideGap,
+  scaleMax,
+  heightScaleMax,
+  baseHeight,
+  isMobile,
 }: SlideItemProps) {
-  const smallSlideWidth = SLIDE_WIDTH * SCALE_MIN;
-  const centerSlideWidth = SLIDE_WIDTH * SCALE_MAX;
-  const slidePosition = arrayIndex * (smallSlideWidth + SLIDE_GAP);
+  const smallSlideWidth = slideWidth * SCALE_MIN;
+  const centerSlideWidth = slideWidth * scaleMax;
+  const slidePosition = arrayIndex * (smallSlideWidth + slideGap);
   const screenCenter = windowWidth / 2;
 
-  const baseHeight = 200;
-  const transitionZone = (smallSlideWidth + SLIDE_GAP) * 1.0;
+  const transitionZone = (smallSlideWidth + slideGap) * 1.0;
 
   // Calculate width - only scale when entering/leaving center
   const width = useTransform(trackX, (x) => {
@@ -85,7 +110,7 @@ function SlideItem({
       return smallSlideWidth;
     }
     const t = 1 - (distanceFromCenter / transitionZone);
-    return smallSlideWidth + (SLIDE_WIDTH * (SCALE_MAX - SCALE_MIN) * t);
+    return smallSlideWidth + (slideWidth * (scaleMax - SCALE_MIN) * t);
   });
 
   // Calculate height - only scale when entering/leaving center
@@ -98,7 +123,7 @@ function SlideItem({
       return baseHeight * SCALE_MIN;
     }
     const t = 1 - (distanceFromCenter / transitionZone);
-    return baseHeight * SCALE_MIN + (baseHeight * (HEIGHT_SCALE_MAX - SCALE_MIN) * t);
+    return baseHeight * SCALE_MIN + (baseHeight * (heightScaleMax - SCALE_MIN) * t);
   });
 
   // Calculate text opacity - only show when close to center
@@ -115,22 +140,25 @@ function SlideItem({
   // Determine click direction
   const handleClick = useCallback(() => {
     const currentX = trackX.get();
-    const slideCenterX = slidePosition + SLIDE_WIDTH / 2 + currentX;
+    const slideCenterX = slidePosition + slideWidth / 2 + currentX;
     if (slideCenterX < screenCenter) {
       onClickLeft();
     } else if (slideCenterX > screenCenter) {
       onClickRight();
     }
-  }, [trackX, slidePosition, screenCenter, onClickLeft, onClickRight]);
+  }, [trackX, slidePosition, slideWidth, screenCenter, onClickLeft, onClickRight]);
 
   return (
     <div className="relative flex-shrink-0 flex flex-col items-center">
       {/* Date - above slide, aligned right */}
       <motion.div
-        className="text-right mb-3"
+        className={cn("text-right", isMobile ? "mb-2" : "mb-3")}
         style={{ opacity: textOpacity, width }}
       >
-        <span className="text-white/90 text-xl font-semibold">{slide.date}</span>
+        <span className={cn(
+          "text-white/90 font-semibold",
+          isMobile ? "text-sm" : "text-xl"
+        )}>{slide.date}</span>
       </motion.div>
 
       {/* Slide */}
@@ -147,10 +175,13 @@ function SlideItem({
 
       {/* Title - below slide, aligned left */}
       <motion.div
-        className="text-left mt-3"
+        className={cn("text-left", isMobile ? "mt-2" : "mt-3")}
         style={{ opacity: textOpacity, width }}
       >
-        <span className="text-white text-xl font-bold">{slide.title}</span>
+        <span className={cn(
+          "text-white font-bold",
+          isMobile ? "text-sm" : "text-xl"
+        )}>{slide.title}</span>
       </motion.div>
     </div>
   );
@@ -188,22 +219,25 @@ export function PickupSection({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Get responsive values
+  const responsive = getResponsiveValues(windowWidth);
+
   // Calculate track offset to center a specific slide
   const getTrackOffset = useCallback((index: number) => {
     const screenCenter = windowWidth / 2;
     const targetSlideIndex = centerArrayOffset + index;
 
-    const smallSlideWidth = SLIDE_WIDTH * SCALE_MIN;
-    const centerSlideWidth = SLIDE_WIDTH * SCALE_MAX;
+    const smallSlideWidth = responsive.slideWidth * SCALE_MIN;
+    const centerSlideWidth = responsive.slideWidth * responsive.scaleMax;
 
     // Position of target slide's left edge
-    const position = targetSlideIndex * (smallSlideWidth + SLIDE_GAP);
+    const position = targetSlideIndex * (smallSlideWidth + responsive.slideGap);
 
     // Center the big slide on screen
     const slideCenter = position + centerSlideWidth / 2;
 
     return screenCenter - slideCenter;
-  }, [windowWidth, centerArrayOffset]);
+  }, [windowWidth, centerArrayOffset, responsive.slideWidth, responsive.scaleMax, responsive.slideGap]);
 
   // Initialize position and trigger entry animation
   useEffect(() => {
@@ -315,18 +349,36 @@ export function PickupSection({
   const currentSlide = slides[displayIndex];
 
   return (
-    <div ref={containerRef} className={cn('relative w-full h-[150vh] overflow-hidden', className)}>
-      {/* Section Title - Top left corner of center div */}
+    <div ref={containerRef} className={cn(
+      'relative w-full overflow-hidden',
+      responsive.isMobile ? 'h-screen' : 'h-[150vh]',
+      className
+    )}>
+      {/* Section Title */}
       <div
-        className="absolute z-20 left-1/2"
-        style={{
+        className={cn(
+          "absolute z-20",
+          responsive.isMobile
+            ? "left-1/2 -translate-x-1/2 top-[15%]"
+            : "left-1/2"
+        )}
+        style={!responsive.isMobile ? {
           transform: `translateX(-${(SLIDE_WIDTH * SCALE_MAX) / 2 + 200}px)`,
           top: 'calc(50% - 380px)'
-        }}
+        } : undefined}
       >
-        <h2 className="text-white text-8xl font-black tracking-wider">
-          <span className="block">PICK</span>
-          <span className="block">UP</span>
+        <h2 className={cn(
+          "text-white font-black tracking-wider",
+          responsive.isMobile ? "text-4xl text-center" : "text-8xl"
+        )}>
+          {responsive.isMobile ? (
+            <span>PICK UP</span>
+          ) : (
+            <>
+              <span className="block">PICK</span>
+              <span className="block">UP</span>
+            </>
+          )}
         </h2>
       </div>
 
@@ -334,8 +386,8 @@ export function PickupSection({
       <div
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white pointer-events-none"
         style={{
-          width: '1010px',
-          height: '940px',
+          width: responsive.isMobile ? '360px' : '1010px',
+          height: responsive.isMobile ? '320px' : '940px',
           opacity: 0.1,
           zIndex: 0,
         }}
@@ -347,7 +399,7 @@ export function PickupSection({
           className="flex items-center h-full will-change-transform"
           style={{
             x: smoothTrackX,
-            gap: `${SLIDE_GAP}px`,
+            gap: `${responsive.slideGap}px`,
             direction: 'ltr'
           }}
           drag="x"
@@ -364,32 +416,51 @@ export function PickupSection({
               windowWidth={windowWidth}
               onClickLeft={() => paginate(-1)}
               onClickRight={() => paginate(1)}
+              slideWidth={responsive.slideWidth}
+              slideGap={responsive.slideGap}
+              scaleMax={responsive.scaleMax}
+              heightScaleMax={responsive.heightScaleMax}
+              baseHeight={responsive.baseHeight}
+              isMobile={responsive.isMobile}
             />
           ))}
         </motion.div>
       </div>
 
       {/* Navigation - Arrows left, Indicators right */}
-      <div className="absolute left-1/2 -translate-x-1/2 z-30" style={{ bottom: '20%', width: `${SLIDE_WIDTH * SCALE_MAX}px` }}>
+      <div
+        className="absolute left-1/2 -translate-x-1/2 z-30"
+        style={{
+          bottom: responsive.isMobile ? '15%' : '20%',
+          width: responsive.isMobile ? '90%' : `${SLIDE_WIDTH * SCALE_MAX}px`,
+          maxWidth: responsive.isMobile ? `${responsive.slideWidth * responsive.scaleMax}px` : undefined
+        }}
+      >
         <div className="flex items-center justify-between">
           {/* Left/Right Arrows */}
           <div className="flex items-center gap-2">
             <button
               onClick={() => paginate(-1)}
-              className="h-10 px-4 flex items-center justify-center bg-white text-orange-500 hover:text-orange-600 transition-colors rounded-l-lg"
+              className={cn(
+                "flex items-center justify-center bg-white text-orange-500 hover:text-orange-600 transition-colors rounded-l-lg",
+                responsive.isMobile ? "h-8 px-3" : "h-10 px-4"
+              )}
               aria-label="Previous slide"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <svg width={responsive.isMobile ? "16" : "20"} height={responsive.isMobile ? "16" : "20"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 12H5" />
                 <path d="M12 19l-7-7 7-7" />
               </svg>
             </button>
             <button
               onClick={() => paginate(1)}
-              className="h-10 px-4 flex items-center justify-center bg-white text-orange-500 hover:text-orange-600 transition-colors rounded-r-lg"
+              className={cn(
+                "flex items-center justify-center bg-white text-orange-500 hover:text-orange-600 transition-colors rounded-r-lg",
+                responsive.isMobile ? "h-8 px-3" : "h-10 px-4"
+              )}
               aria-label="Next slide"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <svg width={responsive.isMobile ? "16" : "20"} height={responsive.isMobile ? "16" : "20"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14" />
                 <path d="M12 5l7 7-7 7" />
               </svg>
@@ -397,7 +468,7 @@ export function PickupSection({
           </div>
 
           {/* Indicators */}
-          <div className="flex items-center gap-2">
+          <div className={cn("flex items-center", responsive.isMobile ? "gap-1.5" : "gap-2")}>
             {slides.map((_, index) => {
               const isActive = index === displayIndex;
               return (
@@ -406,7 +477,9 @@ export function PickupSection({
                   onClick={() => goToSlide(index)}
                   className={cn(
                     'relative transition-all duration-300 rounded-full bg-white',
-                    isActive ? 'w-5 h-5' : 'w-2 h-2 hover:bg-white/80'
+                    isActive
+                      ? responsive.isMobile ? 'w-4 h-4' : 'w-5 h-5'
+                      : responsive.isMobile ? 'w-1.5 h-1.5 hover:bg-white/80' : 'w-2 h-2 hover:bg-white/80'
                   )}
                   aria-label={`Go to slide ${index + 1}`}
                 >

@@ -79,8 +79,8 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
           <PickupSection dictionary={dictionary.pickup} onColorChange={handleColorChange} />
         </motion.div>
 
-        {/* Photo Grid Section - Right after colored section */}
-        <div className="relative z-10 -mt-10 md:-mt-16">
+        {/* Photo Grid Section - Positioned behind hero+pickup, reveals on scroll */}
+        <div className="relative z-0 -mt-32 md:-mt-40">
           <PhotoGridSection />
         </div>
 

@@ -30,11 +30,17 @@ interface FramerHeroSliderProps {
 type AnimationPhase = 'initial' | 'entering' | 'focusing' | 'ready' | 'sliding';
 
 // Constants for slide dimensions
-const SLIDE_WIDTH = 310;
-const SLIDE_GAP = 40;
 const DRAG_THRESHOLD = 50;
 const SCALE_MIN = 0.95;
 const SCALE_MAX = 1.18;
+
+// Responsive dimensions based on screen width
+const getResponsiveDimensions = (width: number) => {
+  if (width < 640) return { slideWidth: 140, slideGap: 12, baseHeight: 320 };
+  if (width < 768) return { slideWidth: 200, slideGap: 20, baseHeight: 400 };
+  if (width < 1024) return { slideWidth: 260, slideGap: 30, baseHeight: 480 };
+  return { slideWidth: 310, slideGap: 40, baseHeight: 542 };
+};
 
 // Default placeholder slides with overlay colors
 const placeholderSlides: Slide[] = [
@@ -63,6 +69,9 @@ interface SlideItemProps {
   currentSlideColor: string;
   onClickLeft: () => void;
   onClickRight: () => void;
+  slideWidth: number;
+  slideGap: number;
+  baseHeight: number;
 }
 
 function SlideItem({
@@ -74,13 +83,15 @@ function SlideItem({
   currentSlideColor,
   onClickLeft,
   onClickRight,
+  slideWidth,
+  slideGap,
+  baseHeight,
 }: SlideItemProps) {
-  const smallSlideWidth = SLIDE_WIDTH * SCALE_MIN;
-  const slidePosition = arrayIndex * (smallSlideWidth + SLIDE_GAP);
+  const smallSlideWidth = slideWidth * SCALE_MIN;
+  const slidePosition = arrayIndex * (smallSlideWidth + slideGap);
   const screenCenter = windowWidth / 2;
 
-  const baseHeight = 542; // Center = 542 * 1.18 = 640px
-  const transitionZone = (smallSlideWidth + SLIDE_GAP) * 0.6; // Zone where scaling happens
+  const transitionZone = (smallSlideWidth + slideGap) * 0.6; // Zone where scaling happens
 
   // Calculate width - only scale when entering/leaving center
   const width = useTransform(trackX, (x) => {
@@ -93,7 +104,7 @@ function SlideItem({
     }
     // Inside transition zone = interpolate
     const t = 1 - (distanceFromCenter / transitionZone);
-    return smallSlideWidth + (SLIDE_WIDTH * (SCALE_MAX - SCALE_MIN) * t);
+    return smallSlideWidth + (slideWidth * (SCALE_MAX - SCALE_MIN) * t);
   });
 
   // Calculate height - only scale when entering/leaving center
@@ -114,7 +125,7 @@ function SlideItem({
   const opacity = useTransform(trackX, (x) => {
     const slideCenterX = slidePosition + smallSlideWidth / 2 + x;
     const distanceFromCenter = Math.abs(slideCenterX - screenCenter);
-    const maxVisibleDistance = (smallSlideWidth + SLIDE_GAP) * 3;
+    const maxVisibleDistance = (smallSlideWidth + slideGap) * 3;
 
     if (distanceFromCenter > maxVisibleDistance) return 0;
     if (distanceFromCenter < maxVisibleDistance * 0.7) return 1;
@@ -139,13 +150,13 @@ function SlideItem({
   // Determine click direction
   const handleClick = useCallback(() => {
     const currentX = trackX.get();
-    const slideCenterX = slidePosition + SLIDE_WIDTH / 2 + currentX;
+    const slideCenterX = slidePosition + slideWidth / 2 + currentX;
     if (slideCenterX < screenCenter) {
       onClickLeft();
     } else if (slideCenterX > screenCenter) {
       onClickRight();
     }
-  }, [trackX, slidePosition, screenCenter, onClickLeft, onClickRight]);
+  }, [trackX, slidePosition, slideWidth, screenCenter, onClickLeft, onClickRight]);
 
   return (
     <motion.div
@@ -191,6 +202,13 @@ export function FramerHeroSlider({
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [cursorVisible, setCursorVisible] = useState(false);
   const [cursorDirection, setCursorDirection] = useState<'left' | 'right'>('right');
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  // Get responsive dimensions
+  const { slideWidth, slideGap, baseHeight } = useMemo(
+    () => getResponsiveDimensions(windowWidth),
+    [windowWidth]
+  );
 
   const containerRef = useRef<HTMLDivElement>(null);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
@@ -206,9 +224,10 @@ export function FramerHeroSlider({
   const trackX = useMotionValue(0);
   const smoothTrackX = useSpring(trackX, springConfig);
 
-  // Update window width on resize
+  // Update window width on resize and detect touch device
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
+    setIsTouchDevice(window.matchMedia('(hover: none)').matches);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -219,17 +238,17 @@ export function FramerHeroSlider({
     const targetSlideIndex = centerArrayOffset + index;
 
     // When this slide is centered, all OTHER slides are at SCALE_MIN
-    const smallSlideWidth = SLIDE_WIDTH * SCALE_MIN;
-    const centerSlideWidth = SLIDE_WIDTH * SCALE_MAX;
+    const smallSlideWidth = slideWidth * SCALE_MIN;
+    const centerSlideWidth = slideWidth * SCALE_MAX;
 
     // Position of target slide's left edge (all slides before it are small)
-    const position = targetSlideIndex * (smallSlideWidth + SLIDE_GAP);
+    const position = targetSlideIndex * (smallSlideWidth + slideGap);
 
     // Center of the target slide (which will be at SCALE_MAX)
     const slideCenter = position + centerSlideWidth / 2;
 
     return screenCenter - slideCenter;
-  }, [windowWidth, centerArrayOffset]);
+  }, [windowWidth, centerArrayOffset, slideWidth, slideGap]);
 
   // Initialize position and trigger entry animation
   useEffect(() => {
@@ -365,14 +384,14 @@ export function FramerHeroSlider({
   return (
     <div
       ref={containerRef}
-      className={cn('relative w-full h-screen overflow-hidden cursor-none', className)}
+      className={cn('relative w-full h-screen overflow-hidden', !isTouchDevice && 'cursor-none', className)}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleCursorClick}
     >
-      {/* Custom Cursor */}
-      {cursorVisible && (
+      {/* Custom Cursor - hidden on touch devices */}
+      {cursorVisible && !isTouchDevice && (
         <div
           className="fixed pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-150"
           style={{
@@ -404,10 +423,10 @@ export function FramerHeroSlider({
       {/* Slider Track */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <motion.div
-          className="flex items-center pb-[15vh] h-full will-change-transform"
+          className="flex items-center pb-[8vh] sm:pb-[10vh] md:pb-[15vh] h-full will-change-transform"
           style={{
             x: smoothTrackX,
-            gap: `${SLIDE_GAP}px`,
+            gap: `${slideGap}px`,
             direction: 'ltr'
           }}
           drag="x"
@@ -426,14 +445,17 @@ export function FramerHeroSlider({
               currentSlideColor={currentSlide?.overlayColor || '#ED6C00'}
               onClickLeft={() => paginate(-1)}
               onClickRight={() => paginate(1)}
+              slideWidth={slideWidth}
+              slideGap={slideGap}
+              baseHeight={baseHeight}
             />
           ))}
         </motion.div>
       </div>
 
-      {/* Left Panel */}
+      {/* Left Panel - hidden on mobile/tablet */}
       <div
-        className="absolute left-0 top-0 bottom-0 w-[28%] z-20 flex flex-col justify-between pt-[20vh] pb-8 px-8 md:px-12 lg:px-16 pointer-events-none"
+        className="absolute left-0 top-0 bottom-0 w-[28%] z-20 hidden md:flex flex-col justify-between pt-[20vh] pb-8 px-8 md:px-12 lg:px-16 pointer-events-none"
         style={{ fontFamily }}
       >
         <div className="text-start max-w-[320px]">
@@ -460,9 +482,9 @@ export function FramerHeroSlider({
         </div>
       </div>
 
-      {/* Right Panel */}
+      {/* Right Panel - hidden on mobile/tablet */}
       <div
-        className="absolute right-0 top-0 bottom-0 w-[20%] z-20 flex flex-col items-end justify-between pt-[10vh] pb-8 pr-8 md:pr-12 lg:pr-16 pl-4 pointer-events-none"
+        className="absolute right-0 top-0 bottom-0 w-[20%] z-20 hidden md:flex flex-col items-end justify-between pt-[10vh] pb-8 pr-8 md:pr-12 lg:pr-16 pl-4 pointer-events-none"
         style={{ fontFamily }}
       >
         <div className="pointer-events-auto cursor-auto">
@@ -488,7 +510,7 @@ export function FramerHeroSlider({
       </div>
 
       {/* Bottom Navigation with Timer Progress */}
-      <div className="absolute left-0 right-0 z-30 pointer-events-auto cursor-auto" style={{ bottom: '16%' }}>
+      <div className="absolute left-0 right-0 z-30 pointer-events-auto cursor-auto bottom-[10%] sm:bottom-[12%] md:bottom-[16%]">
         <div className="flex flex-col items-center gap-4">
           <div className="flex items-center gap-2">
             {slides.map((_, index) => {
@@ -570,10 +592,9 @@ export function FramerHeroSlider({
       {/* Scroll Down Caption */}
       <div
         className={cn(
-          'absolute left-1/2 -translate-x-1/2 z-30 transition-all duration-500 flex flex-col items-center gap-2',
+          'absolute left-1/2 -translate-x-1/2 z-30 transition-all duration-500 flex flex-col items-center gap-2 bottom-[5%] sm:bottom-[4%] md:bottom-[3%]',
           phase === 'ready' || phase === 'sliding' ? 'opacity-100' : 'opacity-0'
         )}
-        style={{ bottom: '3%' }}
       >
         {/* Text scroll container */}
         <div className="h-4 overflow-hidden">

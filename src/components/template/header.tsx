@@ -91,8 +91,8 @@ export function Header({ lang, dictionary }: HeaderProps) {
           <Link
             href={`/${lang}`}
             className={cn(
-              'absolute top-3 flex items-center gap-3 pointer-events-auto',
-              isRTL ? 'right-6' : 'left-6'
+              'absolute top-3 flex items-center gap-2 md:gap-3 pointer-events-auto',
+              isRTL ? 'right-4 md:right-6' : 'left-4 md:left-6'
             )}
           >
             <Image
@@ -100,18 +100,18 @@ export function Header({ lang, dictionary }: HeaderProps) {
               alt={isRTL ? 'المرسال' : 'Almersal'}
               width={160}
               height={56}
-              className="h-14 w-auto"
+              className="h-10 md:h-14 w-auto"
               priority
             />
-            <span className="text-3xl font-extrabold tracking-wider text-white">
+            <span className="hidden md:block text-3xl font-extrabold tracking-wider text-white">
               {isRTL ? 'المرسال' : 'Almersal'}
             </span>
           </Link>
 
-          {/* CTA Buttons on the opposite side */}
+          {/* CTA Buttons on the opposite side - hidden on mobile */}
           <div
             className={cn(
-              'absolute top-5 flex items-center gap-3 pointer-events-auto',
+              'absolute top-5 hidden md:flex items-center gap-3 pointer-events-auto',
               isRTL ? 'left-6 flex-row-reverse' : 'right-6'
             )}
           >
@@ -202,14 +202,14 @@ export function Header({ lang, dictionary }: HeaderProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: '-100%' }}
             transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-            className="fixed top-0 left-0 right-0 h-[80vh] z-[60] rounded-b-[3rem] bg-[#ED6C00] flex flex-col"
+            className="fixed top-0 left-0 right-0 h-screen md:h-[80vh] z-[60] rounded-b-[2rem] md:rounded-b-[3rem] bg-[#ED6C00] flex flex-col overflow-y-auto"
           >
             {/* Top Section: Logo centered with sitename below */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="pt-6 pb-4 flex flex-col items-center"
+              className="pt-4 md:pt-6 pb-2 md:pb-4 flex flex-col items-center"
             >
               <Link href={`/${lang}`} onClick={() => setIsOpen(false)} className="flex flex-col items-center">
                 <Image
@@ -217,22 +217,22 @@ export function Header({ lang, dictionary }: HeaderProps) {
                   alt={isRTL ? 'المرسال' : 'Almersal'}
                   width={80}
                   height={60}
-                  className="h-14 w-auto"
+                  className="h-10 md:h-14 w-auto"
                 />
-                <span className="text-xs font-bold tracking-[0.2em] text-white mt-1 uppercase">
+                <span className="text-[10px] md:text-xs font-bold tracking-[0.2em] text-white mt-1 uppercase">
                   {isRTL ? 'المرسال' : 'ALMERSAL'}
                 </span>
               </Link>
             </motion.div>
 
-            {/* 3-Column Grid - Nav aligned with buttons */}
+            {/* Responsive Grid - 1 col mobile, 3 col desktop */}
             <div className={cn(
-              'grid gap-8 px-12 mt-4 flex-1',
+              'grid gap-4 md:gap-8 px-4 md:px-12 mt-2 md:mt-4 flex-1 pb-16 md:pb-0',
+              'grid-cols-1 lg:grid-cols-[1.7fr_1fr_1fr]',
               isRTL ? 'direction-rtl' : ''
             )}
-            style={{ gridTemplateColumns: '1.7fr 1fr 1fr' }}
             >
-              {/* Left Column: Navigation Items with Arrows - starts at same level as buttons */}
+              {/* Navigation Items with Arrows */}
               <motion.nav
                 initial={{ opacity: 0, x: isRTL ? 30 : -30 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -245,20 +245,20 @@ export function Header({ lang, dictionary }: HeaderProps) {
                     href={item.href}
                     onClick={() => setIsOpen(false)}
                     className={cn(
-                      'flex items-center justify-between py-6 border-b border-white/20 text-white',
+                      'flex items-center justify-between py-4 lg:py-6 border-b border-white/20 text-white',
                       isRTL && 'flex-row-reverse'
                     )}
                   >
-                    <span className="text-xl font-bold">
+                    <span className="text-lg lg:text-xl font-bold">
                       {item.label}
                     </span>
-                    <span className="w-7 h-7 rounded-full border border-white/50 flex items-center justify-center">
+                    <span className="w-6 h-6 lg:w-7 lg:h-7 rounded-full border border-white/50 flex items-center justify-center">
                       {isRTL ? (
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" className="lg:w-3 lg:h-3">
                           <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       ) : (
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" className="lg:w-3 lg:h-3">
                           <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       )}
@@ -272,26 +272,26 @@ export function Header({ lang, dictionary }: HeaderProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="col-span-2 flex flex-col gap-10"
+                className="lg:col-span-2 flex flex-col gap-4 md:gap-10"
               >
-                {/* CTA Buttons Row */}
-                <div className={cn('flex gap-3', isRTL && 'flex-row-reverse')}>
+                {/* CTA Buttons - Stack on mobile, row on desktop */}
+                <div className={cn('flex flex-col md:flex-row gap-3', isRTL && 'md:flex-row-reverse')}>
                   {/* Book Now - Yellow */}
                   <Link
                     href={`/${lang}/contact`}
                     onClick={() => setIsOpen(false)}
-                    className="group relative flex items-center justify-center h-24 px-10 rounded-md font-bold text-[16px] overflow-hidden flex-1"
+                    className="group relative flex items-center justify-center h-14 md:h-24 px-6 md:px-10 rounded-md font-bold text-sm md:text-[16px] overflow-hidden md:flex-1"
                     style={{ backgroundColor: '#FFD900', color: '#000' }}
                   >
                     {/* Default state: Icon + Text */}
-                    <span className="flex items-center gap-3 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-0 group-hover:translate-x-4">
-                      <CalendarIcon size={22} />
+                    <span className="flex items-center gap-2 md:gap-3 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-0 group-hover:translate-x-4">
+                      <CalendarIcon size={18} className="md:w-[22px] md:h-[22px]" />
                       <span>{isRTL ? 'احجز الآن' : 'Book Now'}</span>
                     </span>
                     {/* Hover state: Circle + Text */}
-                    <span className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 -translate-x-4 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-100 group-hover:translate-x-0">
-                      <span className="flex items-center justify-center w-7 h-7 bg-black rounded-full">
-                        <ExternalLinkIcon size={12} className="text-[#FFD900]" />
+                    <span className="absolute inset-0 flex items-center justify-center gap-2 md:gap-3 opacity-0 -translate-x-4 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-100 group-hover:translate-x-0">
+                      <span className="flex items-center justify-center w-6 h-6 md:w-7 md:h-7 bg-black rounded-full">
+                        <ExternalLinkIcon size={10} className="md:w-3 md:h-3 text-[#FFD900]" />
                       </span>
                       <span>{isRTL ? 'احجز الآن' : 'Book Now'}</span>
                     </span>
@@ -301,18 +301,18 @@ export function Header({ lang, dictionary }: HeaderProps) {
                   <Link
                     href={`/${lang}/portfolio`}
                     onClick={() => setIsOpen(false)}
-                    className="group relative flex items-center justify-center h-24 px-10 rounded-md font-bold text-[16px] text-white overflow-hidden flex-1"
+                    className="group relative flex items-center justify-center h-14 md:h-24 px-6 md:px-10 rounded-md font-bold text-sm md:text-[16px] text-white overflow-hidden md:flex-1"
                     style={{ backgroundColor: '#2639A6' }}
                   >
                     {/* Default state: Icon + Text */}
-                    <span className="flex items-center gap-3 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-0 group-hover:translate-x-4">
-                      <DocumentIcon size={20} className="text-white" />
+                    <span className="flex items-center gap-2 md:gap-3 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-0 group-hover:translate-x-4">
+                      <DocumentIcon size={16} className="md:w-5 md:h-5 text-white" />
                       <span>{isRTL ? 'طلب الملف' : 'Request'}</span>
                     </span>
                     {/* Hover state: Circle + Text */}
-                    <span className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 -translate-x-4 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-100 group-hover:translate-x-0">
-                      <span className="flex items-center justify-center w-7 h-7 bg-white rounded-full">
-                        <ButtonArrowIcon size={12} className="text-[#2639A6]" />
+                    <span className="absolute inset-0 flex items-center justify-center gap-2 md:gap-3 opacity-0 -translate-x-4 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-100 group-hover:translate-x-0">
+                      <span className="flex items-center justify-center w-6 h-6 md:w-7 md:h-7 bg-white rounded-full">
+                        <ButtonArrowIcon size={10} className="md:w-3 md:h-3 text-[#2639A6]" />
                       </span>
                       <span>{isRTL ? 'طلب الملف' : 'Request'}</span>
                     </span>
@@ -322,72 +322,92 @@ export function Header({ lang, dictionary }: HeaderProps) {
                   <Link
                     href={`/${lang}/contact#location`}
                     onClick={() => setIsOpen(false)}
-                    className="group relative flex items-center justify-center h-24 px-10 rounded-md font-bold text-[16px] text-[#ED6C00] bg-white overflow-hidden flex-1"
+                    className="group relative flex items-center justify-center h-14 md:h-24 px-6 md:px-10 rounded-md font-bold text-sm md:text-[16px] text-[#ED6C00] bg-white overflow-hidden md:flex-1"
                   >
                     {/* Default state: Icon + Text */}
-                    <span className="flex items-center gap-3 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-0 group-hover:translate-x-4">
-                      <LocationPinFilledIcon size={22} className="text-[#ED6C00]" />
+                    <span className="flex items-center gap-2 md:gap-3 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-0 group-hover:translate-x-4">
+                      <LocationPinFilledIcon size={18} className="md:w-[22px] md:h-[22px] text-[#ED6C00]" />
                       <span>{isRTL ? 'الموقع' : 'Access'}</span>
                     </span>
                     {/* Hover state: Circle + Text */}
-                    <span className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 -translate-x-4 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-100 group-hover:translate-x-0">
-                      <span className="flex items-center justify-center w-7 h-7 bg-[#ED6C00] rounded-full">
-                        <ButtonArrowIcon size={12} className="text-white" />
+                    <span className="absolute inset-0 flex items-center justify-center gap-2 md:gap-3 opacity-0 -translate-x-4 transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-100 group-hover:translate-x-0">
+                      <span className="flex items-center justify-center w-6 h-6 md:w-7 md:h-7 bg-[#ED6C00] rounded-full">
+                        <ButtonArrowIcon size={10} className="md:w-3 md:h-3 text-white" />
                       </span>
                       <span>{isRTL ? 'الموقع' : 'Access'}</span>
                     </span>
                   </Link>
                 </div>
 
-                {/* Categories and Contact side by side */}
-                <div className={cn('grid grid-cols-2 gap-6', isRTL && 'direction-rtl')}>
-                  {/* Categories */}
+                {/* Categories and Contact - responsive layout */}
+                <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6', isRTL && 'direction-rtl')}>
+                  {/* Categories - Desktop: Table grid, Mobile: Simple list */}
                   <div className="flex flex-col">
-                    {/* Categories - Table grid with shared borders */}
-                    {(() => {
-                      const cellClass = "text-white hover:bg-white/10 text-sm font-medium py-4 px-4 transition-colors text-center";
-                      const innerCellClass = "text-white hover:bg-white/10 text-sm font-medium py-6 px-4 transition-colors text-center";
-                      const categories = {
-                        top: { href: `/${lang}/services`, ar: 'جميع الخدمات', en: 'All Services' },
-                        grid: [
-                          [
-                            { href: `/${lang}/services#video`, ar: 'إنتاج الفيديو', en: 'Film & Motion' },
-                            { href: `/${lang}/services#photo`, ar: 'التصوير', en: 'Photography' },
+                    {/* Desktop Categories Grid */}
+                    <div className="hidden md:block">
+                      {(() => {
+                        const cellClass = "text-white hover:bg-white/10 text-sm font-medium py-4 px-4 transition-colors text-center";
+                        const innerCellClass = "text-white hover:bg-white/10 text-sm font-medium py-6 px-4 transition-colors text-center";
+                        const categories = {
+                          top: { href: `/${lang}/services`, ar: 'جميع الخدمات', en: 'All Services' },
+                          grid: [
+                            [
+                              { href: `/${lang}/services#video`, ar: 'إنتاج الفيديو', en: 'Film & Motion' },
+                              { href: `/${lang}/services#photo`, ar: 'التصوير', en: 'Photography' },
+                            ],
+                            [
+                              { href: `/${lang}/services#design`, ar: 'التصميم', en: 'Design' },
+                              { href: `/${lang}/services#social`, ar: 'التواصل', en: 'Social' },
+                            ],
                           ],
-                          [
-                            { href: `/${lang}/services#design`, ar: 'التصميم', en: 'Design' },
-                            { href: `/${lang}/services#social`, ar: 'التواصل', en: 'Social' },
-                          ],
-                        ],
-                        bottom: { href: `/${lang}/services#branding`, ar: 'الهوية البصرية', en: 'Brand Identity' },
-                      };
-                      return (
-                        <div className="border border-white/30 rounded-lg overflow-hidden">
-                          <Link href={categories.top.href} onClick={() => setIsOpen(false)} className={`block ${cellClass} border-b border-white/30`}>
-                            {isRTL ? categories.top.ar : categories.top.en}
-                          </Link>
-                          {categories.grid.map((row, i) => (
-                            <div key={i} className="flex border-b border-white/30">
-                              {row.map((cell, j) => (
-                                <Link key={cell.href} href={cell.href} onClick={() => setIsOpen(false)} className={`flex-1 ${innerCellClass} ${j === 0 ? 'border-r border-white/30' : ''}`}>
-                                  {isRTL ? cell.ar : cell.en}
-                                </Link>
-                              ))}
-                            </div>
-                          ))}
-                          <Link href={categories.bottom.href} onClick={() => setIsOpen(false)} className={`block ${cellClass}`}>
-                            {isRTL ? categories.bottom.ar : categories.bottom.en}
-                          </Link>
-                        </div>
-                      );
-                    })()}
+                          bottom: { href: `/${lang}/services#branding`, ar: 'الهوية البصرية', en: 'Brand Identity' },
+                        };
+                        return (
+                          <div className="border border-white/30 rounded-lg overflow-hidden">
+                            <Link href={categories.top.href} onClick={() => setIsOpen(false)} className={`block ${cellClass} border-b border-white/30`}>
+                              {isRTL ? categories.top.ar : categories.top.en}
+                            </Link>
+                            {categories.grid.map((row, i) => (
+                              <div key={i} className="flex border-b border-white/30">
+                                {row.map((cell, j) => (
+                                  <Link key={cell.href} href={cell.href} onClick={() => setIsOpen(false)} className={`flex-1 ${innerCellClass} ${j === 0 ? 'border-r border-white/30' : ''}`}>
+                                    {isRTL ? cell.ar : cell.en}
+                                  </Link>
+                                ))}
+                              </div>
+                            ))}
+                            <Link href={categories.bottom.href} onClick={() => setIsOpen(false)} className={`block ${cellClass}`}>
+                              {isRTL ? categories.bottom.ar : categories.bottom.en}
+                            </Link>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                    {/* Mobile Categories - Simple horizontal list */}
+                    <div className="md:hidden flex flex-wrap gap-2 justify-center">
+                      {[
+                        { href: `/${lang}/services`, ar: 'جميع الخدمات', en: 'All Services' },
+                        { href: `/${lang}/services#video`, ar: 'فيديو', en: 'Video' },
+                        { href: `/${lang}/services#photo`, ar: 'تصوير', en: 'Photo' },
+                        { href: `/${lang}/services#design`, ar: 'تصميم', en: 'Design' },
+                      ].map((cat) => (
+                        <Link
+                          key={cat.href}
+                          href={cat.href}
+                          onClick={() => setIsOpen(false)}
+                          className="px-4 py-2 text-xs font-medium text-white border border-white/30 rounded-full hover:bg-white/10 transition-colors"
+                        >
+                          {isRTL ? cat.ar : cat.en}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Contact Box */}
+                  {/* Contact Box - Simplified on mobile */}
                   <div className="flex flex-col">
-                    <div className="bg-white rounded-lg p-6 py-[1.875rem] flex flex-col items-center justify-center text-center">
-                      {/* Header Text */}
-                      <p className="text-gray-600 text-xs mb-3 leading-relaxed max-w-[180px]">
+                    <div className="bg-white rounded-lg p-4 md:p-6 md:py-[1.875rem] flex flex-col items-center justify-center text-center">
+                      {/* Header Text - Hidden on mobile */}
+                      <p className="hidden md:block text-gray-600 text-xs mb-3 leading-relaxed max-w-[180px]">
                         {isRTL
                           ? 'للاستفسارات والحجوزات، تواصلوا معنا عبر الهاتف أو النموذج الإلكتروني'
                           : 'For inquiries and bookings, contact us by phone or through the web form'}
@@ -395,15 +415,14 @@ export function Header({ lang, dictionary }: HeaderProps) {
 
                       {/* Large Phone Number */}
                       <div className="mb-2" dir="ltr">
-                        <span className="text-[#ED6C00] text-base font-medium">Tel. </span>
-                        <span className="text-[#ED6C00] text-3xl font-bold tracking-wide">
+                        <span className="text-[#ED6C00] text-sm md:text-base font-medium">Tel. </span>
+                        <span className="text-[#ED6C00] text-xl md:text-3xl font-bold tracking-wide">
                           050-123-4567
                         </span>
                       </div>
 
-                      {/* Hours */}
-                      <div className="flex items-center gap-2 mb-4 text-gray-500 text-xs">
-                        <span className="font-medium">{isRTL ? 'ساعات العمل' : 'Hours'}</span>
+                      {/* Hours - Simplified on mobile */}
+                      <div className="flex items-center gap-2 mb-3 md:mb-4 text-gray-500 text-[10px] md:text-xs">
                         <span>{isRTL ? 'الأحد - الخميس 9:00 - 17:00' : 'Sun - Thu 9:00 - 17:00'}</span>
                       </div>
 
@@ -411,53 +430,53 @@ export function Header({ lang, dictionary }: HeaderProps) {
                       <Link
                         href={`/${lang}/contact`}
                         onClick={() => setIsOpen(false)}
-                        className="inline-block px-8 py-2.5 bg-[#ED6C00] text-white font-bold text-sm text-center rounded-full hover:bg-[#ED6C00]/90 transition-colors"
+                        className="inline-block px-6 md:px-8 py-2 md:py-2.5 bg-[#ED6C00] text-white font-bold text-xs md:text-sm text-center rounded-full hover:bg-[#ED6C00]/90 transition-colors"
                       >
-                        {isRTL ? 'تواصل عبر الموقع' : 'Contact via Web'}
+                        {isRTL ? 'تواصل معنا' : 'Contact Us'}
                       </Link>
                     </div>
                   </div>
                 </div>
 
-                {/* Social Icons + Footer Links - Below Categories and Contact */}
-                <div className="flex items-center justify-between">
-                  {/* Social Icons - Left */}
-                  <div className="flex items-center gap-3">
+                {/* Social Icons + Footer Links - Responsive layout */}
+                <div className="flex flex-col md:flex-row items-center justify-center md:justify-between gap-3 md:gap-0">
+                  {/* Social Icons */}
+                  <div className="flex items-center gap-2 md:gap-3">
                     {[
-                      { icon: InstagramIcon, href: 'https://instagram.com/almersal', size: 18 },
-                      { icon: XIcon, href: 'https://x.com/almersal', size: 16 },
-                      { icon: FacebookIcon, href: 'https://facebook.com/almersal', size: 11 },
-                      { icon: LineIcon, href: 'https://line.me/almersal', size: 19 },
-                      { icon: TikTokIcon, href: 'https://tiktok.com/@almersal', size: 16, label: 'TikTok' },
+                      { icon: InstagramIcon, href: 'https://instagram.com/almersal', size: 16, label: 'Instagram' },
+                      { icon: XIcon, href: 'https://x.com/almersal', size: 14, label: 'X' },
+                      { icon: FacebookIcon, href: 'https://facebook.com/almersal', size: 10, label: 'Facebook' },
+                      { icon: LineIcon, href: 'https://line.me/almersal', size: 17, label: 'Line' },
+                      { icon: TikTokIcon, href: 'https://tiktok.com/@almersal', size: 14, label: 'TikTok' },
                     ].map(({ icon: Icon, href, size, label }) => (
                       <a
                         key={href}
                         href={href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-9 h-9 flex items-center justify-center rounded-full bg-white text-[#ED6C00] hover:bg-white/90 transition-all"
+                        className="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-full bg-white text-[#ED6C00] hover:bg-white/90 transition-all"
                         aria-label={label}
                       >
-                        <Icon size={size} />
+                        <Icon size={size} className="md:w-[18px] md:h-[18px]" />
                       </a>
                     ))}
                   </div>
 
-                  {/* Footer Links - Right */}
-                  <div className="flex items-center gap-4 text-white/50 text-xs">
+                  {/* Footer Links */}
+                  <div className="flex items-center gap-3 md:gap-4 text-white/50 text-[10px] md:text-xs">
                     <Link
                       href={`/${lang}/privacy`}
                       onClick={() => setIsOpen(false)}
                       className="hover:text-white transition-colors"
                     >
-                      {isRTL ? 'سياسة الخصوصية' : 'Privacy Policy'}
+                      {isRTL ? 'الخصوصية' : 'Privacy'}
                     </Link>
                     <Link
                       href={`/${lang}/terms`}
                       onClick={() => setIsOpen(false)}
                       className="hover:text-white transition-colors"
                     >
-                      {isRTL ? 'الشروط والأحكام' : 'Terms'}
+                      {isRTL ? 'الشروط' : 'Terms'}
                     </Link>
                     {/* Language Switch */}
                     <Link
@@ -478,10 +497,10 @@ export function Header({ lang, dictionary }: HeaderProps) {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
               onClick={() => setIsOpen(false)}
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-10"
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-12 h-12 md:w-14 md:h-14 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-10"
               aria-label={isRTL ? 'إغلاق القائمة' : 'Close menu'}
             >
-              <CrossIcon size={24} className="text-[#ED6C00]" />
+              <CrossIcon size={20} className="md:w-6 md:h-6 text-[#ED6C00]" />
             </motion.button>
           </motion.div>
         )}
