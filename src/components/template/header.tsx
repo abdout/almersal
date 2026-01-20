@@ -36,13 +36,19 @@ interface HeaderProps {
 
 export function Header({ lang, dictionary }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { heroColor, isPastHeroSection } = useHeroColor();
+  const { heroColor, currentSection, isFooterVisible } = useHeroColor();
   const isRTL = lang === 'ar';
 
-  // Colors for bar and notch - white when in hero/pickup, orange when past
-  const barColor = isPastHeroSection ? MAIN_ORANGE : 'white';
-  const notchBgColor = isPastHeroSection ? MAIN_ORANGE : 'white';
-  const hamburgerColor = isPastHeroSection ? 'white' : heroColor;
+  // Section-aware colors based on background
+  // Colored sections (orange bg): bar=white, logo=white, sitename=white, hamburger=orange (heroColor)
+  // White sections (white bg): bar=orange, logo=orange, sitename=black, hamburger=white
+  const isWhiteSection = currentSection === 'white';
+
+  const barColor = isWhiteSection ? MAIN_ORANGE : 'white';
+  const notchBgColor = isWhiteSection ? MAIN_ORANGE : 'white';
+  const hamburgerColor = isWhiteSection ? 'white' : heroColor;
+  const logoColor = isWhiteSection ? MAIN_ORANGE : 'white';
+  const sitenameColor = isWhiteSection ? '#000000' : '#ffffff';
 
   const navItems = [
     { href: `/${lang}`, label: dictionary.nav.home },
@@ -56,8 +62,15 @@ export function Header({ lang, dictionary }: HeaderProps) {
   return (
     <>
       {/* Header with 8px bar and center notch - color transitions based on scroll */}
-      <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
-        {/* 8px bar edge to edge - animates from white to orange */}
+      <motion.header
+        className="fixed top-0 left-0 right-0 z-50 pointer-events-none"
+        animate={{
+          y: isFooterVisible ? -100 : 0,
+          opacity: isFooterVisible ? 0 : 1
+        }}
+        transition={{ duration: 0.4, ease: 'easeInOut' }}
+      >
+        {/* 8px bar edge to edge - animates based on section type */}
         <motion.div
           className="absolute top-0 left-0 right-0 h-[8px]"
           animate={{ backgroundColor: barColor }}
@@ -120,7 +133,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
           >
             <motion.div
               animate={{
-                filter: isPastHeroSection
+                filter: isWhiteSection
                   ? 'brightness(0) saturate(100%) invert(44%) sepia(99%) saturate(1441%) hue-rotate(7deg) brightness(101%) contrast(103%)'
                   : 'none'
               }}
@@ -137,7 +150,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
             </motion.div>
             <motion.span
               className="hidden md:block text-3xl font-extrabold tracking-wider"
-              animate={{ color: isPastHeroSection ? '#000000' : '#ffffff' }}
+              animate={{ color: sitenameColor }}
               transition={{ duration: 0.5, ease: 'easeInOut' }}
             >
               {isRTL ? 'المرسال' : 'Almersal'}
@@ -214,7 +227,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
             </Link>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* Background Overlay */}
       <AnimatePresence>

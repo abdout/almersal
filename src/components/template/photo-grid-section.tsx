@@ -91,9 +91,42 @@ export function PhotoGridSection() {
   const getItem = (id: string) => gridItems.find(item => item.id === id)!;
 
   return (
-    <section ref={containerRef} className="relative h-[300vh]">
+    <section ref={containerRef} className="relative h-[150vh] md:h-[300vh]">
+      {/* Mobile Layout - Simplified horizontal scroll */}
+      <div className="md:hidden sticky top-0 h-screen overflow-hidden px-4 py-4">
+        <motion.div
+          className="w-full h-full flex flex-col gap-3 will-change-transform"
+          style={{ y }}
+        >
+          {/* Top row - 3 images */}
+          <div className="flex-[1.5] flex gap-3">
+            <GridImage item={getItem('a')} className="flex-1" />
+            <GridImage item={getItem('c')} className="flex-1" />
+            <GridImage item={getItem('tall')} className="flex-1" />
+          </div>
+
+          {/* Middle - Large image */}
+          <div className="flex-[2] flex gap-3">
+            <GridImage item={getItem('d')} className="flex-[2]" />
+            <GridImage item={getItem('e')} className="flex-1" />
+          </div>
+
+          {/* Bottom row - Horizontal scroll */}
+          <div className="flex-1 flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+            {['g', 'h', 'i', 'j', 'k'].map((id) => (
+              <GridImage
+                key={id}
+                item={getItem(id)}
+                className="flex-shrink-0 w-32 h-full"
+              />
+            ))}
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Desktop Layout - Original complex grid with zoom effect */}
       <div
-        className="sticky top-0 h-screen overflow-hidden px-4 md:px-5 py-4"
+        className="hidden md:block sticky top-0 h-screen overflow-hidden px-4 md:px-5 py-4"
         style={{ contain: 'layout style paint' }}
       >
         <motion.div

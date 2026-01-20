@@ -18,6 +18,7 @@ import { Footer } from '@/components/template/footer';
 import { BottomNav } from '@/components/template/bottom-nav';
 import { ParallaxSection } from '@/components/template/parallax-section';
 import { PhotoGridSection } from '@/components/template/photo-grid-section';
+import { SectionObserverProvider } from '@/components/template/section-observer-provider';
 import type { Locale, Dictionary } from '@/lib/i18n';
 
 const MAIN_ORANGE = '#ED6C00';
@@ -85,14 +86,16 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
   }, [isHeroInView, setHeroColor]);
 
   return (
-    <>
+    <SectionObserverProvider>
       <Header lang={lang} dictionary={dictionary} />
 
       <main className="relative">
         {/* Unified Colored Section - Hero + Pickup */}
         <motion.div
           ref={heroPickupWrapperRef}
-          className="relative z-20 rounded-b-[80px] md:rounded-b-[120px] overflow-hidden shadow-2xl"
+          data-section-id="hero-pickup"
+          data-section-type="colored"
+          className="relative z-20 rounded-b-[40px] md:rounded-b-[80px] lg:rounded-b-[120px] overflow-hidden shadow-2xl"
           animate={{ backgroundColor: heroColor }}
           transition={{ duration: 0.8, ease: 'easeInOut' }}
         >
@@ -103,12 +106,20 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
         </motion.div>
 
         {/* Photo Grid Section - Positioned behind hero+pickup, reveals on scroll */}
-        <div className="relative z-0 -mt-[70vh] md:-mt-[75vh]">
+        <div
+          data-section-id="photo-grid"
+          data-section-type="white"
+          className="relative z-0 -mt-[50vh] md:-mt-[75vh]"
+        >
           <PhotoGridSection />
         </div>
 
         {/* Dream + Support + Visitor (white, rounded bottom, on top) */}
-        <div className="relative z-20 bg-background rounded-b-[80px] md:rounded-b-[120px] overflow-hidden shadow-2xl">
+        <div
+          data-section-id="white-sections"
+          data-section-type="white"
+          className="relative z-20 bg-background rounded-b-[40px] md:rounded-b-[80px] lg:rounded-b-[120px] overflow-hidden shadow-2xl"
+        >
           <ParallaxSection offset={80}>
             <DreamSection dictionary={dictionary} />
           </ParallaxSection>
@@ -126,8 +137,12 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
         </div>
 
         {/* Orange sections - positioned behind white sections, reveals on scroll */}
-        <div className="relative z-10 -mt-[70vh] md:-mt-[80vh]">
-          <div className="bg-[#ED6C00] pt-[70vh] md:pt-[80vh]">
+        <div
+          data-section-id="orange-sections"
+          data-section-type="colored"
+          className="relative z-10 -mt-[50vh] md:-mt-[80vh]"
+        >
+          <div className="bg-[#ED6C00] pt-[50vh] md:pt-[80vh]">
             <MovieSection dictionary={dictionary} lang={lang} />
             <TopicsSection lang={lang} dictionary={dictionary} />
             <InterviewSection lang={lang} dictionary={dictionary} />
@@ -141,7 +156,7 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
 
       {/* Safe area for bottom nav on mobile */}
       <div className="h-16 md:hidden" />
-    </>
+    </SectionObserverProvider>
   );
 }
 

@@ -33,26 +33,26 @@ export function TopicsSection({ lang, dictionary }: TopicsSectionProps) {
   };
 
   return (
-    <section className="relative py-20 md:py-32 bg-[#ED6C00] overflow-hidden">
-      <div className="max-w-[1600px] mx-auto px-6 lg:px-10">
-        {/* Section Header */}
+    <section className="relative py-12 md:py-32 bg-[#ED6C00] overflow-hidden">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-10">
+        {/* Section Header - stacks vertically on mobile */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className={`mb-12 md:mb-16 flex items-start gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}
+          className={`mb-8 md:mb-16 flex flex-col md:flex-row md:items-start gap-1 md:gap-4 ${isRTL ? 'md:flex-row-reverse' : ''}`}
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white">
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white">
             {topicsDict.title}
           </h2>
-          <p className="text-white/80 text-xl md:text-2xl font-semibold mt-2">
+          <p className="text-white/80 text-base md:text-2xl font-semibold md:mt-2">
             {topicsDict.subtitle}
           </p>
         </motion.div>
 
         {/* Topics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {topicsDict.items.map((item, index) => (
             <motion.article
               key={item.id}
@@ -62,20 +62,20 @@ export function TopicsSection({ lang, dictionary }: TopicsSectionProps) {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group cursor-pointer"
             >
-              <div className="border border-white/20 rounded-2xl p-4 transition-all duration-300 hover:bg-white group-hover:border-white group-hover:scale-[1.03] origin-center">
-                <div className="transition-transform duration-300 group-hover:scale-[0.97] origin-center">
+              <div className="border border-white/20 rounded-xl md:rounded-2xl p-3 md:p-4 transition-all duration-300 hover:bg-white group-hover:border-white md:group-hover:scale-[1.03] origin-center">
+                <div className="transition-transform duration-300 md:group-hover:scale-[0.97] origin-center">
                   {/* Date & Category Header */}
-                  <div className={`bg-white/10 group-hover:bg-[#ED6C00]/10 rounded-md px-4 py-2 flex items-center justify-between transition-colors duration-300 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <span className="text-white/90 group-hover:text-[#ED6C00] font-black text-sm transition-colors duration-300">
+                  <div className={`bg-white/10 group-hover:bg-[#ED6C00]/10 rounded-md px-3 md:px-4 py-1.5 md:py-2 flex items-center justify-between transition-colors duration-300 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <span className="text-white/90 group-hover:text-[#ED6C00] font-black text-xs md:text-sm transition-colors duration-300">
                       {item.date}
                     </span>
-                    <span className="text-white group-hover:text-black text-xs font-semibold transition-colors duration-300">
+                    <span className="text-white group-hover:text-black text-[10px] md:text-xs font-semibold transition-colors duration-300">
                       {topicsDict.categories[item.category]}
                     </span>
                   </div>
 
                   {/* Image Container */}
-                  <div className="relative aspect-[3/2] overflow-hidden mt-4">
+                  <div className="relative aspect-[3/2] overflow-hidden mt-3 md:mt-4">
                     <Image
                       src={item.image}
                       alt={item.title}
@@ -85,8 +85,8 @@ export function TopicsSection({ lang, dictionary }: TopicsSectionProps) {
                   </div>
 
                   {/* Description */}
-                  <div className={`p-3 ${isRTL ? 'text-right' : ''}`}>
-                    <h3 className="text-white group-hover:text-black font-bold text-base md:text-lg line-clamp-1 transition-colors duration-300">
+                  <div className={`p-2 md:p-3 ${isRTL ? 'text-right' : ''}`}>
+                    <h3 className="text-white group-hover:text-black font-bold text-sm md:text-lg line-clamp-1 transition-colors duration-300">
                       {item.title}
                     </h3>
                   </div>

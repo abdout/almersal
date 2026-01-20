@@ -103,9 +103,10 @@ export function DreamSection({ dictionary }: DreamSectionProps) {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-background overflow-hidden">
-      {/* Title Row - Full width, edge to edge, no animation */}
-      <div className="w-full flex items-center gap-1 md:gap-1.5 mb-8 md:mb-12">
+    <section className="py-12 md:py-24 bg-background overflow-hidden px-4 md:px-0">
+      {/* Title Row - Mobile: stacked, Desktop: horizontal */}
+      {/* Desktop Title Row */}
+      <div className="hidden md:flex w-full items-center gap-1 md:gap-1.5 mb-8 md:mb-12">
         {/* FIND */}
         <span className="text-[clamp(3rem,15vw,12rem)] font-black text-[#ED6C00] leading-[0.8] flex-shrink-0">
           FIND
@@ -130,25 +131,36 @@ export function DreamSection({ dictionary }: DreamSectionProps) {
         </span>
       </div>
 
-      {/* Subtitle - aligned with YOUR at half screen */}
+      {/* Mobile Title Row */}
+      <div className="flex md:hidden flex-col items-center gap-2 mb-8">
+        <div className="flex items-center gap-2">
+          <span className="text-4xl font-black text-[#ED6C00] leading-[0.9]">FIND</span>
+          <div className="w-12 h-10 bg-neutral-200 rounded-md flex items-center justify-center">
+            <span className="text-2xl text-white font-light">?</span>
+          </div>
+        </div>
+        <span className="text-4xl font-black text-[#ED6C00] leading-[0.9]">YOUR DREAM</span>
+      </div>
+
+      {/* Subtitle - mobile: centered, desktop: aligned with YOUR at half screen */}
       <motion.p
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.4 }}
-        className="text-left text-2xl md:text-3xl lg:text-4xl font-black text-foreground mb-10 md:mb-14 ml-[50%] pr-4"
+        className="text-center md:text-left text-xl md:text-3xl lg:text-4xl font-black text-foreground mb-8 md:mb-14 md:ml-[50%] pr-0 md:pr-4"
       >
         {dreamDict.subtitle}
       </motion.p>
 
-      {/* Hashtag Tag Cloud - aligned with YOUR at half screen */}
-      <div className="ml-[50%] pr-8 md:pr-16 lg:pr-24">
+      {/* Hashtag Tag Cloud - mobile: centered, desktop: aligned with YOUR at half screen */}
+      <div className="md:ml-[50%] pr-0 md:pr-8 lg:pr-16 xl:pr-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="flex flex-wrap justify-start gap-2 md:gap-2.5"
+          className="flex flex-wrap justify-center md:justify-start gap-2"
         >
           {tags.map((tag, index) => {
             const isSelected = selectedTags.has(tag.id);
@@ -168,7 +180,7 @@ export function DreamSection({ dictionary }: DreamSectionProps) {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => toggleTag(tag.id)}
                 className={`
-                  px-5 py-2.5 rounded-full text-sm md:text-base
+                  px-3 py-2 md:px-5 md:py-2.5 rounded-full text-xs md:text-base
                   transition-colors duration-200 cursor-pointer
                   ${isSelected
                     ? 'bg-primary text-primary-foreground border border-primary'

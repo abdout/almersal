@@ -461,7 +461,7 @@ export function FramerHeroSlider({
       {/* Slider Track */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <motion.div
-          className="flex items-center pb-[8vh] sm:pb-[10vh] md:pb-[15vh] h-full will-change-transform pointer-events-auto"
+          className="flex items-center pb-[5vh] sm:pb-[7vh] md:pb-[10vh] h-full will-change-transform pointer-events-auto"
           style={{
             x: smoothTrackX,
             gap: `${slideGap}px`,
@@ -494,7 +494,7 @@ export function FramerHeroSlider({
         </motion.div>
       </div>
 
-      {/* Fixed Navigation Arrows - Positioned at center slide edges */}
+      {/* Fixed Navigation Arrows - Desktop: positioned at center slide edges */}
       {showNavArrows && hasAnimated && (() => {
         const centerSlideWidth = slideWidth * scaleMax;
         const arrowSize = 56; // w-14 = 56px
@@ -503,8 +503,9 @@ export function FramerHeroSlider({
 
         return (
           <div className="absolute inset-0 z-30 pointer-events-none">
+            {/* Desktop arrows - positioned at slide edges */}
             <button
-              className="absolute w-16 h-11 bg-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-transform pointer-events-auto"
+              className="absolute w-16 h-11 bg-white rounded-full items-center justify-center shadow-xl hover:scale-105 transition-transform pointer-events-auto hidden md:flex"
               style={{
                 left: `${leftArrowX}px`,
                 top: 'calc(50% - 7vh)',
@@ -519,7 +520,7 @@ export function FramerHeroSlider({
             </button>
 
             <button
-              className="absolute w-16 h-11 bg-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-transform pointer-events-auto"
+              className="absolute w-16 h-11 bg-white rounded-full items-center justify-center shadow-xl hover:scale-105 transition-transform pointer-events-auto hidden md:flex"
               style={{
                 left: `${rightArrowX}px`,
                 top: 'calc(50% - 7vh)',
@@ -529,6 +530,27 @@ export function FramerHeroSlider({
               aria-label="Next slide"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-[#ED6C00]">
+                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+
+            {/* Mobile arrows - fixed at screen edges */}
+            <button
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform pointer-events-auto md:hidden"
+              onClick={() => paginate(-1)}
+              aria-label="Previous slide"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-[#ED6C00]">
+                <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+
+            <button
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform pointer-events-auto md:hidden"
+              onClick={() => paginate(1)}
+              aria-label="Next slide"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-[#ED6C00]">
                 <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
@@ -606,30 +628,41 @@ export function FramerHeroSlider({
         const rightEdge = (windowWidth / 2) + (centerSlideWidth / 2);
         const topEdge = `calc(50% - 7vh - ${centerSlideHeight / 2}px)`;
         const bottomEdge = `calc(50% - 7vh + ${centerSlideHeight / 2}px)`;
+        const isMobile = windowWidth < 768;
 
         return (
           <div className="absolute inset-0 z-20 pointer-events-none" style={{ fontFamily }}>
-            {/* Top Left Text - to the left of center slide, aligned to top */}
+            {/* Top Left Text - mobile: centered top, desktop: to the left of center slide */}
             {topLeftText && (
               <div
-                className="absolute text-white font-black text-6xl md:text-7xl lg:text-8xl drop-shadow-lg text-right tracking-wider"
-                style={{
+                className={cn(
+                  "absolute text-white font-black drop-shadow-lg tracking-wider",
+                  isMobile
+                    ? "text-4xl left-1/2 -translate-x-1/2 top-[12%] text-center"
+                    : "text-6xl md:text-7xl lg:text-8xl text-right"
+                )}
+                style={!isMobile ? {
                   right: `calc(100% - ${leftEdge - 32}px)`,
-                  top: topEdge,
-                }}
+                  top: `calc(${topEdge} + 40px)`,
+                } : undefined}
               >
                 {topLeftText}
               </div>
             )}
 
-            {/* Bottom Right Text - to the right of center slide, aligned to bottom */}
+            {/* Bottom Right Text - mobile: hidden or below slider, desktop: to the right of center slide */}
             {bottomRightText && bottomRightText.length > 0 && (
               <div
-                className="absolute text-white text-left drop-shadow-lg"
-                style={{
+                className={cn(
+                  "absolute text-white drop-shadow-lg",
+                  isMobile
+                    ? "hidden"
+                    : "text-left"
+                )}
+                style={!isMobile ? {
                   left: `${rightEdge + 35}px`,
-                  bottom: `calc(100% - ${bottomEdge})`,
-                }}
+                  bottom: `calc(100% - ${bottomEdge} - 40px)`,
+                } : undefined}
               >
                 {bottomRightText.map((line, i) => (
                   <div key={i} className={i === 0 ? "text-2xl md:text-3xl font-medium" : "text-5xl md:text-6xl lg:text-7xl font-black tracking-wider"}>
@@ -643,7 +676,7 @@ export function FramerHeroSlider({
       })()}
 
       {/* Bottom Navigation with Timer Progress */}
-      <div className="absolute left-0 right-0 z-30 pointer-events-auto cursor-auto bottom-[10%] sm:bottom-[12%] md:bottom-[16%]">
+      <div className="absolute left-0 right-0 z-30 pointer-events-auto cursor-auto bottom-[7%] sm:bottom-[9%] md:bottom-[12%]">
         <div className="flex flex-col items-center gap-4">
           <div className="flex items-center gap-2">
             {slides.map((_, index) => {

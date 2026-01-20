@@ -351,7 +351,7 @@ export function PickupSection({
   return (
     <div ref={containerRef} className={cn(
       'relative w-full overflow-hidden',
-      responsive.isMobile ? 'h-screen' : 'h-[150vh]',
+      responsive.isMobile ? 'h-[85vh]' : 'h-[150vh]',
       className
     )}>
       {/* Section Title */}

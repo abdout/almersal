@@ -80,7 +80,7 @@ export function SupportSection({ lang, dictionary }: SupportSectionProps) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="group inline-flex items-center gap-3 pl-6 pr-3 py-3 border border-solid border-[#ED6C00] bg-transparent text-[#ED6C00] rounded-full font-medium hover:bg-[#ED6C00] hover:text-white transition-all duration-300"
+              className="group inline-flex items-center gap-3 pl-6 pr-3 py-3 border-[1px] border-solid border-[#ED6C00] bg-transparent text-[#ED6C00] rounded-full font-medium hover:bg-[#ED6C00] hover:text-white transition-all duration-300"
             >
               <span>{supportDict.cta}</span>
               <span className="w-8 h-8 rounded-full bg-[#ED6C00] text-white flex items-center justify-center group-hover:bg-white group-hover:text-[#ED6C00] transition-all duration-300">
