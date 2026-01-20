@@ -76,8 +76,8 @@ export function PhotoGridSection() {
   const yRaw = useTransform(scrollYProgress, [0, 0.2], [400, 0]);
   const y = useSpring(yRaw, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
-  // Phase 2: "e" zooms (0.5 - 1.0) - completes exactly when section ends
-  const eScale = useTransform(scrollYProgress, [0.5, 1], [1, 30]);
+  // Phase 2: "e" zooms (0.5 - 0.92) - gradual zoom, then brief hold before flip
+  const eScale = useTransform(scrollYProgress, [0.5, 0.92], [1, 30]);
 
   // Border radius of "e" goes to 0 as it scales
   const eBorderRadius = useTransform(scrollYProgress, [0.5, 0.7], [8, 0]);
@@ -91,7 +91,7 @@ export function PhotoGridSection() {
   const getItem = (id: string) => gridItems.find(item => item.id === id)!;
 
   return (
-    <section ref={containerRef} className="relative h-[250vh]">
+    <section ref={containerRef} className="relative h-[300vh]">
       <div
         className="sticky top-0 h-screen overflow-hidden px-4 md:px-5 py-4"
         style={{ contain: 'layout style paint' }}

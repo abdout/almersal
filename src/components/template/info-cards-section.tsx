@@ -12,7 +12,7 @@ export function InfoCardsSection({ dictionary }: InfoCardsSectionProps) {
   const { infoCards } = dictionary;
 
   return (
-    <section className="bg-primary py-3 md:py-4">
+    <section className="bg-[#ED6C00] py-3 md:py-4">
       {/* White container - edge to edge with big rounded corners */}
       <div className="bg-white rounded-[80px] md:rounded-[120px] p-12 overflow-hidden">
         {/* Two cards in row with tiny gap */}
@@ -23,29 +23,26 @@ export function InfoCardsSection({ dictionary }: InfoCardsSectionProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            whileHover={{ y: -4 }}
-            className="bg-gray-100 rounded-[64px] md:rounded-[80px] p-8 md:p-12 flex flex-col relative overflow-hidden"
+            className="group bg-gray-100 hover:bg-[#ED6C00]/15 rounded-[64px] md:rounded-[80px] p-8 md:p-10 relative overflow-hidden min-h-[420px] md:min-h-[520px] transition-colors duration-300"
           >
-            <span className="text-primary font-medium text-sm mb-2">
+            <span className="text-[#ED6C00] font-bold text-base mb-2 block">
               {infoCards.campus.label}
             </span>
-            <h3 className="text-3xl md:text-4xl font-bold flex items-center gap-3 mb-4">
+            <h3 className="text-4xl md:text-5xl font-black flex items-center gap-3 mb-3 transition-colors duration-300 group-hover:text-[#ED6C00]">
               {infoCards.campus.title}
-              <span className="w-10 h-10 rounded-full border-2 border-primary flex items-center justify-center">
-                <ExternalLink className="w-5 h-5 text-primary" />
+              <span className="w-9 h-9 rounded-full bg-[#ED6C00] flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                <ExternalLink className="w-4 h-4 text-white " />
               </span>
             </h3>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-muted-foreground text-sm md:text-base max-w-[60%]">
               {infoCards.campus.description}
             </p>
-            {/* Campus illustration - overflows bottom */}
-            <div className="mt-auto -mb-12 -mx-4">
-              <img
-                src="https://media-arts.ac.jp/ma_cms/wp-content/themes/media-arts/assets/imgs/material/oc/mat-campus.png"
-                alt="Campus illustration"
-                className="w-full h-auto max-w-md mx-auto"
-              />
-            </div>
+            {/* Campus illustration - bottom right, reveals on hover */}
+            <img
+              src="https://media-arts.ac.jp/ma_cms/wp-content/themes/media-arts/assets/imgs/material/oc/mat-campus.png"
+              alt="Campus illustration"
+              className="absolute bottom-0 right-0 w-[26rem] md:w-[36rem] h-auto translate-y-72 translate-x-28 transition-transform duration-300 group-hover:scale-110"
+            />
           </motion.div>
 
           {/* Right Card - School Guide */}
@@ -54,29 +51,26 @@ export function InfoCardsSection({ dictionary }: InfoCardsSectionProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            whileHover={{ y: -4 }}
-            className="bg-gray-100 rounded-[64px] md:rounded-[80px] p-8 md:p-12 flex flex-col relative overflow-hidden"
+            className="group bg-gray-100 hover:bg-[#ED6C00]/15 rounded-[64px] md:rounded-[80px] p-8 md:p-10 relative overflow-hidden min-h-[420px] md:min-h-[520px] transition-colors duration-300"
           >
-            <span className="text-primary font-medium text-sm mb-2">
+            <span className="text-[#ED6C00] font-bold text-base mb-2 block">
               {infoCards.guide.label}
             </span>
-            <h3 className="text-3xl md:text-4xl font-bold flex items-center gap-3 mb-4">
+            <h3 className="text-4xl md:text-5xl font-black flex items-center gap-3 mb-3 transition-colors duration-300 group-hover:text-[#ED6C00]">
               {infoCards.guide.title}
-              <span className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                <ArrowRight className="w-5 h-5 text-white" />
+              <span className="w-9 h-9 rounded-full bg-[#ED6C00] flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                <ArrowRight className="w-4 h-4 text-white " />
               </span>
             </h3>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-muted-foreground text-sm md:text-base max-w-[60%]">
               {infoCards.guide.description}
             </p>
-            {/* Pamphlet image - positioned to overflow */}
-            <div className="mt-auto -mb-12 -mr-12">
-              <img
-                src="https://media-arts.ac.jp/ma_cms/wp-content/themes/media-arts/assets/imgs/material/mat-school-guide.png?v1"
-                alt="School guide pamphlet"
-                className="w-full h-auto max-w-lg ml-auto"
-              />
-            </div>
+            {/* Pamphlet image - bottom right, reveals on hover */}
+            <img
+              src="https://media-arts.ac.jp/ma_cms/wp-content/themes/media-arts/assets/imgs/material/mat-school-guide.png?v1"
+              alt="School guide pamphlet"
+              className="absolute bottom-0 right-0 w-[30rem] md:w-[42rem] h-auto translate-y-44 translate-x-28 transition-transform duration-300 group-hover:scale-110"
+            />
           </motion.div>
         </div>
       </div>

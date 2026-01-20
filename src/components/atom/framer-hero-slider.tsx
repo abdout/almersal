@@ -25,6 +25,16 @@ interface FramerHeroSliderProps {
     scrollDown?: string;
   };
   onColorChange?: (color: string) => void;
+  scaleMin?: number;
+  scaleMax?: number;
+  heightScaleMax?: number;
+  showBadge?: boolean;
+  showCustomCursor?: boolean;
+  showScrollDown?: boolean;
+  showNavArrows?: boolean;
+  showPanels?: boolean;
+  topLeftText?: string;
+  bottomRightText?: string[];
 }
 
 type AnimationPhase = 'initial' | 'entering' | 'focusing' | 'ready' | 'sliding';
@@ -55,8 +65,9 @@ const placeholderSlides: Slide[] = [
 
 // Spring configuration for smooth track movement
 const springConfig = {
-  stiffness: 300,
-  damping: 40,
+  stiffness: 120,
+  damping: 25,
+  mass: 1,
 };
 
 // Individual slide component with smooth scaling
@@ -72,6 +83,9 @@ interface SlideItemProps {
   slideWidth: number;
   slideGap: number;
   baseHeight: number;
+  scaleMin: number;
+  scaleMax: number;
+  heightScaleMax: number;
 }
 
 function SlideItem({
@@ -86,39 +100,45 @@ function SlideItem({
   slideWidth,
   slideGap,
   baseHeight,
+  scaleMin,
+  scaleMax,
+  heightScaleMax,
 }: SlideItemProps) {
-  const smallSlideWidth = slideWidth * SCALE_MIN;
+  const smallSlideWidth = slideWidth * scaleMin;
+  const largeSlideWidth = slideWidth * scaleMax;
+  const smallHeight = baseHeight * scaleMin;
+  const largeHeight = baseHeight * heightScaleMax;
   const slidePosition = arrayIndex * (smallSlideWidth + slideGap);
   const screenCenter = windowWidth / 2;
 
-  const transitionZone = (smallSlideWidth + slideGap) * 0.6; // Zone where scaling happens
+  // Transition zone for smooth scaling
+  const transitionZone = (smallSlideWidth + slideGap) * 1.0;
 
-  // Calculate width - only scale when entering/leaving center
+  // Account for width growth when calculating center (like pickup section)
+  const widthGrowth = (largeSlideWidth - smallSlideWidth) / 2;
+
+  // Calculate width with smooth scaling
   const width = useTransform(trackX, (x) => {
-    const slideCenterX = slidePosition + smallSlideWidth / 2 + x;
+    const slideCenterX = slidePosition + smallSlideWidth / 2 + widthGrowth + x;
     const distanceFromCenter = Math.abs(slideCenterX - screenCenter);
 
-    // Outside transition zone = small size
     if (distanceFromCenter > transitionZone) {
       return smallSlideWidth;
     }
-    // Inside transition zone = interpolate
     const t = 1 - (distanceFromCenter / transitionZone);
-    return smallSlideWidth + (slideWidth * (SCALE_MAX - SCALE_MIN) * t);
+    return smallSlideWidth + (largeSlideWidth - smallSlideWidth) * t;
   });
 
-  // Calculate height - only scale when entering/leaving center
+  // Calculate height with smooth scaling
   const height = useTransform(trackX, (x) => {
-    const slideCenterX = slidePosition + smallSlideWidth / 2 + x;
+    const slideCenterX = slidePosition + smallSlideWidth / 2 + widthGrowth + x;
     const distanceFromCenter = Math.abs(slideCenterX - screenCenter);
 
-    // Outside transition zone = small size
     if (distanceFromCenter > transitionZone) {
-      return baseHeight * SCALE_MIN;
+      return smallHeight;
     }
-    // Inside transition zone = interpolate
     const t = 1 - (distanceFromCenter / transitionZone);
-    return baseHeight * SCALE_MIN + (baseHeight * (SCALE_MAX - SCALE_MIN) * t);
+    return smallHeight + (largeHeight - smallHeight) * t;
   });
 
   // Calculate opacity based on distance
@@ -132,20 +152,19 @@ function SlideItem({
     return 1 - ((distanceFromCenter - maxVisibleDistance * 0.7) / (maxVisibleDistance * 0.3));
   });
 
-  // Calculate overlay opacity (inverse of being center)
+  // Calculate overlay opacity - fades as slide approaches center
   const overlayOpacity = useTransform(trackX, (x) => {
     if (!hasAnimated) return 0;
-    const slideCenterX = slidePosition + smallSlideWidth / 2 + x;
+    const slideCenterX = slidePosition + smallSlideWidth / 2 + widthGrowth + x;
     const distanceFromCenter = Math.abs(slideCenterX - screenCenter);
 
-    // Fully visible overlay outside transition zone
-    if (distanceFromCenter > transitionZone) return 0.95;
-    // No overlay at center
-    if (distanceFromCenter < transitionZone * 0.3) return 0;
-    // Transition zone
-    const t = (distanceFromCenter - transitionZone * 0.3) / (transitionZone * 0.7);
-    return t * 0.95;
+    if (distanceFromCenter > transitionZone) {
+      return 0.95;
+    }
+    const t = 1 - (distanceFromCenter / transitionZone);
+    return (1 - t) * 0.95;
   });
+
 
   // Determine click direction
   const handleClick = useCallback(() => {
@@ -160,7 +179,7 @@ function SlideItem({
 
   return (
     <motion.div
-      className="relative flex-shrink-0 rounded-[28px] overflow-hidden"
+      className="relative flex-shrink-0 rounded-[28px]"
       style={{
         width,
         height,
@@ -169,16 +188,17 @@ function SlideItem({
       onClick={handleClick}
     >
       {/* White placeholder div */}
-      <div className="w-full h-full bg-white" />
+      <div className="w-full h-full bg-white rounded-[28px] overflow-hidden" />
 
       {/* Color overlay - fades in as slide moves away from center */}
       <motion.div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none rounded-[28px]"
         style={{
           backgroundColor: currentSlideColor,
           opacity: overlayOpacity,
         }}
       />
+
     </motion.div>
   );
 }
@@ -190,6 +210,16 @@ export function FramerHeroSlider({
   locale = 'ar',
   dictionary,
   onColorChange,
+  scaleMin = SCALE_MIN,
+  scaleMax = SCALE_MAX,
+  heightScaleMax,
+  showBadge = true,
+  showCustomCursor = true,
+  showScrollDown = true,
+  showNavArrows = false,
+  showPanels = true,
+  topLeftText,
+  bottomRightText,
 }: FramerHeroSliderProps) {
   const fontFamily = locale === 'en' ? 'var(--font-geist-sans)' : 'var(--font-rubik)';
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -237,18 +267,18 @@ export function FramerHeroSlider({
     const screenCenter = windowWidth / 2;
     const targetSlideIndex = centerArrayOffset + index;
 
-    // When this slide is centered, all OTHER slides are at SCALE_MIN
-    const smallSlideWidth = slideWidth * SCALE_MIN;
-    const centerSlideWidth = slideWidth * SCALE_MAX;
+    // When this slide is centered, all OTHER slides are at scaleMin
+    const smallSlideWidth = slideWidth * scaleMin;
+    const centerSlideWidth = slideWidth * scaleMax;
 
     // Position of target slide's left edge (all slides before it are small)
     const position = targetSlideIndex * (smallSlideWidth + slideGap);
 
-    // Center of the target slide (which will be at SCALE_MAX)
+    // Center of the target slide (which will be at scaleMax)
     const slideCenter = position + centerSlideWidth / 2;
 
     return screenCenter - slideCenter;
-  }, [windowWidth, centerArrayOffset, slideWidth, slideGap]);
+  }, [windowWidth, centerArrayOffset, slideWidth, slideGap, scaleMin, scaleMax]);
 
   // Initialize position and trigger entry animation
   useEffect(() => {
@@ -390,7 +420,7 @@ export function FramerHeroSlider({
       <div
         className={cn(
           'absolute inset-x-0 top-[15%] bottom-[20%] z-10 overflow-hidden',
-          !isTouchDevice && 'cursor-none'
+          showCustomCursor && !isTouchDevice && 'cursor-none'
         )}
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
@@ -398,7 +428,7 @@ export function FramerHeroSlider({
         onClick={handleCursorClick}
       >
         {/* Custom Cursor - hidden on touch devices */}
-        {cursorVisible && !isTouchDevice && (
+        {showCustomCursor && cursorVisible && !isTouchDevice && (
           <div
             className="fixed pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-150"
             style={{
@@ -456,66 +486,161 @@ export function FramerHeroSlider({
               slideWidth={slideWidth}
               slideGap={slideGap}
               baseHeight={baseHeight}
+              scaleMin={scaleMin}
+              scaleMax={scaleMax}
+              heightScaleMax={heightScaleMax ?? scaleMax}
             />
           ))}
         </motion.div>
       </div>
 
+      {/* Fixed Navigation Arrows - Positioned at center slide edges */}
+      {showNavArrows && hasAnimated && (() => {
+        const centerSlideWidth = slideWidth * scaleMax;
+        const arrowSize = 56; // w-14 = 56px
+        const leftArrowX = (windowWidth / 2) - (centerSlideWidth / 2) - (arrowSize / 2);
+        const rightArrowX = (windowWidth / 2) + (centerSlideWidth / 2) - (arrowSize / 2);
+
+        return (
+          <div className="absolute inset-0 z-30 pointer-events-none">
+            <button
+              className="absolute w-16 h-11 bg-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-transform pointer-events-auto"
+              style={{
+                left: `${leftArrowX}px`,
+                top: 'calc(50% - 7vh)',
+                transform: 'translateY(-50%)',
+              }}
+              onClick={() => paginate(-1)}
+              aria-label="Previous slide"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-[#ED6C00]">
+                <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+
+            <button
+              className="absolute w-16 h-11 bg-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-transform pointer-events-auto"
+              style={{
+                left: `${rightArrowX}px`,
+                top: 'calc(50% - 7vh)',
+                transform: 'translateY(-50%)',
+              }}
+              onClick={() => paginate(1)}
+              aria-label="Next slide"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-[#ED6C00]">
+                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+        );
+      })()}
+
       {/* Left Panel - hidden on mobile/tablet */}
-      <div
-        className="absolute left-0 top-0 bottom-0 w-[28%] z-20 hidden md:flex flex-col justify-between pt-[20vh] pb-8 px-8 md:px-12 lg:px-16 pointer-events-none"
-        style={{ fontFamily }}
-      >
-        <div className="text-start max-w-[320px]">
-          <p className="text-lg md:text-xl lg:text-2xl font-bold text-white leading-snug drop-shadow-lg">
-            {dictionary?.visionStatement || 'We craft innovative media content that reflects our clients\' identity and reaches the hearts of audiences'}
-          </p>
-        </div>
-        <div>
-          {(() => {
-            const lines = (dictionary?.leftPanel || 'Fuel\nCreativity').split('\n');
-            return (
-              <div className="text-white drop-shadow-lg text-start">
-                <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-tight">
-                  {lines[0]}
-                </div>
-                {lines[1] && (
-                  <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight">
-                    {lines[1]}
+      {showPanels && (
+        <div
+          className="absolute left-0 top-0 bottom-0 w-[28%] z-20 hidden md:flex flex-col justify-between pt-[20vh] pb-8 px-8 md:px-12 lg:px-16 pointer-events-none"
+          style={{ fontFamily }}
+        >
+          <div className="text-start max-w-[320px]">
+            <p className="text-lg md:text-xl lg:text-2xl font-bold text-white leading-snug drop-shadow-lg">
+              {dictionary?.visionStatement || 'We craft innovative media content that reflects our clients\' identity and reaches the hearts of audiences'}
+            </p>
+          </div>
+          <div>
+            {(() => {
+              const lines = (dictionary?.leftPanel || 'Fuel\nCreativity').split('\n');
+              return (
+                <div className="text-white drop-shadow-lg text-start">
+                  <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-tight">
+                    {lines[0]}
                   </div>
-                )}
-              </div>
-            );
-          })()}
+                  {lines[1] && (
+                    <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight">
+                      {lines[1]}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Right Panel - hidden on mobile/tablet */}
-      <div
-        className="absolute right-0 top-0 bottom-0 w-[20%] z-20 hidden md:flex flex-col items-end justify-between pt-[10vh] pb-8 pr-8 md:pr-12 lg:pr-16 pl-4 pointer-events-none"
-        style={{ fontFamily }}
-      >
-        <div className="pointer-events-auto cursor-auto">
-          <EventBadge heroColor={currentSlide?.overlayColor} />
-        </div>
-        <div>
-          {(() => {
-            const lines = (dictionary?.rightPanel || 'Shape\nIdentity').split('\n');
-            return (
-              <div className="text-white drop-shadow-lg text-end">
-                <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-tight">
-                  {lines[0]}
-                </div>
-                {lines[1] && (
-                  <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight">
-                    {lines[1]}
+      {showPanels && (
+        <div
+          className="absolute right-0 top-0 bottom-0 w-[20%] z-20 hidden md:flex flex-col items-end justify-between pt-[10vh] pb-8 pr-8 md:pr-12 lg:pr-16 pl-4 pointer-events-none"
+          style={{ fontFamily }}
+        >
+          {showBadge && (
+            <div className="pointer-events-auto cursor-auto">
+              <EventBadge heroColor={currentSlide?.overlayColor} />
+            </div>
+          )}
+          <div>
+            {(() => {
+              const lines = (dictionary?.rightPanel || 'Shape\nIdentity').split('\n');
+              return (
+                <div className="text-white drop-shadow-lg text-end">
+                  <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-tight">
+                    {lines[0]}
                   </div>
-                )}
-              </div>
-            );
-          })()}
+                  {lines[1] && (
+                    <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight">
+                      {lines[1]}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Custom Text Labels - positioned to left and right of center slide */}
+      {(topLeftText || bottomRightText) && hasAnimated && (() => {
+        const centerSlideWidth = slideWidth * scaleMax;
+        const centerSlideHeight = baseHeight * (heightScaleMax ?? scaleMax);
+        const leftEdge = (windowWidth / 2) - (centerSlideWidth / 2);
+        const rightEdge = (windowWidth / 2) + (centerSlideWidth / 2);
+        const topEdge = `calc(50% - 7vh - ${centerSlideHeight / 2}px)`;
+        const bottomEdge = `calc(50% - 7vh + ${centerSlideHeight / 2}px)`;
+
+        return (
+          <div className="absolute inset-0 z-20 pointer-events-none" style={{ fontFamily }}>
+            {/* Top Left Text - to the left of center slide, aligned to top */}
+            {topLeftText && (
+              <div
+                className="absolute text-white font-black text-6xl md:text-7xl lg:text-8xl drop-shadow-lg text-right tracking-wider"
+                style={{
+                  right: `calc(100% - ${leftEdge - 32}px)`,
+                  top: topEdge,
+                }}
+              >
+                {topLeftText}
+              </div>
+            )}
+
+            {/* Bottom Right Text - to the right of center slide, aligned to bottom */}
+            {bottomRightText && bottomRightText.length > 0 && (
+              <div
+                className="absolute text-white text-left drop-shadow-lg"
+                style={{
+                  left: `${rightEdge + 35}px`,
+                  bottom: `calc(100% - ${bottomEdge})`,
+                }}
+              >
+                {bottomRightText.map((line, i) => (
+                  <div key={i} className={i === 0 ? "text-2xl md:text-3xl font-medium" : "text-5xl md:text-6xl lg:text-7xl font-black tracking-wider"}>
+                    {line}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Bottom Navigation with Timer Progress */}
       <div className="absolute left-0 right-0 z-30 pointer-events-auto cursor-auto bottom-[10%] sm:bottom-[12%] md:bottom-[16%]">
@@ -598,63 +723,65 @@ export function FramerHeroSlider({
       </div>
 
       {/* Scroll Down Caption */}
-      <div
-        className={cn(
-          'absolute left-1/2 -translate-x-1/2 z-30 transition-all duration-500 flex flex-col items-center gap-2 bottom-[5%] sm:bottom-[4%] md:bottom-[3%]',
-          phase === 'ready' || phase === 'sliding' ? 'opacity-100' : 'opacity-0'
-        )}
-      >
-        {/* Text scroll container */}
-        <div className="h-4 overflow-hidden">
-          <div className="animate-scroll-down">
-            <span className="block text-xs text-white/90 font-medium tracking-wide drop-shadow-lg h-4">
-              {dictionary?.scrollDown || 'Scroll Down'}
-            </span>
-            <span className="block text-xs text-white/90 font-medium tracking-wide drop-shadow-lg h-4">
-              {dictionary?.scrollDown || 'Scroll Down'}
-            </span>
-          </div>
-        </div>
-        {/* Arrow scroll container */}
-        <div className="h-4 overflow-hidden">
-          <div className="animate-scroll-down">
-            <div className="h-4 flex items-center justify-center">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                className="text-white/80"
-              >
-                <path
-                  d="M12 4v16m0 0l-6-6m6 6l6-6"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <div className="h-4 flex items-center justify-center">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                className="text-white/80"
-              >
-                <path
-                  d="M12 4v16m0 0l-6-6m6 6l6-6"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+      {showScrollDown && (
+        <div
+          className={cn(
+            'absolute left-1/2 -translate-x-1/2 z-30 transition-all duration-500 flex flex-col items-center gap-2 bottom-[5%] sm:bottom-[4%] md:bottom-[3%]',
+            phase === 'ready' || phase === 'sliding' ? 'opacity-100' : 'opacity-0'
+          )}
+        >
+          {/* Text scroll container */}
+          <div className="h-4 overflow-hidden">
+            <div className="animate-scroll-down">
+              <span className="block text-xs text-white/90 font-medium tracking-wide drop-shadow-lg h-4">
+                {dictionary?.scrollDown || 'Scroll Down'}
+              </span>
+              <span className="block text-xs text-white/90 font-medium tracking-wide drop-shadow-lg h-4">
+                {dictionary?.scrollDown || 'Scroll Down'}
+              </span>
             </div>
           </div>
+          {/* Arrow scroll container */}
+          <div className="h-4 overflow-hidden">
+            <div className="animate-scroll-down">
+              <div className="h-4 flex items-center justify-center">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="text-white/80"
+                >
+                  <path
+                    d="M12 4v16m0 0l-6-6m6 6l6-6"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <div className="h-4 flex items-center justify-center">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="text-white/80"
+                >
+                  <path
+                    d="M12 4v16m0 0l-6-6m6 6l6-6"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

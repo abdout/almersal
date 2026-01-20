@@ -10,6 +10,7 @@ import { PickupSection } from '@/components/template/pickup-section';
 import { DreamSection } from '@/components/template/dream-section';
 import { SupportSection } from '@/components/template/support-section';
 import { VisitorSection } from '@/components/template/visitor-section';
+import { MovieSection } from '@/components/template/movie-section';
 import { InfoCardsSection } from '@/components/template/info-cards-section';
 import { InterviewSection } from '@/components/template/interview-section';
 import { TopicsSection } from '@/components/template/topics-section';
@@ -106,8 +107,8 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
           <PhotoGridSection />
         </div>
 
-        {/* Sections that appear from behind with parallax */}
-        <div className="relative z-10 bg-background">
+        {/* Dream + Support + Visitor (white, rounded bottom, on top) */}
+        <div className="relative z-20 bg-background rounded-b-[80px] md:rounded-b-[120px] overflow-hidden shadow-2xl">
           <ParallaxSection offset={80}>
             <DreamSection dictionary={dictionary} />
           </ParallaxSection>
@@ -122,18 +123,16 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
           <ParallaxSection offset={40}>
             <VisitorSection lang={lang} dictionary={dictionary} />
           </ParallaxSection>
+        </div>
 
-          <ParallaxSection offset={35}>
-            <InfoCardsSection dictionary={dictionary} />
-          </ParallaxSection>
-
-          <ParallaxSection offset={10}>
-            <InterviewSection lang={lang} dictionary={dictionary} />
-          </ParallaxSection>
-
-          <ParallaxSection offset={5}>
+        {/* Orange sections - positioned behind white sections, reveals on scroll */}
+        <div className="relative z-10 -mt-[70vh] md:-mt-[80vh]">
+          <div className="bg-[#ED6C00] pt-[70vh] md:pt-[80vh]">
+            <MovieSection dictionary={dictionary} lang={lang} />
             <TopicsSection lang={lang} dictionary={dictionary} />
-          </ParallaxSection>
+            <InterviewSection lang={lang} dictionary={dictionary} />
+            <InfoCardsSection dictionary={dictionary} />
+          </div>
         </div>
       </main>
 
