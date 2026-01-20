@@ -46,6 +46,39 @@
     "title": "The Messenger",
     "description": "Almersal means 'The Messenger' — and that's exactly what we do. We deliver your story to the world through stunning visuals, compelling narratives, and strategic content that resonates."
   },
+  "dream": {
+    "title": "FIND YOUR DREAM",
+    "titleAr": "اكتشف حلمك",
+    "subtitle": "Discover what you love",
+    "tags": {
+      "storytelling": "Storytelling",
+      "commercials": "Commercials",
+      "documentaries": "Documentaries",
+      "musicVideos": "Music Videos",
+      "liveStreaming": "Live Streaming",
+      "productShots": "Product Shots",
+      "events": "Event Coverage",
+      "portraits": "Portraits",
+      "editorial": "Editorial",
+      "architecture": "Architecture",
+      "branding": "Brand Identity",
+      "visualSystems": "Visual Systems",
+      "packaging": "Packaging",
+      "webDesign": "Web Design",
+      "printDesign": "Print Design",
+      "socialStrategy": "Social Strategy",
+      "contentCreation": "Content Creation",
+      "influencer": "Influencer",
+      "analytics": "Analytics",
+      "community": "Community",
+      "motionGraphics": "Motion Graphics",
+      "creativeDirection": "Creative Direction",
+      "campaigns": "Campaigns",
+      "rebranding": "Rebranding",
+      "digitalMarketing": "Digital Marketing",
+      "podcast": "Podcast"
+    }
+  },
   "services": {
     "title": "What We Craft",
     "subtitle": "From concept to screen, we bring visions to life",
@@ -84,6 +117,244 @@
     "title": "Ready to Tell Your Story?",
     "subtitle": "Let's create something remarkable together",
     "button": "Start a Project"
+  },
+  "support": {
+    "label": "Support",
+    "subtitle": "Career Support",
+    "title": "Comprehensive Career Support",
+    "description": "We provide specialized career consultations and comprehensive support to help you build your professional journey. Our team of experts works with you step by step to achieve your goals and develop your skills. We collaborate with families and individuals to provide tailored guidance.",
+    "cta": "View More"
+  },
+  "visitor": {
+    "label": "Visitor Information",
+    "subtitle": "Visitor Guide by Category",
+    "items": {
+      "parents": {
+        "title": "Parents",
+        "description": "Information for those considering their child's path"
+      },
+      "highSchool": {
+        "title": "High School",
+        "description": "A school where you can pursue your passion"
+      },
+      "workingAdults": {
+        "title": "Professionals",
+        "description": "Review and upgrade your skills through learning"
+      },
+      "international": {
+        "title": "International",
+        "description": "Why international students choose Almersal"
+      },
+      "recruiters": {
+        "title": "Recruiters",
+        "description": "For companies considering student recruitment"
+      }
+    }
+  },
+  "infoCards": {
+    "campus": {
+      "label": "Visit Our Campus",
+      "title": "Open Campus",
+      "description": "Join us for a campus tour and experience our facilities firsthand. Take the first step towards your future!"
+    },
+    "guide": {
+      "label": "Free Resources Available",
+      "title": "School Guide",
+      "description": "Learn about our programs, qualifications, and career paths. Get all the information you need in our comprehensive pamphlet!"
+    }
+  },
+  "interview": {
+    "title": "Interview",
+    "subtitle": "Voices",
+    "description": "We asked clients, partners, and team members about working with Almersal!",
+    "watermark": "WE ASKED ABOUT",
+    "categories": {
+      "clients": "Clients",
+      "alumni": "Alumni",
+      "partners": "Partners"
+    },
+    "testimonials": [
+      {
+        "id": "1",
+        "name": "Ahmed Al-Rashid",
+        "role": "Marketing Director",
+        "company": "Saudi Telecom",
+        "category": "clients",
+        "quote": "Almersal transformed our brand story into a visual masterpiece. Their attention to detail and creative vision exceeded our expectations!",
+        "emojis": ["✨", "🎬"]
+      },
+      {
+        "id": "2",
+        "name": "Fatima Hassan",
+        "role": "Brand Manager",
+        "company": "Noon",
+        "category": "clients",
+        "quote": "Working with Almersal was seamless from start to finish. They truly understand how to capture a brand's essence on screen.",
+        "emojis": ["💯", "🎥"]
+      },
+      {
+        "id": "3",
+        "name": "Khalid Mansour",
+        "role": "CEO",
+        "company": "Vision Media",
+        "category": "clients",
+        "quote": "The team at Almersal brought our campaign to life with stunning cinematography and storytelling that resonated with our audience.",
+        "emojis": ["🌟", "📸"]
+      },
+      {
+        "id": "8",
+        "name": "Layla Al-Harbi",
+        "role": "Communications Director",
+        "company": "NEOM",
+        "category": "clients",
+        "quote": "Almersal understood our vision from day one. Their ability to translate complex ideas into compelling visuals is unmatched.",
+        "emojis": ["🏆", "🎯"]
+      },
+      {
+        "id": "9",
+        "name": "Mohammed Saleh",
+        "role": "Creative Director",
+        "company": "Red Sea Film Festival",
+        "category": "clients",
+        "quote": "The quality of work Almersal delivers consistently amazes us. They are true partners in bringing stories to life.",
+        "emojis": ["🎬", "⭐"]
+      },
+      {
+        "id": "10",
+        "name": "Hana Al-Dosari",
+        "role": "Marketing VP",
+        "company": "Tamara",
+        "category": "clients",
+        "quote": "From concept to execution, Almersal exceeded every expectation. Their team is professional, creative, and incredibly talented.",
+        "emojis": ["💫", "🚀"]
+      },
+      {
+        "id": "4",
+        "name": "Sarah Al-Qahtani",
+        "role": "Former Creative Lead",
+        "company": "Now at Netflix",
+        "category": "alumni",
+        "quote": "My time at Almersal shaped my creative career. The skills and mentorship I received opened doors to international opportunities.",
+        "emojis": ["🚀", "💡"]
+      },
+      {
+        "id": "5",
+        "name": "Omar Al-Farsi",
+        "role": "Senior Editor",
+        "company": "Previously at Almersal",
+        "category": "alumni",
+        "quote": "Almersal gave me the freedom to experiment and grow. The collaborative environment pushed me to become a better storyteller.",
+        "emojis": ["🎨", "✨"]
+      },
+      {
+        "id": "11",
+        "name": "Yasmin Khalid",
+        "role": "Director of Photography",
+        "company": "Now at Paramount",
+        "category": "alumni",
+        "quote": "The foundation I built at Almersal prepared me for international projects. Forever grateful for the opportunities.",
+        "emojis": ["📷", "🌍"]
+      },
+      {
+        "id": "12",
+        "name": "Faisal Al-Ghamdi",
+        "role": "Motion Designer",
+        "company": "Now at Apple",
+        "category": "alumni",
+        "quote": "Almersal was my launchpad. The creative freedom and mentorship helped me develop skills that took me global.",
+        "emojis": ["🍎", "💡"]
+      },
+      {
+        "id": "6",
+        "name": "Noura Abdullah",
+        "role": "Production Head",
+        "company": "MBC Studios",
+        "category": "partners",
+        "quote": "Our partnership with Almersal has produced some of the region's most memorable content. They're reliable, creative, and professional.",
+        "emojis": ["🤝", "🎬"]
+      },
+      {
+        "id": "7",
+        "name": "Rayan Al-Mohsen",
+        "role": "Agency Director",
+        "company": "Publicis Arabia",
+        "category": "partners",
+        "quote": "When we need top-tier production quality, Almersal is our go-to partner. They consistently deliver beyond expectations.",
+        "emojis": ["⭐", "🎯"]
+      },
+      {
+        "id": "13",
+        "name": "Dana Al-Shehri",
+        "role": "Head of Partnerships",
+        "company": "Rotana",
+        "category": "partners",
+        "quote": "Almersal brings creativity and professionalism to every project. A trusted partner for all our production needs.",
+        "emojis": ["🎵", "✨"]
+      },
+      {
+        "id": "14",
+        "name": "Tariq Hassan",
+        "role": "Executive Producer",
+        "company": "OSN",
+        "category": "partners",
+        "quote": "Working with Almersal means working with the best. Their dedication to quality is evident in every frame.",
+        "emojis": ["📺", "🏆"]
+      }
+    ]
+  },
+  "topics": {
+    "title": "Topics",
+    "subtitle": "Latest",
+    "categories": {
+      "news": "News",
+      "events": "Events",
+      "workshop": "Workshop"
+    },
+    "items": [
+      {
+        "id": "1",
+        "date": "2025.01.20",
+        "category": "news",
+        "image": "https://picsum.photos/seed/news1/600/450",
+        "title": "Almersal wins Best Creative Agency"
+      },
+      {
+        "id": "2",
+        "date": "2025.01.15",
+        "category": "events",
+        "image": "https://picsum.photos/seed/events1/600/450",
+        "title": "Annual Creative Summit Registration"
+      },
+      {
+        "id": "3",
+        "date": "2025.01.10",
+        "category": "workshop",
+        "image": "https://picsum.photos/seed/workshop1/600/450",
+        "title": "Cinematography Masterclass"
+      },
+      {
+        "id": "4",
+        "date": "2025.01.05",
+        "category": "news",
+        "image": "https://picsum.photos/seed/news2/600/450",
+        "title": "New Studio Opening in Riyadh"
+      },
+      {
+        "id": "5",
+        "date": "2024.12.28",
+        "category": "events",
+        "image": "https://picsum.photos/seed/events2/600/450",
+        "title": "Year End Client Showcase"
+      },
+      {
+        "id": "6",
+        "date": "2024.12.20",
+        "category": "workshop",
+        "image": "https://picsum.photos/seed/workshop2/600/450",
+        "title": "Motion Graphics Bootcamp"
+      }
+    ],
+    "viewAll": "View All Topics"
   },
   "footer": {
     "description": "Almersal — The Messenger. Your story, beautifully delivered.",

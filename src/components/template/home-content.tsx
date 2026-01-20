@@ -7,10 +7,12 @@ import { useHeroColor } from '@/components/template/hero-color-context';
 import { Header } from '@/components/template/header';
 import { HeroSection } from '@/components/template/hero-section';
 import { PickupSection } from '@/components/template/pickup-section';
-import { ServicesSection } from '@/components/template/services-section';
-import { StatsSection } from '@/components/template/stats-section';
-import { PortfolioSection } from '@/components/template/portfolio-section';
-import { CTASection } from '@/components/template/cta-section';
+import { DreamSection } from '@/components/template/dream-section';
+import { SupportSection } from '@/components/template/support-section';
+import { VisitorSection } from '@/components/template/visitor-section';
+import { InfoCardsSection } from '@/components/template/info-cards-section';
+import { InterviewSection } from '@/components/template/interview-section';
+import { TopicsSection } from '@/components/template/topics-section';
 import { Footer } from '@/components/template/footer';
 import { BottomNav } from '@/components/template/bottom-nav';
 import { ParallaxSection } from '@/components/template/parallax-section';
@@ -107,19 +109,30 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
         {/* Sections that appear from behind with parallax */}
         <div className="relative z-10 bg-background">
           <ParallaxSection offset={80}>
-            <ServicesSection dictionary={dictionary} />
+            <DreamSection dictionary={dictionary} />
           </ParallaxSection>
 
-          <ParallaxSection offset={60}>
-            <StatsSection dictionary={dictionary} />
+          <ParallaxSection offset={50}>
+            <SupportSection lang={lang} dictionary={dictionary} />
           </ParallaxSection>
+
+          {/* Separator line */}
+          <div className="w-full h-px bg-black" />
 
           <ParallaxSection offset={40}>
-            <PortfolioSection dictionary={dictionary} />
+            <VisitorSection lang={lang} dictionary={dictionary} />
           </ParallaxSection>
 
-          <ParallaxSection offset={20}>
-            <CTASection lang={lang} dictionary={dictionary} />
+          <ParallaxSection offset={35}>
+            <InfoCardsSection dictionary={dictionary} />
+          </ParallaxSection>
+
+          <ParallaxSection offset={10}>
+            <InterviewSection lang={lang} dictionary={dictionary} />
+          </ParallaxSection>
+
+          <ParallaxSection offset={5}>
+            <TopicsSection lang={lang} dictionary={dictionary} />
           </ParallaxSection>
         </div>
       </main>

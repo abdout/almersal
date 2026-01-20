@@ -384,46 +384,54 @@ export function FramerHeroSlider({
   return (
     <div
       ref={containerRef}
-      className={cn('relative w-full h-screen overflow-hidden', !isTouchDevice && 'cursor-none', className)}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClick={handleCursorClick}
+      className={cn('relative w-full h-screen overflow-hidden', className)}
     >
-      {/* Custom Cursor - hidden on touch devices */}
-      {cursorVisible && !isTouchDevice && (
-        <div
-          className="fixed pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-150"
-          style={{
-            left: cursorPos.x,
-            top: cursorPos.y,
-          }}
-        >
-          <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              style={{ color: currentSlide?.overlayColor || '#ED6C00' }}
-              className={cursorDirection === 'left' ? 'rotate-180' : ''}
-            >
-              <path
-                d="M7 12h10m0 0l-5-5m5 5l-5 5"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+      {/* Slider Track Area - custom cursor zone */}
+      <div
+        className={cn(
+          'absolute inset-x-0 top-[15%] bottom-[20%] z-10 overflow-hidden',
+          !isTouchDevice && 'cursor-none'
+        )}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleCursorClick}
+      >
+        {/* Custom Cursor - hidden on touch devices */}
+        {cursorVisible && !isTouchDevice && (
+          <div
+            className="fixed pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-150"
+            style={{
+              left: cursorPos.x,
+              top: cursorPos.y,
+            }}
+          >
+            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                style={{ color: currentSlide?.overlayColor || '#ED6C00' }}
+                className={cursorDirection === 'left' ? 'rotate-180' : ''}
+              >
+                <path
+                  d="M7 12h10m0 0l-5-5m5 5l-5 5"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Slider Track */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <motion.div
-          className="flex items-center pb-[8vh] sm:pb-[10vh] md:pb-[15vh] h-full will-change-transform"
+          className="flex items-center pb-[8vh] sm:pb-[10vh] md:pb-[15vh] h-full will-change-transform pointer-events-auto"
           style={{
             x: smoothTrackX,
             gap: `${slideGap}px`,

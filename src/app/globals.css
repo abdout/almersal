@@ -323,3 +323,76 @@ html:hover::-webkit-scrollbar-thumb:hover {
 .animate-scroll-down {
   animation: scrollDown 2s ease-in-out infinite;
 }
+
+/* One-time scroll animation for hover */
+@keyframes scrollOnce {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.group-hover\:animate-scroll-once {
+  animation: none;
+}
+
+.group:hover .group-hover\:animate-scroll-once {
+  animation: scrollOnce 0.4s ease-out forwards;
+}
+
+/* Horizontal scroll animation for arrow */
+@keyframes scrollHorizontal {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.group-hover\:animate-scroll-horizontal {
+  animation: none;
+}
+
+.group:hover .group-hover\:animate-scroll-horizontal {
+  animation: scrollHorizontal 0.4s ease-out forwards;
+}
+
+/* Marquee animation - seamless infinite scroll */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes marquee-reverse {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 80s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+.animate-marquee-reverse {
+  animation: marquee-reverse 80s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}

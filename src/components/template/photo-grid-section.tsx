@@ -69,32 +69,29 @@ export function PhotoGridSection() {
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ['start 0.8', 'end start'],
+    offset: ['start end', 'end start'],
   });
 
-  // Phase 1: Entire grid moves as one unit with parallax reveal (0 - 0.4)
-  const yRaw = useTransform(scrollYProgress, [0, 0.4], [400, 0]);
+  // Phase 1: Grid parallax reveal (0 - 0.2)
+  const yRaw = useTransform(scrollYProgress, [0, 0.2], [400, 0]);
   const y = useSpring(yRaw, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
-  // Phase 2: "e" item zooms to full screen (0.5 - 0.8)
-  // Scale stays at 1 until 0.5, then zooms
-  const eScaleRaw = useTransform(scrollYProgress, [0.5, 0.8], [1, 12]);
-  const eScale = useSpring(eScaleRaw, { stiffness: 80, damping: 25, restDelta: 0.001 });
+  // Phase 2: "e" zooms (0.5 - 1.0) - completes exactly when section ends
+  const eScale = useTransform(scrollYProgress, [0.5, 1], [1, 30]);
 
   // Border radius of "e" goes to 0 as it scales
-  const eBorderRadius = useTransform(scrollYProgress, [0.5, 0.65], [8, 0]);
+  const eBorderRadius = useTransform(scrollYProgress, [0.5, 0.7], [8, 0]);
 
   // Z-index jumps up when zoom starts
   const eZIndex = useTransform(scrollYProgress, [0.49, 0.5], [0, 50]);
 
   // Fade out other items as "e" zooms
-  const otherOpacityRaw = useTransform(scrollYProgress, [0.5, 0.6], [1, 0]);
-  const otherOpacity = useSpring(otherOpacityRaw, { stiffness: 100, damping: 30 });
+  const otherOpacity = useTransform(scrollYProgress, [0.5, 0.6], [1, 0]);
 
   const getItem = (id: string) => gridItems.find(item => item.id === id)!;
 
   return (
-    <section ref={containerRef} className="relative h-[350vh]">
+    <section ref={containerRef} className="relative h-[250vh]">
       <div
         className="sticky top-0 h-screen overflow-hidden px-4 md:px-5 py-4"
         style={{ contain: 'layout style paint' }}

@@ -1,0 +1,244 @@
+'use client';
+
+import { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Video, Camera, Palette, Share2 } from 'lucide-react';
+import type { Dictionary } from '@/lib/i18n';
+
+interface DreamSectionProps {
+  dictionary: Dictionary;
+}
+
+type ServiceKey = 'video' | 'photo' | 'design' | 'social';
+
+interface Tag {
+  id: string;
+  services: ServiceKey[];
+}
+
+// Expanded tag list (25+ tags) organized by category
+const tags: Tag[] = [
+  // Video
+  { id: 'storytelling', services: ['video'] },
+  { id: 'commercials', services: ['video'] },
+  { id: 'documentaries', services: ['video'] },
+  { id: 'musicVideos', services: ['video'] },
+  { id: 'liveStreaming', services: ['video'] },
+  // Photo
+  { id: 'productShots', services: ['photo'] },
+  { id: 'events', services: ['photo'] },
+  { id: 'portraits', services: ['photo'] },
+  { id: 'editorial', services: ['photo'] },
+  { id: 'architecture', services: ['photo'] },
+  // Design
+  { id: 'branding', services: ['design'] },
+  { id: 'visualSystems', services: ['design'] },
+  { id: 'packaging', services: ['design'] },
+  { id: 'webDesign', services: ['design'] },
+  { id: 'printDesign', services: ['design'] },
+  // Social
+  { id: 'socialStrategy', services: ['social'] },
+  { id: 'contentCreation', services: ['social'] },
+  { id: 'influencer', services: ['social'] },
+  { id: 'analytics', services: ['social'] },
+  { id: 'community', services: ['social'] },
+  // Cross-category
+  { id: 'motionGraphics', services: ['video', 'design'] },
+  { id: 'creativeDirection', services: ['video', 'photo', 'design', 'social'] },
+  { id: 'campaigns', services: ['video', 'photo', 'social'] },
+  { id: 'rebranding', services: ['design', 'social'] },
+  { id: 'digitalMarketing', services: ['social', 'design'] },
+  { id: 'podcast', services: ['video', 'social'] },
+];
+
+const services = [
+  { key: 'video' as const, icon: Video, color: 'bg-primary' },
+  { key: 'photo' as const, icon: Camera, color: 'bg-blue-500' },
+  { key: 'design' as const, icon: Palette, color: 'bg-pink-500' },
+  { key: 'social' as const, icon: Share2, color: 'bg-green-500' },
+];
+
+export function DreamSection({ dictionary }: DreamSectionProps) {
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
+
+  const dreamDict = dictionary.dream as {
+    title: string;
+    titleAr: string;
+    subtitle: string;
+    tags: Record<string, string>;
+  };
+
+  const servicesDict = dictionary.services as {
+    title: string;
+    subtitle: string;
+    video: { title: string; description: string };
+    photo: { title: string; description: string };
+    design: { title: string; description: string };
+    social: { title: string; description: string };
+  };
+
+  const visibleServices = useMemo(() => {
+    if (selectedTags.size === 0) return new Set<ServiceKey>();
+
+    const serviceSet = new Set<ServiceKey>();
+    selectedTags.forEach(tagId => {
+      const tag = tags.find(t => t.id === tagId);
+      if (tag) {
+        tag.services.forEach(service => serviceSet.add(service));
+      }
+    });
+    return serviceSet;
+  }, [selectedTags]);
+
+  const toggleTag = (tagId: string) => {
+    setSelectedTags(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(tagId)) {
+        newSet.delete(tagId);
+      } else {
+        newSet.add(tagId);
+      }
+      return newSet;
+    });
+  };
+
+  return (
+    <section className="py-16 md:py-24 bg-background overflow-hidden">
+      {/* Title Row - Full width, edge to edge, no animation */}
+      <div className="w-full flex items-center gap-1 md:gap-1.5 mb-8 md:mb-12">
+        {/* FIND */}
+        <span className="text-[clamp(3rem,15vw,12rem)] font-black text-[#ED6C00] leading-[0.8] flex-shrink-0">
+          FIND
+        </span>
+
+        {/* Center - Question Mark box */}
+        <div className="w-[clamp(7rem,18vw,16rem)] h-[clamp(2.5rem,12vw,9rem)] bg-neutral-200 rounded-lg flex items-center justify-center flex-shrink-0">
+          <span className="text-[clamp(2rem,8vw,6rem)] text-white font-light">?</span>
+        </div>
+
+        {/* YOUR - Vertical text, larger */}
+        <span
+          className="text-[clamp(1.6rem,3.5vw,2.8rem)] font-extrabold text-[#ED6C00] tracking-[0.1em] flex-shrink-0"
+          style={{ writingMode: 'vertical-lr', transform: 'rotate(180deg)' }}
+        >
+          YOUR
+        </span>
+
+        {/* DREAM */}
+        <span className="text-[clamp(3rem,15vw,12rem)] font-black text-[#ED6C00] leading-[0.8] flex-grow text-right -ml-3">
+          DREAM
+        </span>
+      </div>
+
+      {/* Subtitle - aligned with YOUR at half screen */}
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        className="text-left text-2xl md:text-3xl lg:text-4xl font-black text-foreground mb-10 md:mb-14 ml-[50%] pr-4"
+      >
+        {dreamDict.subtitle}
+      </motion.p>
+
+      {/* Hashtag Tag Cloud - aligned with YOUR at half screen */}
+      <div className="ml-[50%] pr-8 md:pr-16 lg:pr-24">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="flex flex-wrap justify-start gap-2 md:gap-2.5"
+        >
+          {tags.map((tag, index) => {
+            const isSelected = selectedTags.has(tag.id);
+            const tagLabel = dreamDict.tags[tag.id];
+
+            // Skip if tag not in dictionary
+            if (!tagLabel) return null;
+
+            return (
+              <motion.button
+                key={tag.id}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: 0.6 + index * 0.02 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => toggleTag(tag.id)}
+                className={`
+                  px-5 py-2.5 rounded-full text-sm md:text-base
+                  transition-colors duration-200 cursor-pointer
+                  ${isSelected
+                    ? 'bg-primary text-primary-foreground border border-primary'
+                    : 'bg-transparent text-black outline outline-1 outline-black hover:bg-foreground/5'
+                  }
+                `}
+              >
+                #{tagLabel}
+              </motion.button>
+            );
+          })}
+        </motion.div>
+
+        {/* Service Cards - Only shown when tags selected */}
+        <AnimatePresence>
+          {selectedTags.size > 0 && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.5 }}
+              className="mt-12 md:mt-16 overflow-hidden"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                <AnimatePresence mode="popLayout">
+                  {services.map((service, index) => {
+                    const Icon = service.icon;
+                    const serviceData = servicesDict[service.key];
+                    const isVisible = visibleServices.has(service.key);
+
+                    if (!isVisible) return null;
+
+                    return (
+                      <motion.div
+                        key={service.key}
+                        layout
+                        initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{
+                          duration: 0.4,
+                          delay: index * 0.1,
+                          layout: { duration: 0.3 }
+                        }}
+                        className="group"
+                      >
+                        <motion.div
+                          whileHover={{ y: -8 }}
+                          transition={{ duration: 0.3 }}
+                          className={`
+                            h-64 md:h-72 rounded-2xl ${service.color}
+                            flex flex-col items-center justify-center text-white p-6
+                            shadow-lg hover:shadow-xl transition-shadow duration-300
+                          `}
+                        >
+                          <Icon size={44} className="mb-4 group-hover:scale-110 transition-transform duration-300" />
+                          <h3 className="text-lg md:text-xl font-bold text-center mb-2">{serviceData.title}</h3>
+                          <p className="text-white/80 text-center text-sm leading-relaxed">
+                            {serviceData.description}
+                          </p>
+                        </motion.div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </section>
+  );
+}
