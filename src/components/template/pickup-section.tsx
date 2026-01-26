@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, type PanInfo, type MotionValue } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { PickupSectionMobile } from './pickup-section-mobile';
 
 interface Slide {
   id: string;
@@ -18,6 +19,8 @@ interface PickupSectionProps {
   dictionary?: {
     title?: string;
     subtitle?: string;
+    leftText?: string;
+    rightText?: string;
   };
   onColorChange?: (color: string) => void;
 }
@@ -36,11 +39,11 @@ const HEIGHT_SCALE_MAX = 2.4;
 const getResponsiveValues = (windowWidth: number) => {
   const isMobile = windowWidth < 768;
   return {
-    slideWidth: isMobile ? 240 : SLIDE_WIDTH,
-    slideGap: isMobile ? 20 : SLIDE_GAP,
-    scaleMax: isMobile ? 1.4 : SCALE_MAX,
-    heightScaleMax: isMobile ? 1.4 : HEIGHT_SCALE_MAX,
-    baseHeight: isMobile ? 160 : 200,
+    slideWidth: isMobile ? 180 : SLIDE_WIDTH,
+    slideGap: isMobile ? 12 : SLIDE_GAP,
+    scaleMax: isMobile ? 1.5 : SCALE_MAX,
+    heightScaleMax: isMobile ? 2.5 : HEIGHT_SCALE_MAX,
+    baseHeight: isMobile ? 180 : 200,
     isMobile,
   };
 };
@@ -348,37 +351,39 @@ export function PickupSection({
 
   const currentSlide = slides[displayIndex];
 
+  // Calculate center slide dimensions for positioning
+  const centerSlideWidth = responsive.slideWidth * responsive.scaleMax;
+  const centerSlideHeight = responsive.baseHeight * responsive.heightScaleMax;
+
+  // Render mobile version on small screens
+  if (responsive.isMobile) {
+    return (
+      <PickupSectionMobile
+        slides={slides}
+        autoPlayInterval={autoPlayInterval}
+        className={className}
+        dictionary={dictionary}
+        onColorChange={onColorChange}
+      />
+    );
+  }
+
   return (
     <div ref={containerRef} className={cn(
-      'relative w-full overflow-hidden',
-      responsive.isMobile ? 'h-[85vh]' : 'h-[150vh]',
+      'relative w-full overflow-hidden h-[150vh]',
       className
     )}>
       {/* Section Title */}
       <div
-        className={cn(
-          "absolute z-20",
-          responsive.isMobile
-            ? "left-1/2 -translate-x-1/2 top-[15%]"
-            : "left-1/2"
-        )}
-        style={!responsive.isMobile ? {
+        className="absolute z-20 left-1/2"
+        style={{
           transform: `translateX(-${(SLIDE_WIDTH * SCALE_MAX) / 2 + 200}px)`,
           top: 'calc(50% - 380px)'
-        } : undefined}
+        }}
       >
-        <h2 className={cn(
-          "text-white font-black tracking-wider",
-          responsive.isMobile ? "text-4xl text-center" : "text-8xl"
-        )}>
-          {responsive.isMobile ? (
-            <span>PICK UP</span>
-          ) : (
-            <>
-              <span className="block">PICK</span>
-              <span className="block">UP</span>
-            </>
-          )}
+        <h2 className="text-white font-black tracking-wider text-8xl">
+          <span className="block">PICK</span>
+          <span className="block">UP</span>
         </h2>
       </div>
 
@@ -386,8 +391,8 @@ export function PickupSection({
       <div
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white pointer-events-none"
         style={{
-          width: responsive.isMobile ? '360px' : '1010px',
-          height: responsive.isMobile ? '320px' : '940px',
+          width: '1010px',
+          height: '940px',
           opacity: 0.1,
           zIndex: 0,
         }}
@@ -429,69 +434,60 @@ export function PickupSection({
 
       {/* Navigation - Arrows left, Indicators right */}
       <div
-        className="absolute left-1/2 -translate-x-1/2 z-30"
-        style={{
-          bottom: responsive.isMobile ? '15%' : '20%',
-          width: responsive.isMobile ? '90%' : `${SLIDE_WIDTH * SCALE_MAX}px`,
-          maxWidth: responsive.isMobile ? `${responsive.slideWidth * responsive.scaleMax}px` : undefined
-        }}
-      >
-        <div className="flex items-center justify-between">
-          {/* Left/Right Arrows */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => paginate(-1)}
-              className={cn(
-                "flex items-center justify-center bg-white text-orange-500 hover:text-orange-600 transition-colors rounded-l-lg",
-                responsive.isMobile ? "h-8 px-3" : "h-10 px-4"
-              )}
-              aria-label="Previous slide"
-            >
-              <svg width={responsive.isMobile ? "16" : "20"} height={responsive.isMobile ? "16" : "20"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 12H5" />
-                <path d="M12 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              onClick={() => paginate(1)}
-              className={cn(
-                "flex items-center justify-center bg-white text-orange-500 hover:text-orange-600 transition-colors rounded-r-lg",
-                responsive.isMobile ? "h-8 px-3" : "h-10 px-4"
-              )}
-              aria-label="Next slide"
-            >
-              <svg width={responsive.isMobile ? "16" : "20"} height={responsive.isMobile ? "16" : "20"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14" />
-                <path d="M12 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
+          className="absolute left-1/2 -translate-x-1/2 z-30"
+          style={{
+            bottom: '20%',
+            width: `${SLIDE_WIDTH * SCALE_MAX}px`,
+          }}
+        >
+          <div className="flex items-center justify-between">
+            {/* Left/Right Arrows */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => paginate(-1)}
+                className="flex items-center justify-center bg-white text-orange-500 hover:text-orange-600 transition-colors rounded-l-lg h-10 px-4"
+                aria-label="Previous slide"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 12H5" />
+                  <path d="M12 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                onClick={() => paginate(1)}
+                className="flex items-center justify-center bg-white text-orange-500 hover:text-orange-600 transition-colors rounded-r-lg h-10 px-4"
+                aria-label="Next slide"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14" />
+                  <path d="M12 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
 
-          {/* Indicators */}
-          <div className={cn("flex items-center", responsive.isMobile ? "gap-1.5" : "gap-2")}>
-            {slides.map((_, index) => {
-              const isActive = index === displayIndex;
-              return (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  className={cn(
-                    'relative transition-all duration-300 rounded-full bg-white',
-                    isActive
-                      ? responsive.isMobile ? 'w-4 h-4' : 'w-5 h-5'
-                      : responsive.isMobile ? 'w-1.5 h-1.5 hover:bg-white/80' : 'w-2 h-2 hover:bg-white/80'
-                  )}
-                  aria-label={`Go to slide ${index + 1}`}
-                >
-                  {isActive && (
-                    <div className="absolute inset-1 rounded-full bg-orange-500" />
-                  )}
-                </button>
-              );
-            })}
+            {/* Indicators */}
+            <div className="flex items-center gap-2">
+              {slides.map((_, index) => {
+                const isActive = index === displayIndex;
+                return (
+                  <button
+                    key={index}
+                    onClick={() => goToSlide(index)}
+                    className={cn(
+                      'relative transition-all duration-300 rounded-full bg-white',
+                      isActive ? 'w-5 h-5' : 'w-2 h-2 hover:bg-white/80'
+                    )}
+                    aria-label={`Go to slide ${index + 1}`}
+                  >
+                    {isActive && (
+                      <div className="absolute inset-1 rounded-full bg-orange-500" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }

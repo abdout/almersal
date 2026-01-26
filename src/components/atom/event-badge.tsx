@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 interface EventBadgeProps {
   heroColor?: string;
   className?: string;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 // Map hero background color to contrasting badge color
@@ -23,13 +24,19 @@ function getBadgeColor(heroColor: string): string {
   return colorMap[heroColor] || '#FFD900'; // Default yellow
 }
 
-export function EventBadge({ heroColor = '#FFD900', className }: EventBadgeProps) {
+export function EventBadge({ heroColor = '#FFD900', className, size = 'md' }: EventBadgeProps) {
   const badgeColor = getBadgeColor(heroColor);
+
+  const sizeClasses = {
+    sm: 'w-[100px] h-[100px]',
+    md: 'w-[200px] h-[200px] md:w-[220px] md:h-[220px]',
+    lg: 'w-[260px] h-[260px] md:w-[280px] md:h-[280px]',
+  };
 
   return (
     <div className={cn('flex flex-col items-center', className)}>
       <motion.div
-        className="relative w-[200px] h-[200px] md:w-[220px] md:h-[220px] mt-4 cursor-pointer"
+        className={cn('relative mt-4 cursor-pointer', sizeClasses[size])}
         initial="idle"
         whileHover="hover"
       >

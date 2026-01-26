@@ -6,6 +6,7 @@ import { LoadingWrapper } from '@/components/template/loading-wrapper';
 import { useHeroColor } from '@/components/template/hero-color-context';
 import { Header } from '@/components/template/header';
 import { HeroSection } from '@/components/template/hero-section';
+import { MobileHeroSection } from '@/components/template/mobile-hero-section';
 import { PickupSection } from '@/components/template/pickup-section';
 import { DreamSection } from '@/components/template/dream-section';
 import { SupportSection } from '@/components/template/support-section';
@@ -15,7 +16,6 @@ import { InfoCardsSection } from '@/components/template/info-cards-section';
 import { InterviewSection } from '@/components/template/interview-section';
 import { TopicsSection } from '@/components/template/topics-section';
 import { Footer } from '@/components/template/footer';
-import { BottomNav } from '@/components/template/bottom-nav';
 import { ParallaxSection } from '@/components/template/parallax-section';
 import { PhotoGridSection } from '@/components/template/photo-grid-section';
 import { SectionObserverProvider } from '@/components/template/section-observer-provider';
@@ -100,7 +100,10 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
           transition={{ duration: 0.8, ease: 'easeInOut' }}
         >
           <div ref={heroRef}>
+            {/* Desktop Hero */}
             <HeroSection dictionary={dictionary} onColorChange={handleColorChange} />
+            {/* Mobile Hero - completely separate component */}
+            <MobileHeroSection dictionary={dictionary} onColorChange={handleColorChange} />
           </div>
           <PickupSection dictionary={dictionary.pickup} onColorChange={handleColorChange} />
         </motion.div>
@@ -152,10 +155,6 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
       </main>
 
       <Footer lang={lang} dictionary={dictionary} />
-      <BottomNav lang={lang} />
-
-      {/* Safe area for bottom nav on mobile */}
-      <div className="h-16 md:hidden" />
     </SectionObserverProvider>
   );
 }

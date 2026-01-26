@@ -36,11 +36,15 @@
     "leftPanel": "جريء",
     "rightPanel": "علامة",
     "comingSoon": "قريباً",
-    "scrollDown": "تصفح للأسفل"
+    "scrollDown": "تصفح للأسفل",
+    "ctaPrimary": "اكتشف المزيد",
+    "ctaSecondary": "تواصل معنا"
   },
   "pickup": {
     "title": "مواضيع مميزة",
-    "subtitle": "اختيارات المحررين"
+    "subtitle": "اختيارات المحررين",
+    "leftText": "صناعة الإبداع",
+    "rightText": "تشكيل الهوية"
   },
   "about": {
     "title": "من نحن",

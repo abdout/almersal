@@ -23,6 +23,8 @@ interface FramerHeroSliderProps {
     rightPanel?: string;
     comingSoon?: string;
     scrollDown?: string;
+    ctaPrimary?: string;
+    ctaSecondary?: string;
   };
   onColorChange?: (color: string) => void;
   scaleMin?: number;

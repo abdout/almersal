@@ -279,6 +279,11 @@ html:hover::-webkit-scrollbar-thumb:hover {
   animation: circleTimerProgress var(--timer-duration, 6s) linear forwards;
 }
 
+/* Mobile hero timer animation */
+.animate-timer-progress {
+  animation: circleTimerProgress 6s linear forwards;
+}
+
 /* Circular timer progress for pickup slider (radius 14) */
 @keyframes pickupTimerProgress {
   0% {

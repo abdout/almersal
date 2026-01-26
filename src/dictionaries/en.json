@@ -36,11 +36,15 @@
     "leftPanel": "Fuel\nCreativity",
     "rightPanel": "Shape\nIdentity",
     "comingSoon": "Coming Soon",
-    "scrollDown": "Scroll Down"
+    "scrollDown": "Scroll Down",
+    "ctaPrimary": "Discover More",
+    "ctaSecondary": "Contact Us"
   },
   "pickup": {
     "title": "Featured Stories",
-    "subtitle": "Editor's Picks"
+    "subtitle": "Editor's Picks",
+    "leftText": "Create With Passion",
+    "rightText": "Shape Identity"
   },
   "about": {
     "title": "The Messenger",

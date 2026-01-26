@@ -15,6 +15,8 @@ interface HeroColorContextType {
   setCurrentSection: (section: SectionType) => void;
   isFooterVisible: boolean;
   setIsFooterVisible: (value: boolean) => void;
+  isMenuOpen: boolean;
+  setIsMenuOpen: (value: boolean) => void;
 }
 
 const HeroColorContext = createContext<HeroColorContextType | null>(null);
@@ -24,6 +26,7 @@ export function HeroColorProvider({ children }: { children: ReactNode }) {
   const [isPastHeroSection, setIsPastHeroSectionState] = useState(false);
   const [currentSection, setCurrentSectionState] = useState<SectionType>('colored');
   const [isFooterVisible, setIsFooterVisibleState] = useState(false);
+  const [isMenuOpen, setIsMenuOpenState] = useState(false);
 
   const setHeroColor = useCallback((color: string) => {
     setHeroColorState(color);
@@ -41,6 +44,10 @@ export function HeroColorProvider({ children }: { children: ReactNode }) {
     setIsFooterVisibleState(value);
   }, []);
 
+  const setIsMenuOpen = useCallback((value: boolean) => {
+    setIsMenuOpenState(value);
+  }, []);
+
   return (
     <HeroColorContext.Provider value={{
       heroColor,
@@ -50,7 +57,9 @@ export function HeroColorProvider({ children }: { children: ReactNode }) {
       currentSection,
       setCurrentSection,
       isFooterVisible,
-      setIsFooterVisible
+      setIsFooterVisible,
+      isMenuOpen,
+      setIsMenuOpen
     }}>
       {children}
     </HeroColorContext.Provider>
@@ -68,7 +77,9 @@ export function useHeroColor() {
       currentSection: 'colored' as SectionType,
       setCurrentSection: () => {},
       isFooterVisible: false,
-      setIsFooterVisible: () => {}
+      setIsFooterVisible: () => {},
+      isMenuOpen: false,
+      setIsMenuOpen: () => {}
     };
   }
   return context;

@@ -1,14 +1,14 @@
 'use client';
 
-import { FramerHeroSlider } from '@/components/atom/framer-hero-slider';
+import { MobileHeroSlider } from '@/components/atom/mobile-hero-slider';
 import type { Dictionary } from '@/lib/i18n';
 
-interface HeroSectionProps {
+interface MobileHeroSectionProps {
   dictionary: Dictionary;
   onColorChange?: (color: string) => void;
 }
 
-export function HeroSection({ dictionary, onColorChange }: HeroSectionProps) {
+export function MobileHeroSection({ dictionary, onColorChange }: MobileHeroSectionProps) {
   // Detect language based on dictionary content
   const isArabic = dictionary.hero.title === 'المرسال للإنتاج الإعلامي';
 
@@ -24,19 +24,19 @@ export function HeroSection({ dictionary, onColorChange }: HeroSectionProps) {
   ];
 
   return (
-    <div data-hero-section className="hidden md:block">
-      <FramerHeroSlider
+    <div data-mobile-hero-section className="md:hidden">
+      <MobileHeroSlider
         slides={slides}
-        autoPlayInterval={6000}
         onColorChange={onColorChange}
         locale={isArabic ? 'ar' : 'en'}
         dictionary={{
           visionStatement: dictionary.hero.visionStatement,
-          leftPanel: dictionary.hero.leftPanel,
-          rightPanel: dictionary.hero.rightPanel,
-          comingSoon: dictionary.hero.comingSoon,
-          scrollDown: dictionary.hero.scrollDown,
+          leftText: dictionary.hero.leftPanel,
+          rightText: dictionary.hero.rightPanel,
+          ctaPrimary: dictionary.menu.bookNow,
+          ctaSecondary: dictionary.menu.request,
         }}
+        showBadge={true}
       />
     </div>
   );

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -35,8 +34,7 @@ interface HeaderProps {
 }
 
 export function Header({ lang, dictionary }: HeaderProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const { heroColor, currentSection, isFooterVisible } = useHeroColor();
+  const { heroColor, currentSection, isFooterVisible, isMenuOpen, setIsMenuOpen } = useHeroColor();
   const isRTL = lang === 'ar';
 
   // Section-aware colors based on background
@@ -79,28 +77,58 @@ export function Header({ lang, dictionary }: HeaderProps) {
 
         {/* Main header content */}
         <div className="relative">
-          {/* Center Notch with Hamburger Menu - entire notch is clickable */}
+          {/* Center Notch - Mobile: Logo links home, Desktop: Hamburger opens menu */}
           <div className="absolute left-1/2 -translate-x-1/2 top-0 pointer-events-auto">
-            {/* Notch shape - animates from white to orange */}
-            <motion.button
-              onClick={() => setIsOpen(!isOpen)}
-              aria-label="Toggle menu"
-              className="group relative px-6 pt-2 pb-4 rounded-b-[10px] transition-all duration-300 ease-out hover:pb-6 cursor-pointer"
+            {/* Mobile: Logo as Link to homepage */}
+            <motion.div
+              className="md:hidden group relative px-6 pt-2 pb-4 rounded-b-[10px] transition-all duration-300 ease-out"
               animate={{ backgroundColor: notchBgColor }}
               transition={{ duration: 0.5, ease: 'easeInOut' }}
             >
-              {/* Two-line Menu Icon */}
-              <div className="flex flex-col items-center justify-center gap-[5px] p-1 mt-1 transition-transform duration-300 group-hover:translate-y-1">
-                <motion.span
-                  className="block h-[2.5px] w-5 rounded-full"
-                  animate={{ backgroundColor: hamburgerColor }}
+              <Link
+                href={`/${lang}`}
+                className="flex flex-col items-center justify-center p-1 mt-1"
+              >
+                <motion.div
+                  animate={{
+                    filter: isWhiteSection
+                      ? 'none'
+                      : 'brightness(0) saturate(100%) invert(44%) sepia(99%) saturate(1441%) hue-rotate(7deg) brightness(101%) contrast(103%)'
+                  }}
                   transition={{ duration: 0.5, ease: 'easeInOut' }}
-                />
-                <motion.span
-                  className="block h-[2.5px] w-5 rounded-full"
-                  animate={{ backgroundColor: hamburgerColor }}
-                  transition={{ duration: 0.5, ease: 'easeInOut' }}
-                />
+                >
+                  <Image
+                    src="/logo.png"
+                    alt={isRTL ? 'المرسال' : 'Almersal'}
+                    width={24}
+                    height={24}
+                    className="w-6 h-6 object-contain"
+                  />
+                </motion.div>
+              </Link>
+            </motion.div>
+
+            {/* Desktop: Hamburger button opens menu */}
+            <motion.button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle menu"
+              className="hidden md:block group relative px-6 pt-2 pb-4 rounded-b-[10px] transition-all duration-300 ease-out hover:pb-6 cursor-pointer"
+              animate={{ backgroundColor: notchBgColor }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
+            >
+              <div className="flex flex-col items-center justify-center p-1 mt-1 transition-transform duration-300 group-hover:translate-y-1">
+                <div className="flex flex-col items-center justify-center gap-[5px]">
+                  <motion.span
+                    className="block h-[2.5px] w-5 rounded-full"
+                    animate={{ backgroundColor: hamburgerColor }}
+                    transition={{ duration: 0.5, ease: 'easeInOut' }}
+                  />
+                  <motion.span
+                    className="block h-[2.5px] w-5 rounded-full"
+                    animate={{ backgroundColor: hamburgerColor }}
+                    transition={{ duration: 0.5, ease: 'easeInOut' }}
+                  />
+                </div>
               </div>
             </motion.button>
 
@@ -231,21 +259,21 @@ export function Header({ lang, dictionary }: HeaderProps) {
 
       {/* Background Overlay */}
       <AnimatePresence>
-        {isOpen && (
+        {isMenuOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-30 bg-black/50"
-            onClick={() => setIsOpen(false)}
+            onClick={() => setIsMenuOpen(false)}
           />
         )}
       </AnimatePresence>
 
       {/* Overlay Menu - 80% height with rounded bottom, z-[60] to cover header */}
       <AnimatePresence>
-        {isOpen && (
+        {isMenuOpen && (
           <motion.div
             initial={{ opacity: 0, y: '-100%' }}
             animate={{ opacity: 1, y: 0 }}
@@ -262,7 +290,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
               transition={{ delay: 0.1 }}
               className="pt-4 md:pt-6 pb-2 md:pb-4 flex flex-col items-center"
             >
-              <Link href={`/${lang}`} onClick={() => setIsOpen(false)} className="flex flex-col items-center">
+              <Link href={`/${lang}`} onClick={() => setIsMenuOpen(false)} className="flex flex-col items-center">
                 <Image
                   src="/logo.png"
                   alt={isRTL ? 'المرسال' : 'Almersal'}
@@ -294,7 +322,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => setIsMenuOpen(false)}
                     className={cn(
                       'flex items-center justify-between py-4 lg:py-6 border-b border-white/20 text-white',
                       isRTL && 'flex-row-reverse'
@@ -330,7 +358,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
                   {/* Book Now - Yellow */}
                   <Link
                     href={`/${lang}/contact`}
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => setIsMenuOpen(false)}
                     className="group relative flex items-center justify-center h-14 md:h-24 px-6 md:px-10 rounded-md font-bold text-sm md:text-[16px] overflow-hidden md:flex-1"
                     style={{ backgroundColor: '#FFD900', color: '#000' }}
                   >
@@ -351,7 +379,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
                   {/* Request - Blue */}
                   <Link
                     href={`/${lang}/portfolio`}
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => setIsMenuOpen(false)}
                     className="group relative flex items-center justify-center h-14 md:h-24 px-6 md:px-10 rounded-md font-bold text-sm md:text-[16px] text-white overflow-hidden md:flex-1"
                     style={{ backgroundColor: '#2639A6' }}
                   >
@@ -372,7 +400,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
                   {/* Access/Location - White */}
                   <Link
                     href={`/${lang}/contact#location`}
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => setIsMenuOpen(false)}
                     className="group relative flex items-center justify-center h-14 md:h-24 px-6 md:px-10 rounded-md font-bold text-sm md:text-[16px] text-[#ED6C00] bg-white overflow-hidden md:flex-1"
                   >
                     {/* Default state: Icon + Text */}
@@ -415,19 +443,19 @@ export function Header({ lang, dictionary }: HeaderProps) {
                         };
                         return (
                           <div className="border border-white/30 rounded-lg overflow-hidden">
-                            <Link href={categories.top.href} onClick={() => setIsOpen(false)} className={`block ${cellClass} border-b border-white/30`}>
+                            <Link href={categories.top.href} onClick={() => setIsMenuOpen(false)} className={`block ${cellClass} border-b border-white/30`}>
                               {isRTL ? categories.top.ar : categories.top.en}
                             </Link>
                             {categories.grid.map((row, i) => (
                               <div key={i} className="flex border-b border-white/30">
                                 {row.map((cell, j) => (
-                                  <Link key={cell.href} href={cell.href} onClick={() => setIsOpen(false)} className={`flex-1 ${innerCellClass} ${j === 0 ? 'border-r border-white/30' : ''}`}>
+                                  <Link key={cell.href} href={cell.href} onClick={() => setIsMenuOpen(false)} className={`flex-1 ${innerCellClass} ${j === 0 ? 'border-r border-white/30' : ''}`}>
                                     {isRTL ? cell.ar : cell.en}
                                   </Link>
                                 ))}
                               </div>
                             ))}
-                            <Link href={categories.bottom.href} onClick={() => setIsOpen(false)} className={`block ${cellClass}`}>
+                            <Link href={categories.bottom.href} onClick={() => setIsMenuOpen(false)} className={`block ${cellClass}`}>
                               {isRTL ? categories.bottom.ar : categories.bottom.en}
                             </Link>
                           </div>
@@ -445,7 +473,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
                         <Link
                           key={cat.href}
                           href={cat.href}
-                          onClick={() => setIsOpen(false)}
+                          onClick={() => setIsMenuOpen(false)}
                           className="px-4 py-2 text-xs font-medium text-white border border-white/30 rounded-full hover:bg-white/10 transition-colors"
                         >
                           {isRTL ? cat.ar : cat.en}
@@ -480,7 +508,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
                       {/* Contact Button - Orange */}
                       <Link
                         href={`/${lang}/contact`}
-                        onClick={() => setIsOpen(false)}
+                        onClick={() => setIsMenuOpen(false)}
                         className="inline-block px-6 md:px-8 py-2 md:py-2.5 bg-[#ED6C00] text-white font-bold text-xs md:text-sm text-center rounded-full hover:bg-[#ED6C00]/90 transition-colors"
                       >
                         {isRTL ? 'تواصل معنا' : 'Contact Us'}
@@ -517,14 +545,14 @@ export function Header({ lang, dictionary }: HeaderProps) {
                   <div className="flex items-center gap-3 md:gap-4 text-white/50 text-[10px] md:text-xs">
                     <Link
                       href={`/${lang}/privacy`}
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => setIsMenuOpen(false)}
                       className="hover:text-white transition-colors"
                     >
                       {isRTL ? 'الخصوصية' : 'Privacy'}
                     </Link>
                     <Link
                       href={`/${lang}/terms`}
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => setIsMenuOpen(false)}
                       className="hover:text-white transition-colors"
                     >
                       {isRTL ? 'الشروط' : 'Terms'}
@@ -532,7 +560,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
                     {/* Language Switch */}
                     <Link
                       href={isRTL ? '/en' : '/ar'}
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => setIsMenuOpen(false)}
                       className="hover:text-white transition-colors font-medium"
                     >
                       {isRTL ? 'English' : 'العربية'}
@@ -549,7 +577,7 @@ export function Header({ lang, dictionary }: HeaderProps) {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
-              onClick={() => setIsOpen(false)}
+              onClick={() => setIsMenuOpen(false)}
               className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-12 h-12 md:w-14 md:h-14 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-10"
               aria-label={isRTL ? 'إغلاق القائمة' : 'Close menu'}
             >
