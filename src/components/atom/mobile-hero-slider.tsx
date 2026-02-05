@@ -5,7 +5,6 @@ import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { EventBadge } from '@/components/atom/event-badge';
-import { useHeroColor } from '@/components/template/hero-color-context';
 
 interface Slide {
   id: string;
@@ -53,7 +52,6 @@ export function MobileHeroSlider({
   showBadge = true,
 }: MobileHeroSliderProps) {
   const fontFamily = locale === 'en' ? 'var(--font-geist-sans)' : 'var(--font-rubik)';
-  const { setIsMenuOpen } = useHeroColor();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [timerKey, setTimerKey] = useState(0); // Reset timer animation on slide change
@@ -150,36 +148,36 @@ export function MobileHeroSlider({
       className={cn('relative w-full h-screen overflow-hidden', className)}
       style={{ fontFamily }}
     >
-      {/* Left Vertical Text */}
-      <div className="absolute left-3 top-[12%] z-20 pointer-events-none">
+      {/* Left Vertical Text - moved up, bigger */}
+      <div className="absolute left-3 top-[4%] z-20 pointer-events-none">
         <div className="flex flex-col items-start">
-          <span className="text-white font-black text-2xl leading-tight">
+          <span className="text-white font-black text-4xl leading-tight">
             {leftTextLines[0]}
           </span>
           {leftTextLines[1] && (
-            <span className="text-white font-black text-base [writing-mode:vertical-rl] mt-2 tracking-wider">
+            <span className="text-white font-black text-xl [writing-mode:vertical-rl] mt-2 tracking-wider">
               {leftTextLines[1]}
             </span>
           )}
         </div>
       </div>
 
-      {/* Right Vertical Text */}
-      <div className="absolute right-3 top-[12%] z-20 pointer-events-none">
+      {/* Right Vertical Text - moved up, bigger */}
+      <div className="absolute right-3 top-[4%] z-20 pointer-events-none">
         <div className="flex flex-col items-end">
-          <span className="text-white font-black text-2xl leading-tight">
+          <span className="text-white font-black text-4xl leading-tight">
             {rightTextLines[0]}
           </span>
           {rightTextLines[1] && (
-            <span className="text-white font-black text-base [writing-mode:vertical-rl] rotate-180 mt-2 tracking-wider">
+            <span className="text-white font-black text-xl [writing-mode:vertical-rl] rotate-180 mt-2 tracking-wider">
               {rightTextLines[1]}
             </span>
           )}
         </div>
       </div>
 
-      {/* Timer-Based Indicators - Left side (like desktop) */}
-      <div className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center gap-2" style={{ marginTop: '60px' }}>
+      {/* Timer-Based Indicators - Left side, aligned with bottom of slide */}
+      <div className="absolute left-3 bottom-[22%] z-20 flex flex-col items-center gap-2">
         {slides.map((_, index) => {
           const isActive = index === currentIndex;
           return (
@@ -268,9 +266,9 @@ export function MobileHeroSlider({
             />
           </AnimatePresence>
 
-          {/* Navigation Arrows - circular, at slide edges */}
+          {/* Navigation Arrows - pill shape, at slide edges */}
           <button
-            className="absolute -left-6 top-1/2 -translate-y-1/2 w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform z-30"
+            className="absolute -left-6 top-1/2 -translate-y-1/2 w-11 h-9 bg-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform z-30"
             onClick={() => paginate(-1)}
             aria-label="Previous slide"
           >
@@ -281,7 +279,7 @@ export function MobileHeroSlider({
           </button>
 
           <button
-            className="absolute -right-6 top-1/2 -translate-y-1/2 w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform z-30"
+            className="absolute -right-6 top-1/2 -translate-y-1/2 w-11 h-9 bg-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform z-30"
             onClick={() => paginate(1)}
             aria-label="Next slide"
           >
@@ -291,18 +289,18 @@ export function MobileHeroSlider({
             />
           </button>
 
-          {/* Event Badge - bottom right of slide */}
+          {/* Event Badge - bottom right of slide, scaled up */}
           {showBadge && (
-            <div className="absolute -bottom-4 -right-4 z-40 scale-50 origin-bottom-right">
+            <div className="absolute -bottom-6 -right-10 z-40 scale-[0.65] origin-bottom-right">
               <EventBadge heroColor={currentSlide?.overlayColor} />
             </div>
           )}
         </div>
       </div>
 
-      {/* Description Text */}
-      <div className="absolute bottom-[14%] left-8 right-8 z-20">
-        <p className="text-white text-sm leading-relaxed text-center">
+      {/* Description Text - aligned start */}
+      <div className="absolute bottom-[10%] left-4 right-24 z-20">
+        <p className="text-white text-sm leading-relaxed text-start">
           {dictionary?.visionStatement || 'نصنع محتوى إعلامي مبتكر يعكس هوية عملائنا ويصل إلى قلوب الجمهور'}
         </p>
       </div>
@@ -331,49 +329,6 @@ export function MobileHeroSlider({
         </button>
       </div>
 
-      {/* Bottom Bar with Upward Notch - mirrors top header design */}
-      <div className="absolute bottom-0 left-0 right-0 z-40 pointer-events-none">
-        {/* 8px white bar edge to edge */}
-        <div className="absolute bottom-0 left-0 right-0 h-[8px] bg-white" />
-
-        {/* Right-side Notch with Menu Icon - extends upward, taller */}
-        <div className="absolute right-4 bottom-0 pointer-events-auto">
-          {/* Notch shape - extends upward with more height */}
-          <button
-            onClick={() => setIsMenuOpen(true)}
-            className="relative px-4 pb-2 pt-5 bg-white rounded-t-[10px] transition-all duration-300 ease-out active:pt-6 cursor-pointer"
-            aria-label="Menu"
-          >
-            {/* Two-line Menu Icon */}
-            <div className="flex flex-col items-center justify-center gap-[5px] mb-1">
-              <span
-                className="block h-[2.5px] w-5 rounded-full transition-colors duration-500"
-                style={{ backgroundColor: currentSlide?.overlayColor || '#ED6C00' }}
-              />
-              <span
-                className="block h-[2.5px] w-5 rounded-full transition-colors duration-500"
-                style={{ backgroundColor: currentSlide?.overlayColor || '#ED6C00' }}
-              />
-            </div>
-          </button>
-
-          {/* Inverse rounded corner - left side */}
-          <div className="absolute -left-[8px] bottom-[8px] w-[8px] h-[8px] overflow-hidden">
-            <div
-              className="absolute bottom-0 right-0 w-[16px] h-[16px] rounded-br-[8px]"
-              style={{ boxShadow: '4px 4px 0 0 white' }}
-            />
-          </div>
-
-          {/* Inverse rounded corner - right side */}
-          <div className="absolute -right-[8px] bottom-[8px] w-[8px] h-[8px] overflow-hidden">
-            <div
-              className="absolute bottom-0 left-0 w-[16px] h-[16px] rounded-bl-[8px]"
-              style={{ boxShadow: '-4px 4px 0 0 white' }}
-            />
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

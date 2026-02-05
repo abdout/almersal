@@ -11,6 +11,8 @@ interface HeroColorContextType {
   setHeroColor: (color: string) => void;
   isPastHeroSection: boolean;
   setIsPastHeroSection: (value: boolean) => void;
+  hasScrolled: boolean;
+  setHasScrolled: (value: boolean) => void;
   currentSection: SectionType;
   setCurrentSection: (section: SectionType) => void;
   isFooterVisible: boolean;
@@ -24,6 +26,7 @@ const HeroColorContext = createContext<HeroColorContextType | null>(null);
 export function HeroColorProvider({ children }: { children: ReactNode }) {
   const [heroColor, setHeroColorState] = useState(DEFAULT_COLOR);
   const [isPastHeroSection, setIsPastHeroSectionState] = useState(false);
+  const [hasScrolled, setHasScrolledState] = useState(false);
   const [currentSection, setCurrentSectionState] = useState<SectionType>('colored');
   const [isFooterVisible, setIsFooterVisibleState] = useState(false);
   const [isMenuOpen, setIsMenuOpenState] = useState(false);
@@ -34,6 +37,10 @@ export function HeroColorProvider({ children }: { children: ReactNode }) {
 
   const setIsPastHeroSection = useCallback((value: boolean) => {
     setIsPastHeroSectionState(value);
+  }, []);
+
+  const setHasScrolled = useCallback((value: boolean) => {
+    setHasScrolledState(value);
   }, []);
 
   const setCurrentSection = useCallback((section: SectionType) => {
@@ -54,6 +61,8 @@ export function HeroColorProvider({ children }: { children: ReactNode }) {
       setHeroColor,
       isPastHeroSection,
       setIsPastHeroSection,
+      hasScrolled,
+      setHasScrolled,
       currentSection,
       setCurrentSection,
       isFooterVisible,
@@ -74,6 +83,8 @@ export function useHeroColor() {
       setHeroColor: () => {},
       isPastHeroSection: false,
       setIsPastHeroSection: () => {},
+      hasScrolled: false,
+      setHasScrolled: () => {},
       currentSection: 'colored' as SectionType,
       setCurrentSection: () => {},
       isFooterVisible: false,

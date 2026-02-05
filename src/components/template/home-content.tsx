@@ -9,6 +9,7 @@ import { HeroSection } from '@/components/template/hero-section';
 import { MobileHeroSection } from '@/components/template/mobile-hero-section';
 import { PickupSection } from '@/components/template/pickup-section';
 import { DreamSection } from '@/components/template/dream-section';
+import { MobileDreamSection } from '@/components/atom/mobile-dream-section';
 import { SupportSection } from '@/components/template/support-section';
 import { VisitorSection } from '@/components/template/visitor-section';
 import { MovieSection } from '@/components/template/movie-section';
@@ -19,6 +20,7 @@ import { Footer } from '@/components/template/footer';
 import { ParallaxSection } from '@/components/template/parallax-section';
 import { PhotoGridSection } from '@/components/template/photo-grid-section';
 import { SectionObserverProvider } from '@/components/template/section-observer-provider';
+import { MobileBottomBar } from '@/components/atom/mobile-bottom-bar';
 import type { Locale, Dictionary } from '@/lib/i18n';
 
 const MAIN_ORANGE = '#ED6C00';
@@ -88,6 +90,7 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
   return (
     <SectionObserverProvider>
       <Header lang={lang} dictionary={dictionary} />
+      <MobileBottomBar />
 
       <main className="relative">
         {/* Unified Colored Section - Hero + Pickup */}
@@ -124,7 +127,14 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
           className="relative z-20 bg-background rounded-b-[40px] md:rounded-b-[80px] lg:rounded-b-[120px] overflow-hidden shadow-2xl"
         >
           <ParallaxSection offset={80}>
-            <DreamSection dictionary={dictionary} />
+            {/* Desktop */}
+            <div className="hidden md:block">
+              <DreamSection dictionary={dictionary} />
+            </div>
+            {/* Mobile */}
+            <div className="md:hidden">
+              <MobileDreamSection dictionary={dictionary} />
+            </div>
           </ParallaxSection>
 
           <ParallaxSection offset={50}>
