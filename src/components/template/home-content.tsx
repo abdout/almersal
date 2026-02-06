@@ -120,18 +120,19 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
           <PhotoGridSection />
         </div>
 
-        {/* Dream + Support + Visitor (white, rounded bottom, on top) */}
+        {/* Desktop Dream Section - outside overflow-hidden container for sticky to work */}
+        <div className="hidden md:block relative z-20 bg-background">
+          <DreamSection dictionary={dictionary} />
+        </div>
+
+        {/* Dream (mobile) + Support + Visitor (white, rounded bottom, on top) */}
         <div
           data-section-id="white-sections"
           data-section-type="white"
           className="relative z-20 bg-background rounded-b-[40px] md:rounded-b-[80px] lg:rounded-b-[120px] overflow-hidden shadow-2xl"
         >
+          {/* Mobile Dream Section - with parallax */}
           <ParallaxSection offset={80}>
-            {/* Desktop */}
-            <div className="hidden md:block">
-              <DreamSection dictionary={dictionary} />
-            </div>
-            {/* Mobile */}
             <div className="md:hidden">
               <MobileDreamSection dictionary={dictionary} />
             </div>
