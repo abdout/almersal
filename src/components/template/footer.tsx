@@ -17,6 +17,16 @@ function ArrowIcon() {
   );
 }
 
+// Plus icon for accordion sections
+function PlusIcon() {
+  return (
+    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 // Social media icons
 function InstagramIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
@@ -119,29 +129,115 @@ export function Footer({ lang }: FooterProps) {
 
   // Social media links
   const socialLinks = [
-    { icon: InstagramIcon, href: 'https://www.instagram.com/almersal', label: 'Instagram' },
-    { icon: XIcon, href: 'https://x.com/almersal', label: 'X' },
-    { icon: FacebookIcon, href: 'https://www.facebook.com/almersal', label: 'Facebook' },
-    { icon: LineIcon, href: '#', label: 'LINE' },
-    { icon: YouTubeIcon, href: 'https://www.youtube.com/@almersal', label: 'YouTube' },
-    { icon: TikTokIcon, href: 'https://www.tiktok.com/@almersal', label: 'TikTok' },
+    { icon: InstagramIcon, href: 'https://www.instagram.com/almersal', label: 'Instagram', wide: false },
+    { icon: XIcon, href: 'https://x.com/almersal', label: 'X', wide: false },
+    { icon: FacebookIcon, href: 'https://www.facebook.com/almersal', label: 'Facebook', wide: false },
+    { icon: LineIcon, href: '#', label: 'LINE', wide: false },
+    { icon: YouTubeIcon, href: 'https://www.youtube.com/@almersal', label: 'YouTube', wide: false },
+    { icon: TikTokIcon, href: 'https://www.tiktok.com/@almersal', label: 'TikTok', wide: true },
+  ];
+
+  // Accordion sections for mobile
+  const accordionSections = [
+    { title: isRTL ? 'عن المؤسسة' : 'About School', links: schoolInfoLinks },
+    { title: isRTL ? 'الأقسام' : 'Departments', links: departmentLinks },
+    { title: isRTL ? 'التوظيف' : 'Employment', links: employmentLinks },
+    { title: isRTL ? 'الزوار' : 'Visitors', links: visitorLinks },
   ];
 
   return (
     <div data-section-id="footer" data-section-type="footer">
     <footer className="bg-[#ED6C00] text-white">
-      {/* Main Navigation Grid */}
-      <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-10 pt-10 md:pt-16 pb-8 md:pb-12">
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 lg:gap-12">
+      {/* Main Navigation */}
+      <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-10 pt-10 md:pt-16 pb-4 md:pb-12">
+
+        {/* === MOBILE LAYOUT === */}
+        <div className="md:hidden">
+          {/* Primary Nav - 2 column grid */}
+          <div className="grid grid-cols-2 gap-x-8">
+            {primaryNav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex items-center justify-between py-5 border-b text-sm hover:opacity-70 transition-opacity"
+                style={{ borderColor: 'rgba(255,255,255,0.15)' }}
+              >
+                <span className="font-bold">{item.label}</span>
+                <ArrowIcon />
+              </Link>
+            ))}
+          </div>
+
+          {/* Accordion Sections */}
+          <div className="mt-2">
+            {accordionSections.map((section) => (
+              <details key={section.title} className="group border-b" style={{ borderColor: 'rgba(255,255,255,0.15)' }}>
+                <summary className="flex items-center justify-between py-5 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                  <span className="font-bold text-sm">{section.title}</span>
+                  <span className="group-open:hidden"><PlusIcon /></span>
+                  <span className="hidden group-open:inline-block">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M8 12h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  </span>
+                </summary>
+                <nav className="pb-4 space-y-2.5 ps-1">
+                  {section.links.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="block text-xs text-white/80 hover:text-white transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </nav>
+              </details>
+            ))}
+          </div>
+
+          {/* Social Icons - Horizontal Row */}
+          <div className="mt-8">
+            <p className="text-base text-white font-bold mb-4">{isRTL ? 'حساباتنا الرسمية' : 'Almersal Official SNS'}</p>
+            <div className="flex items-center justify-between">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:opacity-70 transition-opacity"
+                  aria-label={social.label}
+                >
+                  <div className={`h-13 bg-white rounded-full flex items-center justify-center text-[#ED6C00] ${social.wide ? 'w-18 px-2' : 'w-13'}`}>
+                    {social.wide ? <span className="text-sm font-bold text-[#ED6C00]">{social.label}</span> : <social.icon className="w-6 h-6" />}
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Organization Info */}
+          <div className="mt-8 text-xs leading-relaxed">
+            <p className="text-white/80">{isRTL ? 'شركة المرسال للإنتاج الإعلامي' : 'Almersal Media Production Company'}</p>
+            <p className="font-medium mt-1">{isRTL ? 'المرسال للإنتاج الإعلامي' : 'Almersal Media Production'}</p>
+            <p className="mt-3 text-white/80">{isRTL ? 'ص.ب 12345' : 'P.O. Box 12345'}</p>
+            <p className="text-white/80">{isRTL ? 'الرياض، المملكة العربية السعودية' : 'Riyadh, Saudi Arabia'}</p>
+          </div>
+        </div>
+
+        {/* === DESKTOP LAYOUT === */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Column 1: Primary Navigation */}
-          <div className="col-span-2 md:col-span-1">
+          <div className="col-span-1">
             <div className="border-t border-white/20 mb-0" />
             <nav className="space-y-0">
               {primaryNav.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center justify-between py-3 md:py-5 border-b border-white/20 text-sm md:text-base hover:opacity-70 transition-opacity group"
+                  className="flex items-center justify-between py-5 border-b border-white/20 text-base hover:opacity-70 transition-opacity group"
                 >
                   <span>{item.label}</span>
                   <ArrowIcon />
@@ -151,110 +247,81 @@ export function Footer({ lang }: FooterProps) {
           </div>
 
           {/* Column 2: School Info + Departments */}
-          <div className="mt-4 md:mt-8 lg:mt-0">
-            {/* School Info */}
+          <div className="mt-8 lg:mt-0">
             <div>
-              <div className="border-t border-white/20 mb-3 md:mb-5" />
-              <h3 className="text-sm md:text-base font-medium mb-3 md:mb-5">{isRTL ? 'عن المؤسسة' : 'About School'}</h3>
-              <nav className="space-y-2 md:space-y-3">
+              <div className="border-t border-white/20 mb-5" />
+              <h3 className="text-base font-medium mb-5">{isRTL ? 'عن المؤسسة' : 'About School'}</h3>
+              <nav className="space-y-3">
                 {schoolInfoLinks.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="block text-xs md:text-sm text-white/80 hover:text-white transition-colors"
-                  >
+                  <Link key={item.href} href={item.href} className="block text-sm text-white/80 hover:text-white transition-colors">
                     {item.label}
                   </Link>
                 ))}
               </nav>
             </div>
-
-            {/* Departments */}
-            <div className="mt-6 md:mt-10 pt-4 md:pt-8 border-t border-white/20">
-              <h3 className="text-sm md:text-base font-medium mb-3 md:mb-5">{isRTL ? 'الأقسام' : 'Departments'}</h3>
-              <nav className="space-y-2 md:space-y-3">
+            <div className="mt-10 pt-8 border-t border-white/20">
+              <h3 className="text-base font-medium mb-5">{isRTL ? 'الأقسام' : 'Departments'}</h3>
+              <nav className="space-y-3">
                 {departmentLinks.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="block text-xs md:text-sm text-white/80 hover:text-white transition-colors"
-                  >
+                  <Link key={item.href} href={item.href} className="block text-sm text-white/80 hover:text-white transition-colors">
                     {item.label}
                   </Link>
                 ))}
               </nav>
-              <div className="mt-4 md:mt-8 border-b border-white/20" />
+              <div className="mt-8 border-b border-white/20" />
             </div>
           </div>
 
           {/* Column 3: Employment + Visitors */}
-          <div className="mt-4 md:mt-8 lg:mt-0">
-            {/* Employment */}
+          <div className="mt-8 lg:mt-0">
             <div>
-              <div className="border-t border-white/20 mb-3 md:mb-5" />
-              <h3 className="text-sm md:text-base font-medium mb-3 md:mb-5">{isRTL ? 'التوظيف' : 'Employment'}</h3>
-              <nav className="space-y-2 md:space-y-3">
+              <div className="border-t border-white/20 mb-5" />
+              <h3 className="text-base font-medium mb-5">{isRTL ? 'التوظيف' : 'Employment'}</h3>
+              <nav className="space-y-3">
                 {employmentLinks.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="block text-xs md:text-sm text-white/80 hover:text-white transition-colors"
-                  >
+                  <Link key={item.href} href={item.href} className="block text-sm text-white/80 hover:text-white transition-colors">
                     {item.label}
                   </Link>
                 ))}
               </nav>
             </div>
-
-            {/* Visitors */}
-            <div className="mt-6 md:mt-10 pt-4 md:pt-8 border-t border-white/20">
-              <h3 className="text-sm md:text-base font-medium mb-3 md:mb-5">{isRTL ? 'الزوار' : 'Visitors'}</h3>
-              <nav className="space-y-2 md:space-y-3">
+            <div className="mt-10 pt-8 border-t border-white/20">
+              <h3 className="text-base font-medium mb-5">{isRTL ? 'الزوار' : 'Visitors'}</h3>
+              <nav className="space-y-3">
                 {visitorLinks.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="block text-xs md:text-sm text-white/80 hover:text-white transition-colors"
-                  >
+                  <Link key={item.href} href={item.href} className="block text-sm text-white/80 hover:text-white transition-colors">
                     {item.label}
                   </Link>
                 ))}
               </nav>
-              <div className="mt-4 md:mt-8 border-b border-white/20" />
+              <div className="mt-8 border-b border-white/20" />
             </div>
           </div>
 
           {/* Column 4: Contact Info + Social */}
-          <div className="mt-4 md:mt-8 lg:mt-0 col-span-2 md:col-span-1">
-            {/* Organization Info */}
-            <div className="text-xs md:text-sm leading-relaxed">
+          <div className="mt-8 lg:mt-0">
+            <div className="text-sm leading-relaxed">
               <p className="text-white/80">{isRTL ? 'شركة المرسال للإنتاج الإعلامي' : 'Almersal Media Production Company'}</p>
               <p className="font-medium mt-1">{isRTL ? 'المرسال للإنتاج الإعلامي' : 'Almersal Media Production'}</p>
-              <p className="mt-3 md:mt-4 text-white/80">
-                {isRTL ? 'ص.ب 12345' : 'P.O. Box 12345'}
-              </p>
-              <p className="text-white/80">
-                {isRTL ? 'الرياض، المملكة العربية السعودية' : 'Riyadh, Saudi Arabia'}
-              </p>
+              <p className="mt-4 text-white/80">{isRTL ? 'ص.ب 12345' : 'P.O. Box 12345'}</p>
+              <p className="text-white/80">{isRTL ? 'الرياض، المملكة العربية السعودية' : 'Riyadh, Saudi Arabia'}</p>
             </div>
-
-            {/* Social Links - Grid on mobile, Vertical on desktop */}
-            <div className="mt-6 md:mt-8">
-              <p className="text-xs md:text-sm text-white/60 mb-3 md:mb-4">{isRTL ? 'حساباتنا الرسمية' : 'Almersal Official SNS'}</p>
-              <div className="grid grid-cols-3 gap-3 md:grid-cols-1 md:space-y-3 md:gap-0">
+            <div className="mt-8">
+              <p className="text-sm text-white/60 mb-4">{isRTL ? 'حساباتنا الرسمية' : 'Almersal Official SNS'}</p>
+              <div className="space-y-3">
                 {socialLinks.map((social) => (
                   <a
                     key={social.label}
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex flex-col md:flex-row items-center gap-1 md:gap-3 hover:opacity-70 transition-opacity"
+                    className="flex items-center gap-3 hover:opacity-70 transition-opacity"
                     aria-label={social.label}
                   >
                     <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#ED6C00]">
                       <social.icon className="w-4 h-4" />
                     </div>
-                    <span className="text-[10px] md:text-sm">{social.label}</span>
+                    <span className="text-sm">{social.label}</span>
                   </a>
                 ))}
               </div>
@@ -265,30 +332,74 @@ export function Footer({ lang }: FooterProps) {
 
       {/* Contact Cards Section */}
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-10 pb-8 md:pb-12">
-        <div className="flex flex-col lg:flex-row gap-3 md:gap-4">
+        {/* === MOBILE CARDS === */}
+        <div className="flex flex-col gap-3 md:hidden">
           {/* Phone Contact Card */}
-          <div className="flex-1 bg-white rounded-xl md:rounded-2xl p-4 md:p-6 lg:p-8 text-center">
-            <p className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4">
+          <div className="bg-white rounded-2xl px-6 py-8 text-center">
+            <p className="text-base text-gray-600 mb-5 leading-relaxed px-4">
               {isRTL
                 ? 'للاستفسارات والحجوزات، يرجى الاتصال بنا عبر الهاتف أو النموذج'
                 : 'For inquiries and reservations, please contact us by phone or web form'}
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 lg:gap-6">
+            <div className="flex items-baseline justify-center gap-0.5">
+              <span className="text-base text-[#ED6C00] font-medium">Tel.</span>
+              <a
+                href="tel:+966501234567"
+                className="text-[#ED6C00] text-[2.2rem] font-bold tracking-tight hover:opacity-80 transition-opacity"
+              >
+                050-123-4567
+              </a>
+            </div>
+            <p className="text-[11px] text-[#ED6C00] mt-1">
+              {isRTL ? '【ساعات العمل】الأحد - الخميس 9:00〜17:00' : '【Hours】Sun - Thu 9:00〜17:00'}
+            </p>
+            <Link
+              href={`/${lang}/contact`}
+              className="mt-5 mx-auto block max-w-[280px] bg-[#ED6C00] text-white py-3.5 rounded-full text-sm font-medium hover:bg-[#ED6C00]/90 transition-colors"
+            >
+              {isRTL ? 'تواصل عبر الويب' : 'Contact via Web'}
+            </Link>
+          </div>
+
+          {/* Materials Request Card */}
+          <div className="bg-white rounded-2xl px-7 py-7 flex items-center justify-between gap-4">
+            <p className="text-base text-gray-800 leading-snug">
+              {isRTL ? <>لطلب المواد<br />التعريفية</> : <>Request materials<br />for more info</>}
+            </p>
+            <Link
+              href={`/${lang}/request`}
+              className="bg-[#2639A6] text-white px-8 py-3.5 rounded-full text-base font-medium whitespace-nowrap hover:bg-[#2639A6]/90 transition-colors flex-shrink-0"
+            >
+              {isRTL ? 'طلب المواد' : 'Request Materials'}
+            </Link>
+          </div>
+        </div>
+
+        {/* === DESKTOP CARDS === */}
+        <div className="hidden md:flex md:flex-col lg:flex-row gap-4">
+          {/* Phone Contact Card */}
+          <div className="flex-1 bg-white rounded-2xl p-6 lg:p-8 text-center">
+            <p className="text-sm text-gray-600 mb-4">
+              {isRTL
+                ? 'للاستفسارات والحجوزات، يرجى الاتصال بنا عبر الهاتف أو النموذج'
+                : 'For inquiries and reservations, please contact us by phone or web form'}
+            </p>
+            <div className="flex flex-row items-center justify-center gap-4 lg:gap-6">
               <div className="flex items-baseline gap-1">
-                <span className="text-xs md:text-sm text-[#ED6C00]">Tel.</span>
+                <span className="text-sm text-[#ED6C00]">Tel.</span>
                 <a
                   href="tel:+966501234567"
-                  className="text-[#ED6C00] text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight hover:opacity-80 transition-opacity"
+                  className="text-[#ED6C00] text-3xl lg:text-4xl font-bold tracking-tight hover:opacity-80 transition-opacity"
                 >
                   050-123-4567
                 </a>
               </div>
-              <span className="text-[10px] md:text-[12px] text-gray-500">
+              <span className="text-[12px] text-gray-500">
                 {isRTL ? '【ساعات العمل】الأحد - الخميس 9:00〜17:00' : '【Hours】Sun - Thu 9:00〜17:00'}
               </span>
               <Link
                 href={`/${lang}/contact`}
-                className="bg-[#ED6C00] text-white px-4 md:px-6 py-2 md:py-3 rounded-lg text-xs md:text-sm font-medium hover:bg-[#ED6C00]/90 transition-colors"
+                className="bg-[#ED6C00] text-white px-6 py-3 rounded-lg text-sm font-medium hover:bg-[#ED6C00]/90 transition-colors"
               >
                 {isRTL ? 'تواصل عبر الويب' : 'Contact via Web'}
               </Link>
@@ -296,13 +407,13 @@ export function Footer({ lang }: FooterProps) {
           </div>
 
           {/* Materials Request Card */}
-          <div className="lg:w-72 bg-white rounded-xl md:rounded-2xl p-4 md:p-6 lg:p-8 text-center flex flex-col justify-center">
-            <p className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4">
+          <div className="lg:w-72 bg-white rounded-2xl p-6 lg:p-8 text-center flex flex-col justify-center">
+            <p className="text-sm text-gray-600 mb-4">
               {isRTL ? 'لطلب المواد التعريفية' : 'Request materials'}
             </p>
             <Link
               href={`/${lang}/request`}
-              className="bg-[#2639A6] text-white px-4 md:px-6 py-2 md:py-3 rounded-lg text-xs md:text-sm font-medium hover:bg-[#2639A6]/90 transition-colors"
+              className="bg-[#2639A6] text-white px-6 py-3 rounded-lg text-sm font-medium hover:bg-[#2639A6]/90 transition-colors"
             >
               {isRTL ? 'طلب المواد' : 'Request Materials'}
             </Link>
@@ -311,17 +422,17 @@ export function Footer({ lang }: FooterProps) {
       </div>
 
       {/* Logo Section */}
-      <div className="pt-4 md:pt-6 lg:pt-8 px-4 md:px-6 lg:px-10 w-full overflow-hidden">
-        <div className="flex items-center justify-start gap-2 md:gap-4 lg:gap-6 w-full">
+      <div className="pt-4 md:pt-6 lg:pt-8 px-2 md:px-6 lg:px-10 w-full overflow-hidden">
+        <div className="flex items-center justify-start gap-1.5 md:gap-4 lg:gap-6 w-full">
           <Image
             src="/logo.png"
             alt="Almersal Logo"
             width={200}
             height={200}
-            className="w-10 h-10 md:w-16 md:h-16 lg:w-24 lg:h-24 xl:w-[8.5rem] xl:h-[8.5rem] flex-shrink-0"
+            className="w-11 h-11 md:w-16 md:h-16 lg:w-24 lg:h-24 xl:w-[8.5rem] xl:h-[8.5rem] flex-shrink-0"
           />
           <span
-            className="font-bold tracking-wide whitespace-nowrap text-lg md:text-3xl lg:text-[3.25rem] xl:text-[4.85rem] 2xl:text-[5.85rem] truncate"
+            className="font-bold tracking-wide whitespace-nowrap text-[5.2vw] md:text-3xl lg:text-[3.25rem] xl:text-[4.85rem] 2xl:text-[5.85rem]"
           >
             {isRTL ? 'المرسال للإنتاج الإعلامي' : 'ALMERSAL MEDIA PRODUCTION'}
           </span>
@@ -330,7 +441,7 @@ export function Footer({ lang }: FooterProps) {
 
       {/* Bottom Bar */}
       <div className="bg-[#ED6C00]">
-        <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-10 pt-2 pb-20 md:pb-10 flex flex-col sm:flex-row justify-between items-center gap-2 md:gap-3">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-10 pt-2 pb-20 md:pb-10 flex flex-col sm:flex-row justify-between items-start gap-2 md:gap-3">
           <Link
             href={`/${lang}/privacy`}
             className="text-sm font-medium text-white/90 hover:text-white transition-colors"
