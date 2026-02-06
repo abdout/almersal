@@ -37,6 +37,9 @@ interface FramerHeroSliderProps {
   showPanels?: boolean;
   topLeftText?: string;
   bottomRightText?: string[];
+  mobileSlideWidth?: number;
+  mobileSlideGap?: number;
+  mobileBaseHeight?: number;
 }
 
 type AnimationPhase = 'initial' | 'entering' | 'focusing' | 'ready' | 'sliding';
@@ -222,6 +225,9 @@ export function FramerHeroSlider({
   showPanels = true,
   topLeftText,
   bottomRightText,
+  mobileSlideWidth,
+  mobileSlideGap,
+  mobileBaseHeight,
 }: FramerHeroSliderProps) {
   const fontFamily = locale === 'en' ? 'var(--font-geist-sans)' : 'var(--font-rubik)';
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -236,11 +242,18 @@ export function FramerHeroSlider({
   const [cursorDirection, setCursorDirection] = useState<'left' | 'right'>('right');
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
-  // Get responsive dimensions
-  const { slideWidth, slideGap, baseHeight } = useMemo(
-    () => getResponsiveDimensions(windowWidth),
-    [windowWidth]
-  );
+  // Get responsive dimensions with optional mobile overrides
+  const { slideWidth, slideGap, baseHeight } = useMemo(() => {
+    const dims = getResponsiveDimensions(windowWidth);
+    if (windowWidth < 640) {
+      return {
+        slideWidth: mobileSlideWidth ?? dims.slideWidth,
+        slideGap: mobileSlideGap ?? dims.slideGap,
+        baseHeight: mobileBaseHeight ?? dims.baseHeight,
+      };
+    }
+    return dims;
+  }, [windowWidth, mobileSlideWidth, mobileSlideGap, mobileBaseHeight]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
@@ -463,7 +476,7 @@ export function FramerHeroSlider({
       {/* Slider Track */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <motion.div
-          className="flex items-center pb-[5vh] sm:pb-[7vh] md:pb-[10vh] h-full will-change-transform pointer-events-auto"
+          className="flex items-center pt-[12vh] sm:pt-0 pb-0 sm:pb-[7vh] md:pb-[10vh] h-full will-change-transform pointer-events-auto"
           style={{
             x: smoothTrackX,
             gap: `${slideGap}px`,
@@ -538,21 +551,21 @@ export function FramerHeroSlider({
 
             {/* Mobile arrows - fixed at screen edges */}
             <button
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform pointer-events-auto md:hidden"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-16 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform pointer-events-auto md:hidden"
               onClick={() => paginate(-1)}
               aria-label="Previous slide"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-[#ED6C00]">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-[#ED6C00]">
                 <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
 
             <button
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform pointer-events-auto md:hidden"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-16 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform pointer-events-auto md:hidden"
               onClick={() => paginate(1)}
               aria-label="Next slide"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-[#ED6C00]">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-[#ED6C00]">
                 <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
@@ -640,7 +653,7 @@ export function FramerHeroSlider({
                 className={cn(
                   "absolute text-white font-black drop-shadow-lg tracking-wider",
                   isMobile
-                    ? "text-4xl left-1/2 -translate-x-1/2 top-[12%] text-center"
+                    ? "text-6xl left-1/2 -translate-x-1/2 top-[7%] text-center"
                     : "text-6xl md:text-7xl lg:text-8xl text-right"
                 )}
                 style={!isMobile ? {
@@ -649,10 +662,16 @@ export function FramerHeroSlider({
                 } : undefined}
               >
                 {topLeftText}
+                {/* Mobile: show subtitle below title */}
+                {isMobile && bottomRightText && bottomRightText.length > 0 && (
+                  <div className="text-2xl font-bold tracking-wider mt-1 opacity-90">
+                    {bottomRightText.join(' ')}
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Bottom Right Text - mobile: hidden or below slider, desktop: to the right of center slide */}
+            {/* Bottom Right Text - desktop only: to the right of center slide */}
             {bottomRightText && bottomRightText.length > 0 && (
               <div
                 className={cn(
@@ -678,7 +697,7 @@ export function FramerHeroSlider({
       })()}
 
       {/* Bottom Navigation with Timer Progress */}
-      <div className="absolute left-0 right-0 z-30 pointer-events-auto cursor-auto bottom-[7%] sm:bottom-[9%] md:bottom-[12%]">
+      <div className="absolute left-0 right-0 z-30 pointer-events-auto cursor-auto bottom-[4%] sm:bottom-[9%] md:bottom-[12%]">
         <div className="flex flex-col items-center gap-4">
           <div className="flex items-center gap-2">
             {slides.map((_, index) => {

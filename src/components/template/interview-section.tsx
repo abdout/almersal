@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import Image from 'next/image';
@@ -35,6 +35,19 @@ export function InterviewSection({ lang, dictionary }: InterviewSectionProps) {
   const isRTL = lang === 'ar';
   const [activeCategory, setActiveCategory] = useState<'clients' | 'alumni' | 'partners'>('clients');
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAtBottom, setIsAtBottom] = useState(false);
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
+
+  const handleMobileScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    setIsAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 10);
+  }, []);
+
+  const scrollDown = useCallback(() => {
+    if (mobileScrollRef.current) {
+      mobileScrollRef.current.scrollBy({ top: 200, behavior: 'smooth' });
+    }
+  }, []);
 
   const interviewDict = dictionary.interview as {
     title: string;
@@ -77,7 +90,7 @@ export function InterviewSection({ lang, dictionary }: InterviewSectionProps) {
   const visibleTestimonials = filteredTestimonials;
 
   return (
-    <section className="relative py-20 md:py-32 bg-[#ED6C00] overflow-hidden">
+    <section className="relative pt-40 pb-52 md:py-32 bg-[#ED6C00] overflow-hidden">
       {/* Background Watermark - Top */}
       <div className="absolute top-8 left-0 right-0 pointer-events-none overflow-hidden">
         <div className="flex whitespace-nowrap">
@@ -85,7 +98,7 @@ export function InterviewSection({ lang, dictionary }: InterviewSectionProps) {
             {[...Array(4)].map((_, i) => (
               <span
                 key={i}
-                className={`text-[14vw] md:text-[11vw] font-bold text-[#FFB84D]/30 whitespace-nowrap mx-8 ${isRTL ? 'tracking-normal' : 'tracking-widest'}`}
+                className={`text-[18vw] md:text-[11vw] font-bold text-[#FFB84D]/30 whitespace-nowrap mx-8 ${isRTL ? 'tracking-normal' : 'tracking-widest'}`}
               >
                 {interviewDict.watermark} ALMERSAL
               </span>
@@ -95,7 +108,7 @@ export function InterviewSection({ lang, dictionary }: InterviewSectionProps) {
             {[...Array(4)].map((_, i) => (
               <span
                 key={i}
-                className={`text-[14vw] md:text-[11vw] font-bold text-[#FFB84D]/30 whitespace-nowrap mx-8 ${isRTL ? 'tracking-normal' : 'tracking-widest'}`}
+                className={`text-[18vw] md:text-[11vw] font-bold text-[#FFB84D]/30 whitespace-nowrap mx-8 ${isRTL ? 'tracking-normal' : 'tracking-widest'}`}
               >
                 {interviewDict.watermark} ALMERSAL
               </span>
@@ -105,13 +118,13 @@ export function InterviewSection({ lang, dictionary }: InterviewSectionProps) {
       </div>
 
       {/* Background Watermark - Bottom */}
-      <div className="absolute bottom-8 left-0 right-0 pointer-events-none overflow-hidden">
+      <div className="absolute bottom-16 left-0 right-0 pointer-events-none overflow-hidden">
         <div className="flex whitespace-nowrap">
           <div className="animate-marquee flex shrink-0">
             {[...Array(4)].map((_, i) => (
               <span
                 key={i}
-                className={`text-[14vw] md:text-[11vw] font-bold text-[#FFB84D]/30 whitespace-nowrap mx-8 ${isRTL ? 'tracking-normal' : 'tracking-widest'}`}
+                className={`text-[18vw] md:text-[11vw] font-bold text-[#FFB84D]/30 whitespace-nowrap mx-8 ${isRTL ? 'tracking-normal' : 'tracking-widest'}`}
               >
                 {interviewDict.watermark} ALMERSAL
               </span>
@@ -121,7 +134,7 @@ export function InterviewSection({ lang, dictionary }: InterviewSectionProps) {
             {[...Array(4)].map((_, i) => (
               <span
                 key={i}
-                className={`text-[14vw] md:text-[11vw] font-bold text-[#FFB84D]/30 whitespace-nowrap mx-8 ${isRTL ? 'tracking-normal' : 'tracking-widest'}`}
+                className={`text-[18vw] md:text-[11vw] font-bold text-[#FFB84D]/30 whitespace-nowrap mx-8 ${isRTL ? 'tracking-normal' : 'tracking-widest'}`}
               >
                 {interviewDict.watermark} ALMERSAL
               </span>
@@ -142,40 +155,20 @@ export function InterviewSection({ lang, dictionary }: InterviewSectionProps) {
           {/* Mobile Layout - Stacked vertically */}
           <div className="flex flex-col items-center w-full md:hidden">
             {/* Title Section - Mobile */}
-            <div className="text-center mb-6">
-              <h2 className="text-4xl font-black text-white tracking-wide mb-1">
+            <div className="text-start mb-6 w-full max-w-md">
+              <h2 className="text-5xl font-black text-white tracking-wide mb-1">
                 {interviewDict.title}
               </h2>
-              <p className="text-white/90 text-lg font-medium mb-2">
+              <p className="text-white/90 text-2xl font-medium mb-3">
                 {interviewDict.subtitle}
               </p>
-              <p className="text-white/70 text-sm leading-relaxed max-w-[280px] mx-auto">
+              <p className="text-white/70 text-base leading-relaxed">
                 {interviewDict.description}
               </p>
             </div>
 
-            {/* Category Tabs - Mobile (Horizontal) */}
-            <div className="flex gap-2 mb-4">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => handleCategoryChange(category)}
-                  className={`
-                    px-4 py-2 text-sm font-medium rounded-full
-                    transition-all duration-300
-                    ${activeCategory === category
-                      ? 'bg-white text-[#ED6C00]'
-                      : 'bg-transparent text-white border border-white/50 hover:border-white'
-                    }
-                  `}
-                >
-                  {interviewDict.categories[category]}
-                </button>
-              ))}
-            </div>
-
             {/* White Container with Testimonials - Mobile */}
-            <div className="bg-white rounded-2xl p-4 shadow-xl h-[400px] w-full max-w-sm flex flex-col overflow-y-auto">
+            <div ref={mobileScrollRef} onScroll={handleMobileScroll} className="relative bg-white rounded-t-3xl rounded-b-none p-4 shadow-none h-[650px] w-full max-w-md flex flex-col overflow-y-auto">
               {/* Testimonials List */}
               <div className="flex-1 space-y-4">
                 <AnimatePresence mode="wait">
@@ -259,6 +252,38 @@ export function InterviewSection({ lang, dictionary }: InterviewSectionProps) {
                   </motion.div>
                 </AnimatePresence>
               </div>
+
+              {/* Down Arrow - sticky at bottom */}
+              {!isAtBottom && (
+                <div className="sticky bottom-2 flex justify-center pt-2">
+                  <button
+                    onClick={scrollDown}
+                    className="w-9 h-9 rounded-full flex items-center justify-center bg-[#ED6C00] text-white shadow-lg hover:bg-[#d45f00] transition-all duration-300"
+                  >
+                    <ArrowDown className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Category Tabs - Mobile (Horizontal, Bottom) */}
+            <div className="flex gap-4 w-full max-w-md">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => handleCategoryChange(category)}
+                  className={`
+                    flex-1 py-3 text-sm font-medium rounded-b-md rounded-t-none
+                    transition-all duration-300
+                    ${activeCategory === category
+                      ? 'bg-white text-[#ED6C00]'
+                      : 'bg-transparent text-white border border-t-0 border-white/50 hover:border-white'
+                    }
+                  `}
+                >
+                  {interviewDict.categories[category]}
+                </button>
+              ))}
             </div>
           </div>
 

@@ -13,6 +13,7 @@ import { MobileDreamSection } from '@/components/atom/mobile-dream-section';
 import { SupportSection } from '@/components/template/support-section';
 import { VisitorSection } from '@/components/template/visitor-section';
 import { MovieSection } from '@/components/template/movie-section';
+import { MobileMovieSection } from '@/components/template/mobile-movie-section';
 import { InfoCardsSection } from '@/components/template/info-cards-section';
 import { InterviewSection } from '@/components/template/interview-section';
 import { TopicsSection } from '@/components/template/topics-section';
@@ -157,7 +158,12 @@ function HomeContentInner({ dictionary, lang }: { dictionary: Dictionary; lang: 
           className="relative z-10 -mt-[50vh] md:-mt-[80vh]"
         >
           <div className="bg-[#ED6C00] pt-[50vh] md:pt-[80vh]">
-            <MovieSection dictionary={dictionary} lang={lang} />
+            {/* Desktop Movie */}
+            <div className="hidden md:block">
+              <MovieSection dictionary={dictionary} lang={lang} />
+            </div>
+            {/* Mobile Movie - wider sliders */}
+            <MobileMovieSection dictionary={dictionary} lang={lang} />
             <TopicsSection lang={lang} dictionary={dictionary} />
             <InterviewSection lang={lang} dictionary={dictionary} />
             <InfoCardsSection dictionary={dictionary} />

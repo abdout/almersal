@@ -52,6 +52,49 @@ const tags: Tag[] = [
   { id: 'podcast', services: ['video', 'social'] },
 ];
 
+// Map tag IDs to icon paths
+const tagIcons: Record<string, string> = {
+  // Video
+  storytelling: '/icons/tv.svg',
+  commercials: '/icons/editing.svg',
+  documentaries: '/icons/tv.svg',
+  musicVideos: '/icons/music.svg',
+  liveStreaming: '/icons/live.svg',
+  // Photo
+  productShots: '/icons/pictures.svg',
+  events: '/icons/entertain.svg',
+  portraits: '/icons/pictures.svg',
+  editorial: '/icons/pictures.svg',
+  architecture: '/icons/architecture.svg',
+  // Design
+  branding: '/icons/design.svg',
+  visualSystems: '/icons/illustration.svg',
+  packaging: '/icons/goods.svg',
+  webDesign: '/icons/design.svg',
+  printDesign: '/icons/design.svg',
+  // Social
+  socialStrategy: '/icons/youtube.svg',
+  contentCreation: '/icons/editing.svg',
+  influencer: '/icons/entertain.svg',
+  analytics: '/icons/games.svg',
+  community: '/icons/entertain.svg',
+  // Cross-category
+  motionGraphics: '/icons/animation.svg',
+  creativeDirection: '/icons/art.svg',
+  campaigns: '/icons/tv.svg',
+  rebranding: '/icons/design.svg',
+  digitalMarketing: '/icons/youtube.svg',
+  podcast: '/icons/live.svg',
+};
+
+// Map service types to student images
+const studentImages: Record<string, string> = {
+  video: '/t-st-av-01.png',
+  photo: '/t-st-vd-01.png',
+  design: '/t-st-vd-02.png',
+  social: '/t-st-ai-01.png',
+};
+
 const services = [
   { key: 'video' as const, icon: Video, color: 'bg-primary' },
   { key: 'photo' as const, icon: Camera, color: 'bg-blue-500' },
@@ -162,27 +205,70 @@ export function DreamSection({ dictionary }: DreamSectionProps) {
               <AnimatePresence mode="wait">
                 {hoveredTag ? (
                   <motion.div
-                    key={hoveredTag}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex flex-col items-center justify-center text-white text-center px-4 gap-2"
+                    key="hovered-content"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                    className="flex flex-col w-full h-full p-3"
                   >
-                    <span className="text-xs uppercase tracking-wider opacity-80">
-                      {tags.find(t => t.id === hoveredTag)?.services[0]}
-                    </span>
-                    <span className="text-lg font-bold">
-                      {dreamDict.tags[hoveredTag]}
-                    </span>
-                    <Image
-                      src="/dream-icon.svg"
-                      alt="icon"
-                      width={48}
-                      height={48}
-                      className="my-2"
-                    />
-                    <span className="text-sm">is passion!</span>
+                    {/* Top cream card with speech bubble - fixed container */}
+                    <div className="relative flex flex-col items-center justify-center text-black text-center bg-[#FAE5CC] rounded-[3.5rem] px-2 py-16 mx-7 mt-10">
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={hoveredTag}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -8 }}
+                          transition={{ duration: 0.15 }}
+                          className="flex flex-col items-center"
+                        >
+                          <span className="text-xs uppercase tracking-wider text-[#F5A623]">
+                            {tags.find(t => t.id === hoveredTag)?.services[0]}
+                          </span>
+                          <span className="text-lg font-extrabold mt-1 leading-tight">
+                            {dreamDict.tags[hoveredTag]}
+                          </span>
+                          <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center my-3">
+                            <Image
+                              src={tagIcons[hoveredTag] || '/icons/art.svg'}
+                              alt="icon"
+                              width={44}
+                              height={44}
+                            />
+                          </div>
+                          <span className="text-lg font-extrabold">is passion!</span>
+                        </motion.div>
+                      </AnimatePresence>
+                      {/* Speech bubble pointer */}
+                      <svg
+                        className="absolute -bottom-3 left-1/2 -translate-x-1/2"
+                        width="20"
+                        height="12"
+                        viewBox="0 0 20 12"
+                      >
+                        <path d="M0 0 L10 12 L20 0 Z" fill="#FAE5CC" />
+                      </svg>
+                    </div>
+                    {/* Bottom section */}
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={hoveredTag}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                        className="flex-1 flex flex-col items-center justify-start text-center px-2 pt-8"
+                      >
+                        <p className="text-white font-bold text-lg leading-tight">
+                          {tags.find(t => t.id === hoveredTag)?.services[0] === 'video' && 'Video Production'}
+                          {tags.find(t => t.id === hoveredTag)?.services[0] === 'photo' && 'Photography'}
+                          {tags.find(t => t.id === hoveredTag)?.services[0] === 'design' && 'Visual Design'}
+                          {tags.find(t => t.id === hoveredTag)?.services[0] === 'social' && 'Social Media'}
+                        </p>
+                        <p className="text-white/80 text-base mt-1">is recommended!</p>
+                      </motion.div>
+                    </AnimatePresence>
                   </motion.div>
                 ) : (
                   <motion.span
@@ -197,19 +283,23 @@ export function DreamSection({ dictionary }: DreamSectionProps) {
                 )}
               </AnimatePresence>
             </motion.div>
-            {/* Student image - appears on hover */}
-            <AnimatePresence>
+            {/* Student image - appears on hover, changes per service */}
+            <AnimatePresence mode="wait">
               {hoveredTag && (
                 <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="absolute -left-24 bottom-0 w-32 h-40 pointer-events-none"
-                  style={{ y: boxY }}
+                  key={tags.find(t => t.id === hoveredTag)?.services[0]}
+                  initial={{ opacity: 0, x: 100, zIndex: -10 }}
+                  animate={{ opacity: 1, x: -100, zIndex: 10 }}
+                  exit={{ opacity: 0, x: 100, zIndex: -10 }}
+                  transition={{
+                    duration: 0.2,
+                    ease: 'easeOut',
+                    zIndex: { delay: 0.15 }
+                  }}
+                  className="absolute -left-48 top-[250px] w-80 h-[30rem] pointer-events-none"
                 >
                   <Image
-                    src="/student.avif"
+                    src={studentImages[tags.find(t => t.id === hoveredTag)?.services[0] || 'video']}
                     alt="Student"
                     fill
                     className="object-contain object-bottom"
