@@ -77,7 +77,7 @@ export function DreamSection({ dictionary }: DreamSectionProps) {
 
   // Box animations - starts at 0 (when section reaches top), completes at 0.4
   const boxY = useTransform(smoothProgress, [0, 0.4], [10, 205]);
-  const boxHeight = useTransform(smoothProgress, [0, 0.4], ['140px', '450px']);
+  const boxHeight = useTransform(smoothProgress, [0, 0.4], ['140px', '480px']);
   const boxBgColor = useTransform(smoothProgress, [0, 0.4], ['#E5E5E5', '#ED6C00']);
 
   // Text animations ("YOUR DREAM" moves left, both texts turn gray suddenly at end)
@@ -196,13 +196,7 @@ export function DreamSection({ dictionary }: DreamSectionProps) {
         </div>
 
         {/* Subtitle - mobile: centered, desktop: aligned with YOUR at half screen */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-center md:text-left text-xl md:text-3xl lg:text-4xl font-black text-foreground mb-8 md:mb-14 md:ml-[50%] pr-0 md:pr-4"
-        >
+        <p className="text-center md:text-left text-xl md:text-3xl lg:text-4xl font-black text-foreground mb-8 md:mb-14 md:ml-[50%] pr-0 md:pr-4">
           {dreamDict.subtitle.split('what').map((part, i, arr) => (
             <span key={i}>
               {part}
@@ -211,18 +205,12 @@ export function DreamSection({ dictionary }: DreamSectionProps) {
               )}
             </span>
           ))}
-        </motion.p>
+        </p>
 
         {/* Hashtag Tag Cloud - mobile: centered, desktop: aligned with YOUR at half screen */}
         <div className="md:ml-[50%] pr-0 md:pr-8 lg:pr-16 xl:pr-24">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-wrap justify-center md:justify-start gap-2"
-          >
-            {tags.map((tag, index) => {
+          <div className="flex flex-wrap justify-center md:justify-start gap-3">
+            {tags.map((tag) => {
               const isSelected = selectedTags.has(tag.id);
               const tagLabel = dreamDict.tags[tag.id];
 
@@ -230,18 +218,12 @@ export function DreamSection({ dictionary }: DreamSectionProps) {
               if (!tagLabel) return null;
 
               return (
-                <motion.button
+                <button
                   key={tag.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: 0.6 + index * 0.02 }}
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
                   onClick={() => toggleTag(tag.id)}
                   className={`
                     px-3 py-2 md:px-5 md:py-2.5 rounded-full text-xs md:text-base
-                    transition-colors duration-200 cursor-pointer
+                    transition-colors duration-200 cursor-pointer hover:scale-[1.03] active:scale-[0.98]
                     ${isSelected
                       ? 'bg-primary text-primary-foreground border border-primary'
                       : 'bg-transparent text-black outline outline-1 outline-black hover:bg-foreground/5'
@@ -249,10 +231,10 @@ export function DreamSection({ dictionary }: DreamSectionProps) {
                   `}
                 >
                   #{tagLabel}
-                </motion.button>
+                </button>
               );
             })}
-          </motion.div>
+          </div>
 
           {/* Service Cards - Only shown when tags selected */}
           <AnimatePresence>
