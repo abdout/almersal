@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useMemo, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValueEvent } from 'framer-motion';
 import { Video, Camera, Palette, Share2 } from 'lucide-react';
+import Image from 'next/image';
 import type { Dictionary } from '@/lib/i18n';
 
 interface DreamSectionProps {
@@ -60,6 +61,8 @@ const services = [
 
 export function DreamSection({ dictionary }: DreamSectionProps) {
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
+  const [hoveredTag, setHoveredTag] = useState<string | null>(null);
+  const [animationComplete, setAnimationComplete] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   // Scroll-linked animation setup
@@ -85,6 +88,11 @@ export function DreamSection({ dictionary }: DreamSectionProps) {
   const textColor = useTransform(smoothProgress, [0.35, 0.4], ['#ED6C00', '#E5E5E5']);
   const findColor = useTransform(smoothProgress, [0.35, 0.4], ['#ED6C00', '#E5E5E5']);
   const subtitleColor = useTransform(smoothProgress, [0.35, 0.4], ['#171717', '#ED6C00']);
+
+  // Track when animation completes to enable tag hover
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    setAnimationComplete(latest >= 0.35);
+  });
 
   const dreamDict = dictionary.dream as {
     title: string;
@@ -144,17 +152,71 @@ export function DreamSection({ dictionary }: DreamSectionProps) {
           <div className="relative w-[clamp(7rem,18vw,16rem)] flex-shrink-0 self-start">
             {/* Animated ? box - absolutely positioned so height expansion doesn't affect layout */}
             <motion.div
-              className="absolute top-0 left-0 w-full rounded-lg flex items-center justify-center will-change-transform"
+              className="absolute top-0 left-0 w-full rounded-lg flex flex-col items-center justify-center will-change-transform overflow-hidden"
               style={{
                 y: boxY,
                 height: boxHeight,
                 backgroundColor: boxBgColor,
               }}
             >
-              <span className="text-[clamp(2rem,8vw,6rem)] text-white font-light">
-                ?
-              </span>
+              <AnimatePresence mode="wait">
+                {hoveredTag ? (
+                  <motion.div
+                    key={hoveredTag}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex flex-col items-center justify-center text-white text-center px-4 gap-2"
+                  >
+                    <span className="text-xs uppercase tracking-wider opacity-80">
+                      {tags.find(t => t.id === hoveredTag)?.services[0]}
+                    </span>
+                    <span className="text-lg font-bold">
+                      {dreamDict.tags[hoveredTag]}
+                    </span>
+                    <Image
+                      src="/dream-icon.svg"
+                      alt="icon"
+                      width={48}
+                      height={48}
+                      className="my-2"
+                    />
+                    <span className="text-sm">is passion!</span>
+                  </motion.div>
+                ) : (
+                  <motion.span
+                    key="question"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="text-[clamp(2rem,8vw,6rem)] text-white font-light"
+                  >
+                    ?
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </motion.div>
+            {/* Student image - appears on hover */}
+            <AnimatePresence>
+              {hoveredTag && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute -left-24 bottom-0 w-32 h-40 pointer-events-none"
+                  style={{ y: boxY }}
+                >
+                  <Image
+                    src="/student.avif"
+                    alt="Student"
+                    fill
+                    className="object-contain object-bottom"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* YOUR DREAM - animated container */}
@@ -212,26 +274,28 @@ export function DreamSection({ dictionary }: DreamSectionProps) {
           <div className="flex flex-wrap justify-center md:justify-start gap-3">
             {tags.map((tag) => {
               const isSelected = selectedTags.has(tag.id);
+              const isHovered = hoveredTag === tag.id;
               const tagLabel = dreamDict.tags[tag.id];
 
               // Skip if tag not in dictionary
               if (!tagLabel) return null;
 
               return (
-                <button
+                <div
                   key={tag.id}
-                  onClick={() => toggleTag(tag.id)}
+                  onMouseEnter={() => animationComplete && setHoveredTag(tag.id)}
+                  onMouseLeave={() => setHoveredTag(null)}
                   className={`
                     px-3 py-2 md:px-5 md:py-2.5 rounded-full text-xs md:text-base
-                    transition-colors duration-200 cursor-pointer hover:scale-[1.03] active:scale-[0.98]
-                    ${isSelected
-                      ? 'bg-primary text-primary-foreground border border-primary'
-                      : 'bg-transparent text-black outline outline-1 outline-black hover:bg-foreground/5'
+                    transition-all duration-200 cursor-default select-none
+                    ${isHovered && animationComplete
+                      ? 'bg-black text-white outline outline-1 outline-black'
+                      : 'bg-transparent text-black outline outline-1 outline-black'
                     }
                   `}
                 >
                   #{tagLabel}
-                </button>
+                </div>
               );
             })}
           </div>
